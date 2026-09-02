@@ -394,24 +394,47 @@ async function runParser(commit){const raw=parserText.value.trim(),files=[...par
 openParserBtn.addEventListener('click',openParser);closeParserBtn.addEventListener('click',closeParser);parserOverlay.addEventListener('click',e=>{if(e.target===parserOverlay)closeParser();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&parserOverlay.classList.contains('open'))closeParser();});parserFiles.addEventListener('change',()=>{const fs=[...parserFiles.files];parserFileList.textContent=fs.length?fs.map(f=>`${f.name} (${Math.ceil(f.size/1024)}KB)`).join(' · '):'첨부 파일 없음';});parseOnlyBtn.addEventListener('click',()=>runParser(false));parseUpdateBtn.addEventListener('click',()=>runParser(true));
 
 const PNG_EXPORT_SCALE=2;
-function exportCssText(){
-  let css='';
-  for(const sheet of [...document.styleSheets]){
-    try{for(const rule of [...sheet.cssRules])css+=rule.cssText+'\n';}catch(e){}
-  }
-  css+='\nhtml,body{margin:0!important;padding:0!important;background:#fff!important;overflow:hidden!important;}';
-  css+='\n.report{display:block!important;position:relative!important;left:0!important;top:0!important;transform:none!important;box-shadow:none!important;margin:0!important;width:1536px!important;height:1024px!important;}';
-  css+='\n.edit-active{box-shadow:none!important;background-color:transparent!important;outline:none!important;}';
-  return css;
+let H2C_LOADING_PROMISE=null;
+async function ensureHtml2Canvas(){
+  if(typeof window.html2canvas==='function')return window.html2canvas;
+  if(H2C_LOADING_PROMISE)return H2C_LOADING_PROMISE;
+  const urls=[
+    'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
+  ];
+  H2C_LOADING_PROMISE=(async()=>{
+    let lastErr=null;
+    for(const url of urls){
+      try{
+        await new Promise((resolve,reject)=>{
+          const old=[...document.scripts].find(x=>x.src===url);
+          if(old){
+            if(typeof window.html2canvas==='function'){resolve();return;}
+            old.addEventListener('load',resolve,{once:true});
+            old.addEventListener('error',()=>reject(new Error('스크립트 로드 실패')),{once:true});
+            setTimeout(()=>typeof window.html2canvas==='function'?resolve():reject(new Error('스크립트 로드 시간 초과')),6000);
+            return;
+          }
+          const sc=document.createElement('script');
+          sc.src=url;sc.async=true;sc.crossOrigin='anonymous';sc.referrerPolicy='no-referrer';
+          sc.onload=resolve;sc.onerror=()=>reject(new Error('스크립트 로드 실패: '+url));
+          document.head.appendChild(sc);
+        });
+        if(typeof window.html2canvas==='function')return window.html2canvas;
+      }catch(e){lastErr=e;}
+    }
+    throw lastErr||new Error('이미지 렌더러를 불러오지 못했습니다.');
+  })();
+  try{return await H2C_LOADING_PROMISE;}catch(e){H2C_LOADING_PROMISE=null;throw e;}
 }
-function xmlEscapeStyle(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function buildExportClone(pageId){
   const src=document.getElementById(pageId);
   if(!src)throw new Error('페이지를 찾지 못했습니다: '+pageId);
   const clone=src.cloneNode(true);
   clone.classList.add('active');
   clone.classList.remove('edit-active');
-  clone.setAttribute('style','display:block!important;position:relative!important;left:0!important;top:0!important;transform:none!important;box-shadow:none!important;margin:0!important;width:'+PAGE_W+'px!important;height:'+PAGE_H+'px!important;');
+  clone.removeAttribute('contenteditable');
+  clone.style.cssText='display:block!important;position:relative!important;left:0!important;top:0!important;transform:none!important;box-shadow:none!important;margin:0!important;width:'+PAGE_W+'px!important;height:'+PAGE_H+'px!important;overflow:hidden!important;background:#fff!important;';
   clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
   clone.querySelectorAll('.edit-active').forEach(el=>el.classList.remove('edit-active'));
   clone.querySelectorAll('*').forEach(el=>{el.removeAttribute('spellcheck');});
@@ -419,39 +442,67 @@ function buildExportClone(pageId){
 }
 function canvasToPngDownload(canvas,filename){
   return new Promise((resolve,reject)=>{
-    canvas.toBlob(blob=>{
-      if(!blob){reject(new Error('PNG 생성에 실패했습니다.'));return;}
-      const url=URL.createObjectURL(blob),a=document.createElement('a');
-      a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),1200);resolve();
-    },'image/png');
+    try{
+      canvas.toBlob(blob=>{
+        if(!blob){reject(new Error('PNG 파일 생성에 실패했습니다.'));return;}
+        const url=URL.createObjectURL(blob),a=document.createElement('a');
+        a.href=url;a.download=filename;a.style.display='none';document.body.appendChild(a);a.click();a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),2000);resolve();
+      },'image/png',1);
+    }catch(e){reject(e);}
   });
 }
 async function exportPagePng(pageId,button){
   const pageNo=pageId.replace('p','');
   const oldText=button?.textContent||'';
   if(button){button.disabled=true;button.textContent='생성중';}
+  let holder=null;
   try{
     if(EDIT_MODE)setActiveEditTarget(null);
+    if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
     scheduleAutoFit();
     await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const h2c=await ensureHtml2Canvas();
+    holder=document.createElement('div');
+    holder.id='__png_export_holder__';
+    holder.style.cssText='position:fixed;left:-20000px;top:0;width:'+PAGE_W+'px;height:'+PAGE_H+'px;overflow:hidden;background:#fff;z-index:-99999;pointer-events:none;';
     const clone=buildExportClone(pageId);
-    const css=exportCssText();
-    const markup=new XMLSerializer().serializeToString(clone);
-    const xhtml='<div xmlns="http://www.w3.org/1999/xhtml" style="width:'+PAGE_W+'px;height:'+PAGE_H+'px;overflow:hidden;background:#fff"><style>'+xmlEscapeStyle(css)+'</style>'+markup+'</div>';
-    const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+PAGE_W+'" height="'+PAGE_H+'" viewBox="0 0 '+PAGE_W+' '+PAGE_H+'"><foreignObject x="0" y="0" width="100%" height="100%">'+xhtml+'</foreignObject></svg>';
-    const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob);
-    const img=new Image();
-    await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('페이지 렌더링에 실패했습니다.'));img.src=url;});
-    const canvas=document.createElement('canvas');
-    canvas.width=PAGE_W*PNG_EXPORT_SCALE;canvas.height=PAGE_H*PNG_EXPORT_SCALE;
-    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
-    URL.revokeObjectURL(url);
-    const filename='주간원료가동향_'+CURRENT_WEEK+'_P'+pageNo+'_'+canvas.width+'x'+canvas.height+'.png';
-    await canvasToPngDownload(canvas,filename);
-    toast('P'+pageNo+' PNG 저장 완료 · '+canvas.width+'×'+canvas.height);
-  }catch(e){console.error(e);toast('이미지 저장 실패: '+e.message);}
-  finally{if(button){button.disabled=false;button.textContent=oldText;}}
+    holder.appendChild(clone);document.body.appendChild(holder);
+    if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const canvas=await h2c(clone,{
+      backgroundColor:'#ffffff',
+      scale:PNG_EXPORT_SCALE,
+      width:PAGE_W,
+      height:PAGE_H,
+      windowWidth:PAGE_W,
+      windowHeight:PAGE_H,
+      scrollX:0,
+      scrollY:0,
+      useCORS:true,
+      allowTaint:false,
+      logging:false,
+      removeContainer:true,
+      imageTimeout:12000
+    });
+    if(canvas.width!==PAGE_W*PNG_EXPORT_SCALE||canvas.height!==PAGE_H*PNG_EXPORT_SCALE){
+      const fixed=document.createElement('canvas');
+      fixed.width=PAGE_W*PNG_EXPORT_SCALE;fixed.height=PAGE_H*PNG_EXPORT_SCALE;
+      const fctx=fixed.getContext('2d');fctx.fillStyle='#fff';fctx.fillRect(0,0,fixed.width,fixed.height);fctx.drawImage(canvas,0,0,fixed.width,fixed.height);
+      await canvasToPngDownload(fixed,'주간원료가동향_'+CURRENT_WEEK+'_P'+pageNo+'_'+fixed.width+'x'+fixed.height+'.png');
+    }else{
+      await canvasToPngDownload(canvas,'주간원료가동향_'+CURRENT_WEEK+'_P'+pageNo+'_'+canvas.width+'x'+canvas.height+'.png');
+    }
+    toast('P'+pageNo+' PNG 저장 완료 · '+(PAGE_W*PNG_EXPORT_SCALE)+'×'+(PAGE_H*PNG_EXPORT_SCALE));
+  }catch(e){
+    console.error('PNG export error',e);
+    const msg=(e&&e.message)?e.message:String(e);
+    toast('이미지 저장 실패: '+msg);
+    alert('이미지 저장에 실패했습니다.\n\n'+msg+'\n\n인터넷 연결 또는 회사 보안정책에서 CDN 스크립트를 차단하는지 확인해 주세요.');
+  }finally{
+    if(holder&&holder.parentNode)holder.remove();
+    if(button){button.disabled=false;button.textContent=oldText;}
+  }
 }
 exportP1Btn.addEventListener('click',()=>exportPagePng('p1',exportP1Btn));
 exportP2Btn.addEventListener('click',()=>exportPagePng('p2',exportP2Btn));
