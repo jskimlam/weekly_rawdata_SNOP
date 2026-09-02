@@ -57,7 +57,7 @@ body{font-synthesis:none}
 #p3 .market-table{position:absolute;left:96px;top:454px;width:1348px}
 #p3 .market-table col.c1{width:72px}#p3 .market-table col.c2{width:98px}#p3 .market-table col.c3{width:553px}#p3 .market-table col.c4{width:72px}#p3 .market-table col.c5{width:553px}
 #p3 .market-table tbody tr{height:220px}
-#p3 .footnote{left:100px;bottom:55px}#p3 .approval{right:103px;bottom:20px;width:595px;grid-template-columns:120px 150px 175px 150px}
+#p3 .footnote{left:100px;bottom:55px}
 /* source parser panel ------------------------------------------------ */
 .parser-overlay{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;padding:18px}.parser-overlay.open{display:flex}.parser-panel{width:min(980px,96vw);max-height:92vh;background:#fff;border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}.parser-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #ddd}.parser-head strong{font-size:19px}.parser-close{border:0;background:transparent;font-size:25px;cursor:pointer}.parser-body{padding:14px 18px;overflow:auto}.parser-help{font-size:12px;line-height:1.5;color:#555;margin-bottom:10px}.parser-input{width:100%;height:290px;resize:vertical;border:1px solid #999;padding:12px;font-family:inherit;font-size:13px;line-height:1.5}.parser-file-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}.parser-file-row input{font-family:inherit;font-size:12px}.parser-file-list{font-size:11px;color:#555}.parser-preview{margin-top:12px;border:1px solid #ccd3da;background:#f7f9fb;padding:10px;min-height:54px;max-height:180px;overflow:auto;font-size:12px;line-height:1.45;white-space:pre-wrap}.parser-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #ddd}.parser-actions button{height:34px;padding:0 14px;border:1px solid #888;background:#fff;font-family:inherit;font-weight:800;cursor:pointer}.parser-actions .primary{background:#17365d;color:#fff;border-color:#17365d}.parser-actions button:disabled{opacity:.55;cursor:wait}
 
@@ -92,6 +92,7 @@ body.edit-mode .edit-active{box-shadow:inset 0 0 0 3px rgba(23,54,93,.42)!import
 .db-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .db-tools select,.db-tools button{font-family:inherit;height:32px;border:1px solid #999;background:#fff;padding:0 9px;font-size:11px;font-weight:700}
 .db-tools button{cursor:pointer}.db-tools button:hover{background:#f3f3f3}.db-tools button.primary{background:#17365d;color:#fff;border-color:#17365d}.db-tools button:disabled{opacity:.55;cursor:wait}
+.db-tools button.png-btn{background:#f6f8fb;border-color:#6f7f91;color:#233447}.db-tools button.png-btn:hover{background:#e8eef5}.db-tools .png-label{font-size:10px;font-weight:800;color:#6a7480;margin-left:3px;white-space:nowrap}
 .db-status{height:27px;display:inline-flex;align-items:center;padding:0 9px;border-radius:14px;font-size:10.5px;font-weight:800;background:#eee;color:#555;white-space:nowrap}
 .db-status.online{background:#e6f4ea;color:#176b35}.db-status.loading{background:#fff4d6;color:#765700}.db-status.error{background:#fde8e7;color:#a3211b}.db-status.empty{background:#edf2f7;color:#425466}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:200;background:#111;color:#fff;padding:10px 16px;font-size:12px;font-weight:700;border-radius:4px;opacity:0;pointer-events:none;transition:.2s;max-width:min(90vw,760px);text-align:center}.toast.show{opacity:.94}
@@ -109,6 +110,10 @@ body.edit-mode .edit-active{box-shadow:inset 0 0 0 3px rgba(23,54,93,.42)!import
     <button id="openParserBtn" type="button">자료 입력/파싱</button>
     <button id="editModeBtn" type="button">편집 모드</button>
     <button id="saveDbBtn" class="primary" type="button">현재 화면 DB 저장</button>
+    <span class="png-label">PPT 이미지</span>
+    <button id="exportP1Btn" class="png-btn" type="button" title="1페이지를 3072×2048 PNG로 저장">1P PNG</button>
+    <button id="exportP2Btn" class="png-btn" type="button" title="2페이지를 3072×2048 PNG로 저장">2P PNG</button>
+    <button id="exportP3Btn" class="png-btn" type="button" title="3페이지를 3072×2048 PNG로 저장">3P PNG</button>
     <div id="editTools" class="edit-tools" aria-label="수동 편집 도구">
       <span id="editScope" class="scope">편집할 항목을 클릭</span>
       <button id="fontDownBtn" type="button" title="글자 작게">A−</button>
@@ -257,7 +262,6 @@ body.edit-mode .edit-active{box-shadow:inset 0 0 0 3px rgba(23,54,93,.42)!import
     <tr><td class="item">MMA</td><td class="price">$1,710<div class="delta">(+20)</div></td><td class="body"><div class="lead">▣ 원료가 상승 및 저율 가동으로 공급 tight 지속되며 가격 상승</div><div class="rowline">[중국] 내수가 보합 <b>11,550 RMB/mt</b> / MMA 가동률 <b>45%</b></div><div class="rowline">[유도품] 수요 약세 (가전, 자동차, 투명 소재 등)</div><div class="rowline">[유럽] $2,219(+18, 아시아 比 $509↑)</div></td><td class="tone">강보합</td><td class="body"><div class="lead">▣ 공급 tight 지속 및 재고 보충 수요 발생으로 강보합 예상</div><div class="rowline">[원료] Naphtha : 보합, Acetone : 강보합</div><div class="rowline">[수급] MMA : 가동률 하락</div><div class="rowline">[유도품] PMMA ($1,625 → $1,625, -)</div></td></tr>
   </tbody></table>
   <div class="footnote">※ 국제가 기준 [BPA : ICIS CFR China, MMA : ICIS CFR KOREA &gt; 500mt]<br>※ 가동률 기준 [Chem99]</div>
-  <div class="approval"><div>'26. 09. 01</div><div>구매부문</div><div>관리책임&nbsp;&nbsp;이지호 팀장</div><div>작성자 김진수 프로</div></div>
 </section>
 
 </div></div>
@@ -388,6 +392,71 @@ async function filesToPayload(files){const out=[];for(const f of files){const bu
 function formatParsePreview(data){const x=data?.parsed||data?.data||data;try{return JSON.stringify(x,null,2)}catch(e){return String(x||'');}}
 async function runParser(commit){const raw=parserText.value.trim(),files=[...parserFiles.files];if(!raw&&!files.length){parserPreview.textContent='원문을 붙여넣거나 파일을 첨부해 주세요.';return;}parseOnlyBtn.disabled=parseUpdateBtn.disabled=true;parserPreview.textContent='파싱 중...';setStatus('loading',commit?'파싱·DB 반영 중':'파싱 중');try{const attachments=await filesToPayload(files);const action=commit?'parseAndUpdate':'parseSource';const res=await gasPost(action,{week_end:CURRENT_WEEK,raw_text:raw,files:attachments});parserPreview.textContent=formatParsePreview(res);if(commit){toast('파싱 및 DB 반영 완료');await loadWeekList(CURRENT_WEEK);}else{setStatus('online','DB 연결됨');}}catch(e){console.error(e);parserPreview.textContent='서버 파싱 기능이 아직 GAS에 연결되지 않았습니다.\n\n'+e.message+'\n\n필요 GAS 액션: parseSource / parseAndUpdate';setStatus('error','파서 연결 필요');}finally{parseOnlyBtn.disabled=parseUpdateBtn.disabled=false;}}
 openParserBtn.addEventListener('click',openParser);closeParserBtn.addEventListener('click',closeParser);parserOverlay.addEventListener('click',e=>{if(e.target===parserOverlay)closeParser();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&parserOverlay.classList.contains('open'))closeParser();});parserFiles.addEventListener('change',()=>{const fs=[...parserFiles.files];parserFileList.textContent=fs.length?fs.map(f=>`${f.name} (${Math.ceil(f.size/1024)}KB)`).join(' · '):'첨부 파일 없음';});parseOnlyBtn.addEventListener('click',()=>runParser(false));parseUpdateBtn.addEventListener('click',()=>runParser(true));
+
+const PNG_EXPORT_SCALE=2;
+function exportCssText(){
+  let css='';
+  for(const sheet of [...document.styleSheets]){
+    try{for(const rule of [...sheet.cssRules])css+=rule.cssText+'\n';}catch(e){}
+  }
+  css+='\nhtml,body{margin:0!important;padding:0!important;background:#fff!important;overflow:hidden!important;}';
+  css+='\n.report{display:block!important;position:relative!important;left:0!important;top:0!important;transform:none!important;box-shadow:none!important;margin:0!important;width:1536px!important;height:1024px!important;}';
+  css+='\n.edit-active{box-shadow:none!important;background-color:transparent!important;outline:none!important;}';
+  return css;
+}
+function xmlEscapeStyle(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function buildExportClone(pageId){
+  const src=document.getElementById(pageId);
+  if(!src)throw new Error('페이지를 찾지 못했습니다: '+pageId);
+  const clone=src.cloneNode(true);
+  clone.classList.add('active');
+  clone.classList.remove('edit-active');
+  clone.setAttribute('style','display:block!important;position:relative!important;left:0!important;top:0!important;transform:none!important;box-shadow:none!important;margin:0!important;width:'+PAGE_W+'px!important;height:'+PAGE_H+'px!important;');
+  clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  clone.querySelectorAll('.edit-active').forEach(el=>el.classList.remove('edit-active'));
+  clone.querySelectorAll('*').forEach(el=>{el.removeAttribute('spellcheck');});
+  return clone;
+}
+function canvasToPngDownload(canvas,filename){
+  return new Promise((resolve,reject)=>{
+    canvas.toBlob(blob=>{
+      if(!blob){reject(new Error('PNG 생성에 실패했습니다.'));return;}
+      const url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1200);resolve();
+    },'image/png');
+  });
+}
+async function exportPagePng(pageId,button){
+  const pageNo=pageId.replace('p','');
+  const oldText=button?.textContent||'';
+  if(button){button.disabled=true;button.textContent='생성중';}
+  try{
+    if(EDIT_MODE)setActiveEditTarget(null);
+    scheduleAutoFit();
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const clone=buildExportClone(pageId);
+    const css=exportCssText();
+    const markup=new XMLSerializer().serializeToString(clone);
+    const xhtml='<div xmlns="http://www.w3.org/1999/xhtml" style="width:'+PAGE_W+'px;height:'+PAGE_H+'px;overflow:hidden;background:#fff"><style>'+xmlEscapeStyle(css)+'</style>'+markup+'</div>';
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+PAGE_W+'" height="'+PAGE_H+'" viewBox="0 0 '+PAGE_W+' '+PAGE_H+'"><foreignObject x="0" y="0" width="100%" height="100%">'+xhtml+'</foreignObject></svg>';
+    const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob);
+    const img=new Image();
+    await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('페이지 렌더링에 실패했습니다.'));img.src=url;});
+    const canvas=document.createElement('canvas');
+    canvas.width=PAGE_W*PNG_EXPORT_SCALE;canvas.height=PAGE_H*PNG_EXPORT_SCALE;
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    URL.revokeObjectURL(url);
+    const filename='주간원료가동향_'+CURRENT_WEEK+'_P'+pageNo+'_'+canvas.width+'x'+canvas.height+'.png';
+    await canvasToPngDownload(canvas,filename);
+    toast('P'+pageNo+' PNG 저장 완료 · '+canvas.width+'×'+canvas.height);
+  }catch(e){console.error(e);toast('이미지 저장 실패: '+e.message);}
+  finally{if(button){button.disabled=false;button.textContent=oldText;}}
+}
+exportP1Btn.addEventListener('click',()=>exportPagePng('p1',exportP1Btn));
+exportP2Btn.addEventListener('click',()=>exportPagePng('p2',exportP2Btn));
+exportP3Btn.addEventListener('click',()=>exportPagePng('p3',exportP3Btn));
+
 async function boot(){initRowMap();const initial=(location.hash||'#p1').slice(1);if(document.getElementById(initial))showPage(initial);else showPage('p1');updateApproval(FALLBACK_WEEK);try{const ping=await gasGet('ping');setStatus('online','DB 연결됨');await loadWeekList(FALLBACK_WEEK);}catch(e){console.error(e);setStatus('error','DB 연결 실패');toast('GAS Web App 연결 실패: '+e.message);renderWtiChart(FALLBACK_WEEK);scheduleAutoFit();}}
 weekSelect.addEventListener('change',()=>loadWeek(weekSelect.value));reloadBtn.addEventListener('click',()=>loadWeek(CURRENT_WEEK));saveBtn.addEventListener('click',saveCurrentScreen);boot();
 </script>
