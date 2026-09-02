@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>주간 원료가동향</title>
+<style>
+:root{
+  --ink:#111; --blue:#1326bd; --red:#e2241a; --yellow:#fff900;
+  --head:#efc4ad; --line:#767676; --grid:#a9bbc8; --paper:#fff; --screen:#edf0f3;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--screen);font-family:"Malgun Gothic","맑은 고딕",sans-serif;color:var(--ink)}
+body{font-synthesis:none}
+.toolbar{position:sticky;top:0;z-index:50;min-height:56px;background:#fff;border-bottom:1px solid #cfd4da;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:9px 18px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.toolbar .title{font-size:21px;font-weight:800;letter-spacing:-.6px;white-space:nowrap}.toolbar .title small{font-size:12px;font-weight:500;color:#777;margin-left:9px}
+.tabs{display:flex;gap:5px;overflow-x:auto}.tabs button{font-family:inherit;border:1px solid #999;background:#fff;color:#111;height:34px;padding:0 15px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}.tabs button.active{background:#111;color:#fff;border-color:#111}
+.stage{padding:16px 0 34px;overflow:auto}.page-frame{position:relative;margin:0 auto}.report{position:absolute;left:0;top:0;width:1536px;height:1024px;background:#fff;display:none;transform-origin:top left;overflow:hidden;box-shadow:0 8px 28px rgba(20,29,40,.14)}.report.active{display:block}
+.report *{font-family:"Malgun Gothic","맑은 고딕",sans-serif}
+/* common */
+.main-title{position:absolute;margin:0;font-size:31px;line-height:1.15;font-weight:800;letter-spacing:-1.5px}.footnote{position:absolute;font-size:10.5px;line-height:1.35;color:#4e4e4e}.approval{position:absolute;height:27px;border:1px solid #7a7a7a;display:grid;font-size:11px;color:#666;background:#fff}.approval>div{display:flex;align-items:center;justify-content:center;border-right:1px solid #7a7a7a}.approval>div:last-child{border-right:0}
+/* PAGE 1 ------------------------------------------------ */
+#p1 .main-title{left:95px;top:58px}
+#p1 .sub-title{position:absolute;left:96px;top:108px;font-size:28px;font-weight:800;letter-spacing:-1.2px}
+#p1 .macro{position:absolute;left:115px;top:158px;width:750px;font-size:17px;line-height:1.65;letter-spacing:-.35px}
+#p1 .macro .head{font-size:18px;font-weight:800;margin-bottom:5px}
+#p1 .macro .lead{font-size:17.5px;margin:0 0 35px 0;line-height:1.65}
+#p1 .macro .bullet{margin:0 0 5px 10px}
+#p1 .oil-chart{position:absolute;left:948px;top:150px;width:455px;height:225px}
+#p1 .oil-chart .ct{position:absolute;top:-7px;left:179px;font-size:16px;font-weight:800}
+#p1 .oil-chart .cy{position:absolute;left:-48px;top:92px;transform:rotate(-90deg);font-size:12px;font-weight:700}
+#p1 .oil-chart svg{width:100%;height:100%}
+.price-matrix{position:absolute;left:85px;top:399px;width:1308px;border-collapse:collapse;table-layout:fixed;font-size:12.2px;border:1.2px solid #91a8b9}
+.price-matrix th,.price-matrix td{border:1px solid #a8bac6;height:27px;padding:1px 3px;text-align:center;vertical-align:middle;white-space:nowrap}
+.price-matrix th{height:48px;background:#dce7f0;font-size:13.2px;font-weight:800;line-height:1.05}.price-matrix th.peach{background:#f4d6c4}.price-matrix td.item{text-align:left;padding-left:18px;font-size:13px}.price-matrix td.up{color:#dc342a;font-weight:800}.price-matrix td.down{color:#304eb6;font-weight:800}.price-matrix .spread td{background:#fff98a}.price-matrix .grp td{border-top:1.8px solid #819aaa}.price-matrix .tiny{font-size:9.5px}.price-matrix .two{line-height:1.1}
+#p1 .approval{right:90px;bottom:34px;width:600px;grid-template-columns:120px 150px 170px 160px}
+/* shared report tables ------------------------------------------------ */
+.market-table{border-collapse:collapse;table-layout:fixed;border:1.15px solid #666;background:#fff}.market-table th,.market-table td{border:1px solid #777}.market-table thead th{height:37px;background:#e9b7ae;font-size:15px;font-weight:800;letter-spacing:5px}.market-table thead th:nth-child(1),.market-table thead th:nth-child(2){letter-spacing:0}.market-table td.item{color:#101dc1;text-decoration:underline;text-align:center;font-weight:800;font-size:17px}.market-table td.price{background:var(--yellow);text-align:center;font-weight:800;font-size:18px;line-height:1.35}.market-table td.price .delta{color:var(--red);font-size:14px}.market-table td.body{vertical-align:top;padding:14px 14px;font-size:12.8px;line-height:1.52;letter-spacing:-.25px}.market-table td.tone{text-align:center;font-size:16px;font-weight:800}.market-table .lead{font-weight:700;margin:0 0 7px}.market-table .rowline{margin:4px 0}.market-table b{font-weight:800}.market-table .red{color:var(--red)}.market-table .blue{color:var(--blue)}
+/* charts ------------------------------------------------ */
+.graph3{position:absolute;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.chart-card{position:relative;height:100%;background:#f2f2f2;border:1px solid #a9a9a9;overflow:hidden}.chart-head{position:absolute;left:0;top:0;height:39px;background:#fff978;padding:7px 22px 0;font-size:18px;font-weight:800;min-width:180px}.legend{position:absolute;right:11px;top:7px;font-size:10px;line-height:1.45}.legend .lg{display:inline-block;width:35px;border-top:2.5px solid;margin-right:7px;vertical-align:middle}.legend .blue{border-color:#151ed0}.legend .red{border-color:#df2220}.unit{position:absolute;right:8px;top:40px;font-size:9.5px}.chart-card svg{position:absolute;left:5px;top:48px;width:calc(100% - 10px);height:calc(100% - 54px)}.bep-note{position:absolute;left:16px;bottom:28px;font-size:10px;color:#676767}.chart-label{font-size:11px;font-weight:800}.chart-date{font-size:8.5px;fill:#666}
+/* PAGE 2 ------------------------------------------------ */
+#p2 .main-title{left:20px;top:18px;font-size:29px}
+#p2 .graph3{left:30px;top:92px;width:1476px;height:315px;gap:10px}
+#p2 .chart-card{height:315px}
+#p2 .chart-head{height:40px;min-width:188px;padding:7px 22px 0;font-size:17px}.p2-legend{font-size:10px;top:5px}.p2-unit{top:41px}
+#p2 .market-table{position:absolute;left:30px;top:424px;width:1476px}
+#p2 .market-table col.c1{width:60px}#p2 .market-table col.c2{width:70px}#p2 .market-table col.c3{width:405px}#p2 .market-table col.c4{width:53px}#p2 .market-table col.c5{width:auto}
+#p2 .market-table tbody tr{height:164px}
+#p2 .market-table td.body{font-size:12.6px;line-height:1.52;padding:13px 14px}
+#p2 .market-table td.item{font-size:17px}#p2 .market-table td.price{font-size:17px}#p2 .market-table td.price .delta{font-size:14px}#p2 .market-table td.tone{font-size:16px}
+#p2 .footnote{left:35px;top:986px}
+#p2 .approval{right:50px;bottom:-4px;width:575px;grid-template-columns:115px 145px 165px 150px}
+/* PAGE 3 ------------------------------------------------ */
+#p3 .main-title{left:94px;top:42px}
+#p3 .graph3{left:100px;top:107px;width:1338px;height:340px;gap:14px}
+#p3 .chart-card{height:340px}
+#p3 .market-table{position:absolute;left:96px;top:454px;width:1348px}
+#p3 .market-table col.c1{width:72px}#p3 .market-table col.c2{width:98px}#p3 .market-table col.c3{width:575px}#p3 .market-table col.c4{width:72px}#p3 .market-table col.c5{width:auto}
+#p3 .market-table tbody tr{height:220px}
+#p3 .footnote{left:100px;bottom:55px}#p3 .approval{right:103px;bottom:20px;width:595px;grid-template-columns:120px 150px 175px 150px}
+/* responsive */
+@media(max-width:760px){.toolbar{align-items:flex-start;flex-direction:column;gap:7px;padding:8px 10px}.toolbar .title{font-size:18px}.tabs{width:100%}.tabs button{height:31px;padding:0 10px;font-size:11px}.stage{padding-top:10px}}
+@media print{.toolbar{display:none}.stage{padding:0}.page-frame{width:1536px!important;height:auto!important}.report{display:block!important;position:relative!important;transform:none!important;box-shadow:none!important;page-break-after:always}.report:last-child{page-break-after:auto}}
+
+/* DB integration controls */
+.toolbar{flex-wrap:wrap}
+.db-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.db-tools select,.db-tools button{font-family:inherit;height:32px;border:1px solid #999;background:#fff;padding:0 9px;font-size:11px;font-weight:700}
+.db-tools button{cursor:pointer}.db-tools button:hover{background:#f3f3f3}.db-tools button.primary{background:#17365d;color:#fff;border-color:#17365d}.db-tools button:disabled{opacity:.55;cursor:wait}
+.db-status{height:27px;display:inline-flex;align-items:center;padding:0 9px;border-radius:14px;font-size:10.5px;font-weight:800;background:#eee;color:#555;white-space:nowrap}
+.db-status.online{background:#e6f4ea;color:#176b35}.db-status.loading{background:#fff4d6;color:#765700}.db-status.error{background:#fde8e7;color:#a3211b}.db-status.empty{background:#edf2f7;color:#425466}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:200;background:#111;color:#fff;padding:10px 16px;font-size:12px;font-weight:700;border-radius:4px;opacity:0;pointer-events:none;transition:.2s;max-width:min(90vw,760px);text-align:center}.toast.show{opacity:.94}
+@media(max-width:980px){.toolbar{justify-content:flex-start}.db-tools{order:3;width:100%}.tabs{order:2}}
+@media print{.db-tools,.toast{display:none!important}}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <div class="title">주간 원료가동향 <small id="basisDate">2026.08.28 기준</small></div>
+  <div class="db-tools">
+    <span id="dbStatus" class="db-status loading">DB 확인 중</span>
+    <select id="weekSelect" title="보고서 주차 선택"><option value="2026-08-28">W35 · 2026-08-28</option></select>
+    <button id="reloadDbBtn" type="button">DB 불러오기</button>
+    <button id="saveDbBtn" class="primary" type="button">현재 화면 DB 저장</button>
+  </div>
+  <div class="tabs">
+    <button class="active" data-page="p1">1. 주원료 및 NP 동향</button>
+    <button data-page="p2">2. ABS계 원료 가격 및 시황</button>
+    <button data-page="p3">3. PC계 원료 가격 및 시황</button>
+  </div>
+</div>
+<div class="stage"><div id="pageFrame" class="page-frame">
+
+<!-- PAGE 1 -->
+<section class="report active" id="p1">
+  <h1 class="main-title">Ⅰ. 주원료 및 NP 동향</h1>
+  <div class="sub-title">■ 주원료 동향_전주 시황</div>
+  <div class="macro">
+    <div class="head">[ Macro Issue ]</div>
+    <p class="lead">- 호르무즈 해협 재개방 기대와 미·이란 협상 교착으로 주 후반 상승,<br>&nbsp;&nbsp;전주비는 $3.66/bbl(4.2%) 하락한 $83.40으로 마감</p>
+    <p class="bullet">· 파키스탄/오만의 중재로 이란과의 협의가 진행되며 해협 통항 정상화 기대 확대</p>
+    <p class="bullet">· 8/27, 미국은 이란과의 대화가 진행되지 않고 있다고 밝힘</p>
+  </div>
+  <div class="oil-chart"><div class="ct">유가(WTI)</div><div class="cy">Dollar/Barrel</div>
+    <svg viewBox="0 0 455 225" aria-label="WTI daily trend">
+      <line x1="53" y1="21" x2="53" y2="194" stroke="#9a9a9a"/><line x1="53" y1="194" x2="436" y2="194" stroke="#9a9a9a"/>
+      <g font-size="12" font-weight="700"><text x="17" y="25">90</text><text x="17" y="108">85</text><text x="17" y="198">80</text></g>
+      <polyline points="84,73 149,107 214,153 279,154 344,137 409,139" fill="none" stroke="#222ca5" stroke-width="4"/>
+      <g fill="#fff" stroke="#6673c1" stroke-width="2"><circle cx="84" cy="73" r="6"/><circle cx="149" cy="107" r="6"/><circle cx="214" cy="153" r="6"/><circle cx="279" cy="154" r="6"/><circle cx="344" cy="137" r="6"/><circle cx="409" cy="139" r="6"/></g>
+      <g font-size="12" font-weight="800"><text x="62" y="104">87.06</text><text x="126" y="135">85.01</text><text x="194" y="142">82.36</text><text x="258" y="142">82.23</text><text x="324" y="125">83.53</text><text x="389" y="126">83.40</text></g>
+      <g font-size="11"><text x="67" y="218">8/21</text><text x="132" y="218">8/24</text><text x="197" y="218">8/25</text><text x="262" y="218">8/26</text><text x="327" y="218">8/27</text><text x="392" y="218">8/28</text></g>
+    </svg>
+  </div>
+  <table class="price-matrix">
+    <colgroup><col style="width:102px"><col style="width:68px"><col style="width:68px"><col style="width:61px"><col style="width:39px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:66px"><col style="width:98px"></colgroup>
+    <thead><tr><th class="peach">구분</th><th class="peach">8/31</th><th class="peach">8/28</th><th class="peach">전주比<br><span class="tiny">8/21→8/28</span></th><th class="peach">%</th><th>8/21</th><th>8/14</th><th>8/7</th><th>26년<br>8월</th><th>26년<br>7월</th><th>26년<br>6월</th><th>26년<br>2월</th><th>26년<br>평균</th><th>25년<br>평균</th><th>25년<br>12월</th><th>25년<br>8월</th><th>25년<br>High</th><th>25년<br>Low</th><th>Historical<br>High&nbsp;&nbsp;&nbsp;Low</th></tr></thead>
+    <tbody>
+      <tr><td class="item two">WTI<br>($/MT)</td><td class="up two">85.76<br><span class="tiny">629</span></td><td class="two">83.40<br><span class="tiny">611</span></td><td class="down two">△4<br><span class="tiny">△27</span></td><td class="down two">4<br><span class="tiny">4</span></td><td class="two">87.06<br><span class="tiny">638</span></td><td class="two">82.40<br><span class="tiny">604</span></td><td class="two">78.18<br><span class="tiny">573</span></td><td class="two">82.76<br><span class="tiny">607</span></td><td class="two">79.31<br><span class="tiny">581</span></td><td class="two">80.31<br><span class="tiny">589</span></td><td class="two">64.96<br><span class="tiny">476</span></td><td class="two">82.33<br><span class="tiny">603</span></td><td class="two">64.85<br><span class="tiny">475</span></td><td class="two">57.73<br><span class="tiny">423</span></td><td class="two">64.34<br><span class="tiny">472</span></td><td class="two">77.88<br><span class="tiny">571</span></td><td class="two">56.66<br><span class="tiny">415</span></td><td class="two">145.29&nbsp;&nbsp;&nbsp;16.94<br><span class="tiny">1,065&nbsp;&nbsp;&nbsp;124</span></td></tr>
+      <tr><td class="item">Naphtha</td><td class="up">859</td><td>827</td><td class="up">+1</td><td class="up">0</td><td>827</td><td>781</td><td>761</td><td>799</td><td>797</td><td>690</td><td>611</td><td>808</td><td>597</td><td>546</td><td>586</td><td>683</td><td>531</td><td>1,246&nbsp;&nbsp;&nbsp;188</td></tr>
+      <tr><td class="item">EL</td><td class="up">1,100</td><td>1,050</td><td class="down">△20</td><td class="down">2</td><td>1,070</td><td>965</td><td>990</td><td>1,019</td><td>913</td><td>876</td><td>704</td><td>1,003</td><td>814</td><td>745</td><td>827</td><td>900</td><td>730</td><td>1,655&nbsp;&nbsp;&nbsp;355</td></tr>
+      <tr><td class="item">PL</td><td class="up">1,120</td><td>1,100</td><td>-</td><td>-</td><td>1,100</td><td>1,070</td><td>1,050</td><td>1,080</td><td>973</td><td>1,019</td><td>833</td><td>1,048</td><td>795</td><td>743</td><td>776</td><td>870</td><td>710</td><td>1,860&nbsp;&nbsp;&nbsp;325</td></tr>
+      <tr><td class="item">PP</td><td class="up">1,115</td><td>1,105</td><td>-</td><td>-</td><td>1,105</td><td>1,090</td><td>1,090</td><td>1,098</td><td>1,027</td><td>1,134</td><td>829</td><td>1,061</td><td>846</td><td>756</td><td>863</td><td>900</td><td>750</td><td>2,025&nbsp;&nbsp;&nbsp;645</td></tr>
+      <tr><td class="item">BZ</td><td class="up">1,066</td><td>1,016</td><td class="down">△6</td><td class="down">1</td><td>1,022</td><td>960</td><td>916</td><td>979</td><td>920</td><td>893</td><td>767</td><td>940</td><td>749</td><td>663</td><td>734</td><td>920</td><td>647</td><td>1,486&nbsp;&nbsp;&nbsp;274</td></tr>
+      <tr class="grp"><td class="item">SM</td><td class="up">1,238</td><td>1,178</td><td class="down">△14</td><td class="down">1</td><td>1,191</td><td>1,143</td><td>1,082</td><td>1,148</td><td>1,074</td><td>1,070</td><td>956</td><td>1,130</td><td>913</td><td>820</td><td>899</td><td>1,066</td><td>789</td><td>1,828&nbsp;&nbsp;&nbsp;546.5</td></tr>
+      <tr><td class="item">AN</td><td>1,545</td><td>1,545</td><td>-</td><td>-</td><td>1,545</td><td>1,540</td><td>1,540</td><td>1,543</td><td>1,520</td><td>1,668</td><td>1,056</td><td>1,476</td><td>1,168</td><td>1,098</td><td>1,115</td><td>1,310</td><td>1,070</td><td>3,000&nbsp;&nbsp;&nbsp;815</td></tr>
+      <tr><td class="item">BD</td><td class="up">1,530</td><td>1,510</td><td class="up">+10</td><td class="up">1</td><td>1,500</td><td>1,400</td><td>1,310</td><td>1,430</td><td>1,220</td><td>1,340</td><td>1,270</td><td>1,555</td><td>1,122</td><td>905</td><td>1,084</td><td>1,490</td><td>770</td><td>4,500&nbsp;&nbsp;&nbsp;300</td></tr>
+      <tr><td class="item">Cost</td><td class="up">1,358</td><td>1,319</td><td class="down">△7</td><td class="down">0</td><td>1,326</td><td>1,281</td><td>1,231</td><td>1,289</td><td>1,207</td><td>1,260</td><td>1,028</td><td>1,281</td><td>1,008</td><td>902</td><td>981</td><td>1,189</td><td>866</td><td>2,151&nbsp;&nbsp;&nbsp;610</td></tr>
+      <tr><td class="item">ABS</td><td>1,490</td><td>1,490</td><td class="down">△30</td><td class="down">2</td><td>1,520</td><td>1,520</td><td>1,490</td><td>1,505</td><td>1,506</td><td>1,593</td><td>1,299</td><td>1,551</td><td>1,306</td><td>1,176</td><td>1,283</td><td>1,430</td><td>1,170</td><td>2,490&nbsp;&nbsp;&nbsp;995</td></tr>
+      <tr class="spread"><td class="item">Spread</td><td class="up">132</td><td>171</td><td class="down">△23</td><td class="down">12</td><td>194</td><td>239</td><td>259</td><td>216</td><td>299</td><td>333</td><td>270</td><td>270</td><td>300</td><td>274</td><td>302</td><td>372</td><td>221</td><td>1177.5&nbsp;&nbsp;&nbsp;-58.95</td></tr>
+      <tr class="grp"><td class="item">BPA</td><td></td><td>1,375</td><td class="up">+20</td><td class="up">1</td><td>1,355</td><td>1,335</td><td>1,335</td><td>1,350</td><td>1,330</td><td>1,438</td><td>1,137</td><td>1,400</td><td>1,158</td><td>1,075</td><td>1,117</td><td>1,245</td><td>1,075</td><td>3,675&nbsp;&nbsp;&nbsp;740</td></tr>
+      <tr><td class="item">PC</td><td></td><td>1,950</td><td class="up">+65</td><td class="up">3</td><td>1,885</td><td>1,885</td><td>1,885</td><td>1,901</td><td>1,857</td><td>2,081</td><td>1,610</td><td>1,980</td><td>1,567</td><td>1,558</td><td>1,515</td><td>1,685</td><td>1,505</td><td>4,050&nbsp;&nbsp;&nbsp;1,505</td></tr>
+      <tr class="spread"><td class="item">Spread</td><td></td><td>575</td><td class="up">+45</td><td class="up">8</td><td>530</td><td>550</td><td>550</td><td>551</td><td>527</td><td>644</td><td>473</td><td>580</td><td>411</td><td>483</td><td>398</td><td>485</td><td>360</td><td>2,240&nbsp;&nbsp;&nbsp;-150</td></tr>
+      <tr><td class="item">MMA</td><td></td><td>1,710</td><td class="up">+20</td><td class="up">1</td><td>1,690</td><td>1,680</td><td>1,680</td><td>1,690</td><td>1,704</td><td>1,845</td><td>1,330</td><td>1,772</td><td>1,402</td><td>1,265</td><td>1,284</td><td>1,625</td><td>1,265</td><td>2,750&nbsp;&nbsp;&nbsp;1,265</td></tr>
+      <tr><td class="item">PMMA</td><td></td><td>1,625</td><td>-</td><td>-</td><td>1,625</td><td>1,625</td><td>1,625</td><td>1,625</td><td>1,625</td><td>1,625</td><td>1,710</td><td>1,950</td><td>1,635</td><td>1,916</td><td>1,842</td><td>1,675</td><td>1,760</td><td>3,200&nbsp;&nbsp;&nbsp;1,410</td></tr>
+    </tbody>
+  </table>
+  <div class="approval"><div>'26. 09. 01</div><div>구매부문</div><div>관리책임&nbsp;&nbsp;이지호 팀장</div><div>작성자 김진수 프로</div></div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="report" id="p2">
+  <h1 class="main-title">【별첨】 ABS계 원료 가격 및 시황</h1>
+  <div class="graph3">
+    <!-- SM -->
+    <div class="chart-card">
+      <div class="chart-head">SM 가격 동향</div><div class="legend p2-legend"><div><span class="lg blue"></span>시장가</div><div><span class="lg red"></span>BEP</div></div><div class="unit p2-unit">($/ton)</div>
+      <svg viewBox="0 0 480 195">
+        <line x1="18" y1="170" x2="466" y2="170" stroke="#a6a6a6"/>
+        <polyline points="30,51 60,66 90,75 120,82 150,109 180,129 210,121 240,104 270,83 300,76 330,95 360,100 390,88 420,83 452,71" fill="none" stroke="#1424d2" stroke-width="3"/>
+        <polyline points="30,35 60,56 90,67 120,75 150,90 180,103 210,97 240,88 270,66 300,53 330,68 360,72 390,70 420,60 452,44" fill="none" stroke="#e12b24" stroke-width="3"/>
+        <g fill="#fff" stroke-width="2"><g stroke="#1424d2"><circle cx="30" cy="51" r="4"/><circle cx="60" cy="66" r="4"/><circle cx="90" cy="75" r="4"/><circle cx="120" cy="82" r="4"/><circle cx="150" cy="109" r="4"/><circle cx="180" cy="129" r="4"/><circle cx="210" cy="121" r="4"/><circle cx="240" cy="104" r="4"/><circle cx="270" cy="83" r="4"/><circle cx="300" cy="76" r="4"/><circle cx="330" cy="95" r="4"/><circle cx="360" cy="100" r="4"/><circle cx="390" cy="88" r="4"/><circle cx="420" cy="83" r="4"/><circle cx="452" cy="71" r="4"/></g><g stroke="#e12b24"><circle cx="30" cy="35" r="4"/><circle cx="60" cy="56" r="4"/><circle cx="90" cy="67" r="4"/><circle cx="120" cy="75" r="4"/><circle cx="150" cy="90" r="4"/><circle cx="180" cy="103" r="4"/><circle cx="210" cy="97" r="4"/><circle cx="240" cy="88" r="4"/><circle cx="270" cy="66" r="4"/><circle cx="300" cy="53" r="4"/><circle cx="330" cy="68" r="4"/><circle cx="360" cy="72" r="4"/><circle cx="390" cy="70" r="4"/><circle cx="420" cy="60" r="4"/><circle cx="452" cy="44" r="4"/></g></g>
+        <text x="13" y="27" fill="#e12b24" class="chart-label">1,319</text><text x="12" y="62" fill="#1424d2" class="chart-label">1,254</text><text x="421" y="36" fill="#e12b24" class="chart-label">1,307</text><text x="424" y="88" fill="#1424d2" class="chart-label">1,178</text>
+        <text x="98" y="31" fill="#1424d2" class="chart-label">-65</text><text x="357" y="27" fill="#1424d2" class="chart-label">-129</text>
+        <g class="chart-date"><text x="12" y="188">5/22</text><text x="48" y="188">5/29</text><text x="87" y="188">6/5</text><text x="121" y="188">6/12</text><text x="159" y="188">6/19</text><text x="196" y="188">6/26</text><text x="232" y="188">7/3</text><text x="269" y="188">7/10</text><text x="305" y="188">7/17</text><text x="342" y="188">7/24</text><text x="378" y="188">7/31</text><text x="414" y="188">8/14</text><text x="446" y="188">8/28</text></g>
+      </svg><div class="bep-note">BEP=에틸렌*0.3 + 벤젠*0.8 + $150</div>
+    </div>
+    <!-- ABS input -->
+    <div class="chart-card">
+      <div class="chart-head">ABS 투입가격</div><div class="legend p2-legend"><div><span class="lg blue"></span>T09</div><div><span class="lg red"></span>금주</div></div><div class="unit p2-unit">($/ton)</div>
+      <svg viewBox="0 0 480 195">
+        <line x1="18" y1="170" x2="466" y2="170" stroke="#aaa"/>
+        <polyline points="22,158 55,164 88,149 120,72 151,44 184,77 217,102 250,119 283,102 316,99 349,103 382,109 415,111 452,119" fill="none" stroke="#1424d2" stroke-width="4"/>
+        <polyline points="218,102 250,121 283,109 316,97 349,100 382,103 415,108 452,113" fill="none" stroke="#e12b24" stroke-width="3"/>
+        <g class="chart-label"><text x="20" y="151" fill="#1424d2">901</text><text x="50" y="157" fill="#1424d2">941</text><text x="84" y="141" fill="#1424d2">1,065</text><text x="114" y="65" fill="#1424d2">1,360</text><text x="145" y="38" fill="#1424d2">1,620</text><text x="178" y="72" fill="#1424d2">1,510</text><text x="209" y="96" fill="#1424d2">1,420</text><text x="243" y="137" fill="#1424d2">1,231</text><text x="275" y="128" fill="#1424d2">1,287</text><text x="308" y="122" fill="#1424d2">1,330</text><text x="342" y="120" fill="#1424d2">1,309</text><text x="406" y="129" fill="#1424d2">1,270</text><text x="243" y="114" fill="#e12b24">1,280</text><text x="276" y="102" fill="#e12b24">1,317</text><text x="372" y="97" fill="#e12b24">1,338</text><text x="432" y="103" fill="#e12b24">1,307</text></g>
+        <g class="chart-date"><text x="16" y="188">'26.01</text><text x="117" y="188">'26.05</text><text x="215" y="188">'26.07</text><text x="312" y="188">'26.09</text><text x="411" y="188">'26.11</text></g>
+      </svg>
+    </div>
+    <!-- AN BD -->
+    <div class="chart-card">
+      <div class="chart-head">AN/BD 가격 동향</div><div class="legend p2-legend"><div><span class="lg blue"></span>시장가</div><div><span class="lg red"></span>BEP</div></div><div class="unit p2-unit">($/ton)</div>
+      <svg viewBox="0 0 480 195">
+        <line x1="18" y1="170" x2="466" y2="170" stroke="#aaa"/>
+        <!-- AN upper -->
+        <polyline points="30,52 61,56 92,66 123,69 154,71 185,65 216,70 247,80 278,86 309,83 340,84 371,79 402,76 433,74 457,73" fill="none" stroke="#1424d2" stroke-width="3"/>
+        <polyline points="30,35 61,38 92,46 123,52 154,72 185,74 216,74 247,68 278,66 309,62 340,62 371,62 402,62 433,62 457,58" fill="none" stroke="#e12b24" stroke-width="3"/>
+        <!-- BD lower -->
+        <polyline points="30,125 61,129 92,131 123,136 154,140 185,143 216,146 247,143 278,139 309,137 340,145 371,145 402,141 433,138 457,135" fill="none" stroke="#1424d2" stroke-width="3"/>
+        <polyline points="30,111 61,116 92,122 123,126 154,137 185,143 216,146 247,142 278,139 309,132 340,127 371,128 402,126 433,125 457,121" fill="none" stroke="#e12b24" stroke-width="3"/>
+        <text x="8" y="27" fill="#e12b24" class="chart-label">1,902</text><text x="10" y="70" fill="#1424d2" class="chart-label">1,735</text><text x="421" y="53" fill="#e12b24" class="chart-label">1,635</text><text x="421" y="84" fill="#1424d2" class="chart-label">1,545</text><text x="9" y="108" fill="#1424d2" class="chart-label">1,620</text><text x="10" y="151" fill="#e12b24" class="chart-label">1,373</text><text x="421" y="119" fill="#e12b24" class="chart-label">1,327</text><text x="421" y="145" fill="#1424d2" class="chart-label">1,510</text><text x="95" y="22" fill="#1424d2" class="chart-label">-167</text><text x="95" y="108" fill="#e12b24" class="chart-label">+248</text><text x="352" y="26" fill="#1424d2" class="chart-label">-90</text><text x="351" y="111" fill="#e12b24" class="chart-label">+173</text>
+        <g class="chart-date"><text x="12" y="188">5/22</text><text x="48" y="188">5/29</text><text x="87" y="188">6/5</text><text x="121" y="188">6/12</text><text x="159" y="188">6/19</text><text x="196" y="188">6/26</text><text x="232" y="188">7/3</text><text x="269" y="188">7/10</text><text x="305" y="188">7/17</text><text x="342" y="188">7/24</text><text x="378" y="188">7/31</text><text x="414" y="188">8/14</text><text x="446" y="188">8/28</text></g>
+      </svg>
+      <div class="bep-note" style="bottom:94px;left:92px">BEP=프로필렌*1.1+NH3*0.5+$150</div><div class="bep-note">BEP=납사+$500</div>
+    </div>
+  </div>
+  <table class="market-table">
+    <colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+    <thead><tr><th>정구분</th><th>8/28</th><th>시 황</th><th colspan="2">전 망</th></tr></thead>
+    <tbody>
+      <tr><td class="item">SM</td><td class="price">$1,178<div class="delta">(-13)</div></td><td class="body"><div class="lead">▣ 유가/벤젠 가격 상승과 중국 저재고 감소, 숏커버링 수요 영향으로 강세</div><div class="rowline">[중국] 화동 재고 감소 / SM 가동률 <b>65%</b></div><div class="rowline">중국 내수가 및 선물 변동성 확대</div><div class="rowline">[유도품] 중국 가동률 EPS <b>54% ← 55%</b>, PS <b>50% ← 47%</b>, ABS <b>59% ← 57%</b></div></td><td class="tone">강보합</td><td class="body"><div class="lead">▣ 당분간 유가/cost 강세 모멘텀 속 낮은 재고와 정수 시즌 돌입으로 강보합</div><div class="rowline">[원료] EL : 원료가 강세 + 감산 및 역외물량 유입 노이즈 / BZ : 에너지 강세 흐름과 낮은 재고로 하단 지지</div><div class="rowline">[수급] 유가 상승 모멘텀 + 재고 감소 속 역외 수요 영향 단기 강보합</div></td></tr>
+      <tr><td class="item">AN</td><td class="price">$1,545<div class="delta">(-)</div></td><td class="body"><div class="lead">▣ 수요 약세가 지속되는 가운데 지정학적 Risk 재부각에 따른 원료가 강세와 중국 업체 Trouble에 따른 내수가 재상승으로 소폭 상승</div><div class="rowline">[중국] 내수가 <b>11,600~11,850 RMB/mt</b> / AN 가동률 <b>68%</b></div><div class="rowline">[유도품] 중국 가동률 ABS <b>59%</b>, AF <b>48%</b></div></td><td class="tone">강보합</td><td class="body"><div class="lead">▣ 수요 약세 지속되는 가운데 지정학적 Risk에 따른 원료가 강세로 강보합 예상</div><div class="rowline">[원료] PL : 원료가 연동 강보합 예상</div><div class="rowline">[수급] AN : 감산+정기보수</div><div class="rowline">[유도품] ABS : 약보합, AF : 약보합</div></td></tr>
+      <tr><td class="item">BD</td><td class="price">$1,510<div class="delta">(+10)</div></td><td class="body"><div class="lead">▣ 고유 가격 강세 및 역내 공급 tight로 가격 상승</div><div class="rowline">[중국] 내수가 강세 / prompt 수입 관심 유지</div><div class="rowline">[유도품] 중국 가동률 ABS <b>59% ← 57%</b>, PBR·SBR 구매 저항 병존</div></td><td class="tone">강보합</td><td class="body"><div class="lead">▣ 공급 리스크 지속으로 강보합 예상</div><div class="rowline">[원료] 납사 : 중동 리스크로 강보합</div><div class="rowline">[수급] 크래커 등 태환 및 감산으로 tight</div><div class="rowline">※ 천연고무 가격 상승이 합성고무 수요에 영향</div></td></tr>
+    </tbody>
+  </table>
+  <div class="footnote">※ 국제가 기준 [SM/BD : Platts CFR China, AN : Platts CFR F.E.A] &nbsp;&nbsp;&nbsp; ※ 가동률 기준 [ICIS Weekly 중국 SM Report]</div>
+  <div class="approval"><div>'26. 09. 01</div><div>구매부문</div><div>관리책임&nbsp;&nbsp;이지호 팀장</div><div>작성자 김진수 프로</div></div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="report" id="p3">
+  <h1 class="main-title">【별첨】 PC계 원료 가격 및 시황</h1>
+  <div class="graph3">
+    <div class="chart-card"><div class="chart-head">BPA 가격 동향</div><div class="legend"><div><span class="lg blue"></span>시장가</div><div><span class="lg red"></span>BEP</div></div><div class="unit">($/ton)</div><svg viewBox="0 0 430 260"><line x1="22" y1="218" x2="417" y2="218" stroke="#aaa"/><polyline points="28,54 58,76 88,85 118,95 148,117 178,139 208,157 238,148 268,127 298,129 328,142 358,144 388,133 414,124" fill="none" stroke="#18238e" stroke-width="3"/><polyline points="28,88 58,102 88,120 118,146 148,181 178,159 208,136 238,104 268,87 298,121 328,130 358,112 388,82 414,84" fill="none" stroke="#c63d35" stroke-width="3"/><g fill="#fff" stroke-width="2"><g stroke="#18238e"><circle cx="28" cy="54" r="4"/><circle cx="414" cy="124" r="4"/></g><g stroke="#c63d35"><circle cx="28" cy="88" r="4"/><circle cx="414" cy="84" r="4"/></g></g><g class="chart-label"><text x="7" y="43" fill="#18238e">1,525</text><text x="378" y="145" fill="#18238e">1,375</text><text x="0" y="111" fill="#c63d35">1,451</text><text x="380" y="72" fill="#c63d35">1,466</text><text x="102" y="35" fill="#c63d35">+74</text><text x="337" y="82" fill="#18238e">-91</text></g><g class="chart-date"><text x="12" y="242">5/29</text><text x="70" y="242">6/5</text><text x="104" y="242">6/12</text><text x="139" y="242">6/19</text><text x="174" y="242">6/26</text><text x="209" y="242">7/3</text><text x="243" y="242">7/10</text><text x="278" y="242">7/17</text><text x="313" y="242">7/24</text><text x="347" y="242">7/31</text><text x="381" y="242">8/21</text><text x="405" y="242">8/28</text></g></svg><div class="bep-note">BEP=벤젠 +$450</div></div>
+    <div class="chart-card"><div class="chart-head">PC 투입가격</div><div class="legend"><div><span class="lg blue"></span>T09</div><div><span class="lg red"></span>금주</div></div><div class="unit">($/ton)</div><svg viewBox="0 0 430 260"><line x1="22" y1="218" x2="417" y2="218" stroke="#aaa"/><polyline points="28,171 58,175 88,159 118,67 148,46 178,91 208,114 238,147 268,121 298,112 328,116 358,127 388,121 414,135" fill="none" stroke="#1a24c9" stroke-width="4"/><polyline points="208,115 238,157 268,140 298,132 328,145 358,156 388,147 414,159" fill="none" stroke="#c43d35" stroke-width="3"/><g class="chart-label"><text x="22" y="163" fill="#1a24c9">1,116</text><text x="86" y="151" fill="#1a24c9">1,174</text><text x="111" y="60" fill="#1a24c9">1,555</text><text x="141" y="38" fill="#1a24c9">1,665</text><text x="175" y="83" fill="#1a24c9">1,513</text><text x="205" y="106" fill="#1a24c9">1,449</text><text x="234" y="171" fill="#c43d35">1,352</text><text x="266" y="134" fill="#c43d35">1,411</text><text x="296" y="126" fill="#c43d35">1,432</text><text x="326" y="139" fill="#c43d35">1,410</text><text x="382" y="172" fill="#c43d35">1,362</text><text x="259" y="119" fill="#1a24c9">1,364</text><text x="352" y="115" fill="#1a24c9">1,452</text><text x="393" y="129" fill="#1a24c9">1,404</text></g><g class="chart-date"><text x="18" y="243">'26.01</text><text x="112" y="243">'26.03</text><text x="202" y="243">'26.05</text><text x="290" y="243">'26.07</text><text x="380" y="243">'26.11</text></g></svg></div>
+    <div class="chart-card"><div class="chart-head">MMA 가격 동향</div><div class="legend"><div><span class="lg blue"></span>시장가</div><div><span class="lg red"></span>BEP</div></div><div class="unit">($/ton)</div><svg viewBox="0 0 430 260"><line x1="22" y1="218" x2="417" y2="218" stroke="#aaa"/><polyline points="28,48 58,64 88,73 118,80 148,80 178,108 208,110 238,117 268,120 298,123 328,123 358,119 388,113 414,111" fill="none" stroke="#18238e" stroke-width="3"/><polyline points="28,120 58,133 88,141 118,148 148,153 178,146 208,127 238,98 268,117 298,136 328,142 358,136 388,130 414,133" fill="none" stroke="#c43d35" stroke-width="3"/><g class="chart-label"><text x="7" y="40" fill="#18238e">1,915</text><text x="382" y="102" fill="#18238e">1,710</text><text x="0" y="138" fill="#c43d35">1,554</text><text x="381" y="150" fill="#c43d35">1,627</text><text x="339" y="84" fill="#c43d35">+83</text><text x="84" y="82" fill="#c43d35">-361</text></g><g class="chart-date"><text x="12" y="242">5/29</text><text x="70" y="242">6/5</text><text x="104" y="242">6/12</text><text x="139" y="242">6/19</text><text x="174" y="242">6/26</text><text x="209" y="242">7/3</text><text x="243" y="242">7/10</text><text x="278" y="242">7/17</text><text x="313" y="242">7/24</text><text x="347" y="242">7/31</text><text x="381" y="242">8/21</text><text x="405" y="242">8/28</text></g></svg><div class="bep-note">BEP=납사+$800</div></div>
+  </div>
+  <table class="market-table"><colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"><col class="c5"></colgroup><thead><tr><th>구분</th><th>8/28</th><th>시 황</th><th colspan="2">전 망</th></tr></thead><tbody>
+    <tr><td class="item">BPA</td><td class="price">$1,375<div class="delta">(+20)</div></td><td class="body"><div class="lead">▣ 원료가 상승에 따른 원가 압박 가중과 T/A 인한 공급 감소 영향으로 상승</div><div class="rowline">※ T/A 일정 : Luxi, Nanya, Ruilin, Wanhua, Fuyu, Huizhou Zhongxin, Bluestar 등 8~9월 집중</div><div class="rowline">[중국] 내수가 보합 <b>9,400 RMB/mt</b></div><div class="rowline">[유도품] 中 BPA 수요 및 생산 흐름 / PC 가동률 <b>74.6% ← 74.1%</b>, Epoxy <b>50% ← 55%</b></div></td><td class="tone">강보합</td><td class="body"><div class="lead">▣ T/A 영향 공급 축소 유지, 원료 강세와 국경절 수요기대 등으로 강보합</div><div class="rowline">[원료] Phenol : 중국 내 페놀 유입 감소와 벤젠 강세 등 영향으로 강보합 / Acetone : 감산 유지·인도 수요 반등 영향으로 강보합</div><div class="rowline">※ 감산 : 주요 업체 정기보수 및 저율가동 지속</div><div class="rowline">[수급] Spot 거래 미미(유도품 수요 부진)</div><div class="rowline">[유도품] Epoxy : ECH 반등과 국경절 전 보충수요 영향 강보합 / PC($1,885→$1,950)</div></td></tr>
+    <tr><td class="item">MMA</td><td class="price">$1,710<div class="delta">(+20)</div></td><td class="body"><div class="lead">▣ 원료가 상승 및 저율 가동으로 공급 tight 지속되며 가격 상승</div><div class="rowline">[중국] 내수가 보합 <b>11,550 RMB/mt</b> / MMA 가동률 <b>45%</b></div><div class="rowline">[유도품] 수요 약세 (가전, 자동차, 투명 소재 등)</div><div class="rowline">[유럽] $2,219(+18, 아시아 比 $509↑)</div></td><td class="tone">강보합</td><td class="body"><div class="lead">▣ 공급 tight 지속 및 재고 보충 수요 발생으로 강보합 예상</div><div class="rowline">[원료] Naphtha : 보합, Acetone : 강보합</div><div class="rowline">[수급] MMA : 가동률 하락</div><div class="rowline">[유도품] PMMA ($1,625 → $1,625, -)</div></td></tr>
+  </tbody></table>
+  <div class="footnote">※ 국제가 기준 [BPA : ICIS CFR China, MMA : ICIS CFR KOREA &gt; 500mt]<br>※ 가동률 기준 [Chem99]</div>
+  <div class="approval"><div>'26. 09. 01</div><div>구매부문</div><div>관리책임&nbsp;&nbsp;이지호 팀장</div><div>작성자 김진수 프로</div></div>
+</section>
+
+</div></div>
+<script>
+const PAGE_W=1536,PAGE_H=1024;
+const GAS_URL='https://script.google.com/macros/s/AKfycbzezSDIQCzEDmHGNfDOS0N4ZFqKSzw50mLdgdHhJhMrNtyF2_ve32Up7ef2MxnfNCvM/exec';
+const API_TOKEN='RAWMAT_'+'bae8861aa98d4b95b2beb486af2442b9ae2d8fedb4924b2e9e8faf16b21deb25';
+const FALLBACK_WEEK='2026-08-28';
+const PRICE_ROW_ITEMS=['WTI','Naphtha','Ethylene','Propylene','PP','Benzene','SM','AN','BD','Cost','ABS','ABS Spread','BPA','PC','PC-BPA Spread','MMA','PMMA'];
+const DAILY_WTI_FALLBACK=[
+  {price_date:'2026-08-21',week_end:'2026-08-28',item:'WTI',price:87.06,unit:'$/b',price_type:'daily'},
+  {price_date:'2026-08-24',week_end:'2026-08-28',item:'WTI',price:85.01,unit:'$/b',price_type:'daily'},
+  {price_date:'2026-08-25',week_end:'2026-08-28',item:'WTI',price:82.36,unit:'$/b',price_type:'daily'},
+  {price_date:'2026-08-26',week_end:'2026-08-28',item:'WTI',price:82.23,unit:'$/b',price_type:'daily'},
+  {price_date:'2026-08-27',week_end:'2026-08-28',item:'WTI',price:83.53,unit:'$/b',price_type:'daily'},
+  {price_date:'2026-08-28',week_end:'2026-08-28',item:'WTI',price:83.40,unit:'$/b',price_type:'daily'}
+];
+const FALLBACK_KPIS=[
+ {week_end:FALLBACK_WEEK,item:'SM',group:'중국',metric:'SM 가동률',value:65,unit:'%',sort_order:1,source:'ICIS Weekly 중국 SM Report'},
+ {week_end:FALLBACK_WEEK,item:'SM',group:'유도품',metric:'EPS 가동률',value:54,unit:'%',note:'전주 55%',sort_order:1,source:'ICIS Weekly 중국 SM Report'},
+ {week_end:FALLBACK_WEEK,item:'SM',group:'유도품',metric:'PS 가동률',value:50,unit:'%',note:'전주 47%',sort_order:2,source:'ICIS Weekly 중국 SM Report'},
+ {week_end:FALLBACK_WEEK,item:'SM',group:'유도품',metric:'ABS 가동률',value:59,unit:'%',note:'전주 57%',sort_order:3,source:'ICIS Weekly 중국 SM Report'},
+ {week_end:FALLBACK_WEEK,item:'AN',group:'중국',metric:'AN 가동률',value:68,unit:'%',sort_order:1,source:'260828 AN 위클리'},
+ {week_end:FALLBACK_WEEK,item:'AN',group:'유도품',metric:'AF 가동률',value:48,unit:'%',sort_order:1,source:'260828 AN 위클리'},
+ {week_end:FALLBACK_WEEK,item:'AN',group:'유도품',metric:'ABS 가동률',value:59,unit:'%',sort_order:2,source:'260828 AN 위클리'},
+ {week_end:FALLBACK_WEEK,item:'BD',group:'유도품',metric:'ABS 가동률',value:59,unit:'%',note:'전주 57%',sort_order:1,source:'ICIS Weekly 중국 SM Report'},
+ {week_end:FALLBACK_WEEK,item:'BPA',group:'유도품',metric:'PC 가동률',value:74.6,unit:'%',note:'전주 74.1%',sort_order:1,source:'원본 보고서'},
+ {week_end:FALLBACK_WEEK,item:'BPA',group:'유도품',metric:'Epoxy 가동률',value:50,unit:'%',note:'전주 55%',sort_order:2,source:'원본 보고서'},
+ {week_end:FALLBACK_WEEK,item:'MMA',group:'중국',metric:'MMA 가동률',value:45,unit:'%',sort_order:1,source:'260828 MMA 위클리'}
+];
+
+const pages=[...document.querySelectorAll('.report')],buttons=[...document.querySelectorAll('.tabs button')],frame=document.getElementById('pageFrame');
+const weekSelect=document.getElementById('weekSelect'),dbStatus=document.getElementById('dbStatus'),saveBtn=document.getElementById('saveDbBtn'),reloadBtn=document.getElementById('reloadDbBtn');
+let CURRENT_WEEK=FALLBACK_WEEK,CURRENT_BUNDLE=null,ALL_MARKET=[],CURRENT_DAILY_WTI=[...DAILY_WTI_FALLBACK];
+
+function showPage(id){buttons.forEach(b=>b.classList.toggle('active',b.dataset.page===id));pages.forEach(p=>p.classList.toggle('active',p.id===id));location.hash=id;fit();window.scrollTo({top:0,behavior:'instant'});}
+function fit(){const p=document.querySelector('.report.active');if(!p)return;const scale=Math.min(1,(window.innerWidth-18)/PAGE_W);p.style.transform=`scale(${scale})`;frame.style.width=`${PAGE_W*scale}px`;frame.style.height=`${PAGE_H*scale}px`;}
+buttons.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));window.addEventListener('resize',fit);
+
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2800);}
+function setStatus(type,text){dbStatus.className='db-status '+type;dbStatus.textContent=text;}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function parseJsonSafe(v){try{return JSON.parse(v)}catch(e){return null}}
+function ymd(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function parseDate(s){const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
+function addDays(s,n){const d=parseDate(s);if(!d)return s;d.setDate(d.getDate()+n);return ymd(d);}
+function md(s){const d=parseDate(s);return d?`${d.getMonth()+1}/${d.getDate()}`:s;}
+function weekLabel(s){const d=parseDate(s);if(!d)return'';const x=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const day=x.getUTCDay()||7;x.setUTCDate(x.getUTCDate()+4-day);const ys=new Date(Date.UTC(x.getUTCFullYear(),0,1));return 'W'+String(Math.ceil((((x-ys)/86400000)+1)/7)).padStart(2,'0');}
+function fmt(v,item){const n=Number(v);if(!Number.isFinite(n))return '-';if(item==='WTI')return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});if(Math.abs(n-Math.round(n))<1e-8)return Math.round(n).toLocaleString('en-US');return n.toLocaleString('en-US',{maximumFractionDigits:2});}
+function numFromText(s){const m=String(s||'').replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null;}
+function colorChangeCell(td,diff){td.classList.remove('up','down');if(diff>0)td.classList.add('up');else if(diff<0)td.classList.add('down');}
+
+async function gasGet(action,payload={}){const q=new URLSearchParams({action,...payload});const r=await fetch(GAS_URL+'?'+q.toString(),{method:'GET',redirect:'follow',cache:'no-store'});const txt=await r.text();let data;try{data=JSON.parse(txt)}catch(e){throw new Error('GAS 응답을 JSON으로 읽지 못했습니다. '+txt.slice(0,100))}if(!data.success)throw new Error(data.error||'GAS 오류');return data;}
+async function gasPost(action,payload={}){const body=new URLSearchParams();body.set('action',action);body.set('token',API_TOKEN);Object.entries(payload).forEach(([k,v])=>body.set(k,typeof v==='string'?v:JSON.stringify(v)));const r=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:body.toString(),redirect:'follow'});const txt=await r.text();let data;try{data=JSON.parse(txt)}catch(e){throw new Error('GAS 응답을 JSON으로 읽지 못했습니다. '+txt.slice(0,100))}if(!data.success)throw new Error(data.error||'GAS 저장 오류');return data;}
+
+function initRowMap(){const trs=[...document.querySelectorAll('#p1 .price-matrix tr')].slice(1);trs.forEach((tr,i)=>{tr.dataset.item=PRICE_ROW_ITEMS[i]||'';});[...document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')].forEach(tr=>tr.dataset.item=tr.cells[0].textContent.trim());}
+function getPriceRow(item){return document.querySelector(`#p1 .price-matrix tr[data-item="${CSS.escape(item)}"]`);}
+function marketRows(item,type){return ALL_MARKET.filter(r=>String(r.item)===item&&(!type||String(r.price_type).toLowerCase()===type)).sort((a,b)=>String(a.price_date).localeCompare(String(b.price_date)));}
+function priceAt(item,date,types=['weekly']){for(const t of types){const rows=ALL_MARKET.filter(r=>r.item===item&&r.price_date===date&&String(r.price_type).toLowerCase()===t);if(rows.length)return Number(rows[rows.length-1].price);}return null;}
+function latestForWeek(item,week){const rows=ALL_MARKET.filter(r=>r.item===item&&r.week_end===week&&String(r.price_type).toLowerCase()==='latest').sort((a,b)=>String(a.price_date).localeCompare(String(b.price_date)));return rows.length?rows[rows.length-1]:null;}
+function avgOf(item,year,month){const rows=marketRows(item,'weekly').filter(r=>{const d=parseDate(r.price_date);return d&&d.getFullYear()===year&&(month==null||d.getMonth()+1===month)&&Number.isFinite(Number(r.price));});return rows.length?rows.reduce((s,r)=>s+Number(r.price),0)/rows.length:null;}
+function hiLo(item,year=null){const rows=marketRows(item,'weekly').filter(r=>{const d=parseDate(r.price_date);return d&&Number.isFinite(Number(r.price))&&(year==null||d.getFullYear()===year);});if(!rows.length)return [null,null];const vals=rows.map(r=>Number(r.price));return [Math.max(...vals),Math.min(...vals)];}
+function setMatrixValue(td,v,item){if(v==null||!Number.isFinite(Number(v))){td.textContent='-';return;}if(item==='WTI'){td.innerHTML=`${fmt(v,item)}<br><span class="tiny">${Math.round(Number(v)*7.326).toLocaleString('en-US')}</span>`;}else td.textContent=fmt(v,item);}
+
+function updatePriceMatrix(week){
+ const t=document.querySelector('#p1 .price-matrix'),ths=[...t.querySelectorAll('thead th')];const prev=addDays(week,-7),prev2=addDays(week,-14),prev3=addDays(week,-21);const latestDates=ALL_MARKET.filter(r=>r.week_end===week&&String(r.price_type).toLowerCase()==='latest').map(r=>r.price_date).sort();const latestDate=latestDates.at(-1)||week;
+ if(ths.length>=8){ths[1].textContent=md(latestDate);ths[2].textContent=md(week);ths[3].textContent=`전주比\n${md(prev)}→${md(week)}`;ths[5].textContent=md(prev);ths[6].textContent=md(prev2);ths[7].textContent=md(prev3);}
+ const d=parseDate(week),yr=d?d.getFullYear():2026,mo=d?d.getMonth()+1:8;
+ PRICE_ROW_ITEMS.forEach(item=>{const tr=getPriceRow(item);if(!tr)return;const c=tr.cells;const latest=latestForWeek(item,week);const cur=priceAt(item,week,['weekly','latest']);const p1=priceAt(item,prev,['weekly']);const p2=priceAt(item,prev2,['weekly']);const p3=priceAt(item,prev3,['weekly']);if(latest)setMatrixValue(c[1],Number(latest.price),item);else if(week!==FALLBACK_WEEK)c[1].textContent='-';if(cur!=null)setMatrixValue(c[2],cur,item);else if(week!==FALLBACK_WEEK)c[2].textContent='-';if(p1!=null)setMatrixValue(c[5],p1,item);else if(week!==FALLBACK_WEEK)c[5].textContent='-';if(p2!=null)setMatrixValue(c[6],p2,item);else if(week!==FALLBACK_WEEK)c[6].textContent='-';if(p3!=null)setMatrixValue(c[7],p3,item);else if(week!==FALLBACK_WEEK)c[7].textContent='-';if(cur!=null&&p1!=null){const diff=cur-p1,pct=p1?diff/p1*100:0;const abs=Math.abs(diff);c[3].innerHTML=(diff>0?'+':diff<0?'△':'-')+(diff===0?'':fmt(abs,item));c[4].textContent=diff===0?'-':Math.abs(pct).toFixed(Math.abs(pct)<1?1:0);colorChangeCell(c[3],diff);colorChangeCell(c[4],diff);}else if(week!==FALLBACK_WEEK){c[3].textContent='-';c[4].textContent='-';}
+   if(week!==FALLBACK_WEEK){const curAvg=avgOf(item,yr,mo),pm=mo===1?12:mo-1,py=mo===1?yr-1:yr;const prevAvg=avgOf(item,py,pm);const prev2Date=parseDate(addDays(`${yr}-${String(mo).padStart(2,'0')}-01`,-35));const prev2Avg=prev2Date?avgOf(item,prev2Date.getFullYear(),prev2Date.getMonth()+1):null;const feb=avgOf(item,yr,2),yavg=avgOf(item,yr,null),lastYavg=avgOf(item,yr-1,null),dec=avgOf(item,yr-1,12),aug=avgOf(item,yr-1,8),hl=hiLo(item,yr-1),hist=hiLo(item,null);[curAvg,prevAvg,prev2Avg,feb,yavg,lastYavg,dec,aug,hl[0],hl[1]].forEach((v,j)=>setMatrixValue(c[8+j],v,item));c[18].textContent=(hist[0]==null||hist[1]==null)?'-':`${fmt(hist[0],item)}   ${fmt(hist[1],item)}`;}
+ });
+}
+
+function renderWtiChart(week){const svg=document.querySelector('#p1 .oil-chart svg');if(!svg)return;const start=addDays(week,-7);let rows=ALL_MARKET.filter(r=>r.item==='WTI'&&String(r.price_type).toLowerCase()==='daily'&&r.price_date>=start&&r.price_date<=week).sort((a,b)=>a.price_date.localeCompare(b.price_date));if(!rows.length&&week===FALLBACK_WEEK)rows=CURRENT_DAILY_WTI;if(rows.length<2)return;CURRENT_DAILY_WTI=rows;const W=455,H=225,L=53,R=19,T=21,B=31;const vals=rows.map(r=>Number(r.price));let mn=Math.floor(Math.min(...vals)-1),mx=Math.ceil(Math.max(...vals)+1);if(mx-mn<5){mx+=2;mn-=2}const x=i=>L+(W-L-R)*(rows.length===1?0.5:i/(rows.length-1));const y=v=>T+(H-T-B)*(mx-v)/(mx-mn);const pts=rows.map((r,i)=>`${x(i).toFixed(1)},${y(Number(r.price)).toFixed(1)}`).join(' ');let s=`<line x1="${L}" y1="${T}" x2="${L}" y2="${H-B}" stroke="#9a9a9a"/><line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="#9a9a9a"/>`;[mx,(mx+mn)/2,mn].forEach((v,i)=>{const yy=T+i*(H-T-B)/2;s+=`<text x="17" y="${yy+4}" font-size="12" font-weight="700">${v.toFixed(0)}</text>`});s+=`<polyline points="${pts}" fill="none" stroke="#222ca5" stroke-width="4"/>`;rows.forEach((r,i)=>{const xx=x(i),yy=y(Number(r.price));s+=`<circle cx="${xx}" cy="${yy}" r="6" fill="#fff" stroke="#6673c1" stroke-width="2"/><text x="${xx-20}" y="${Math.max(T+12,yy-12)}" font-size="12" font-weight="800">${Number(r.price).toFixed(2)}</text><text x="${xx-16}" y="218" font-size="11">${md(r.price_date)}</text>`});svg.innerHTML=s;}
+
+function weeklySeries(item,week,limit=15){return marketRows(item,'weekly').filter(r=>r.price_date<=week).slice(-limit).map(r=>({date:r.price_date,value:Number(r.price)})).filter(x=>Number.isFinite(x.value));}
+function renderDualChart(card,seriesA,seriesB,colorA='#18238e',colorB='#c63d35'){if(!card||seriesA.length<8||seriesB.length<8)return;const svg=card.querySelector('svg');if(!svg)return;const vb=(svg.getAttribute('viewBox')||'0 0 480 195').split(/\s+/).map(Number),W=vb[2],H=vb[3],L=28,R=18,T=18,B=25;const dates=[...new Set([...seriesA.map(x=>x.date),...seriesB.map(x=>x.date)])].sort().slice(-15);const amap=new Map(seriesA.map(x=>[x.date,x.value])),bmap=new Map(seriesB.map(x=>[x.date,x.value]));const vals=[...dates.map(d=>amap.get(d)),...dates.map(d=>bmap.get(d))].filter(Number.isFinite);if(vals.length<8)return;let mn=Math.min(...vals),mx=Math.max(...vals),pad=(mx-mn||100)*.13;mn-=pad;mx+=pad;const x=i=>L+(W-L-R)*(dates.length===1?.5:i/(dates.length-1));const y=v=>T+(H-T-B)*(mx-v)/(mx-mn);const path=(map)=>dates.map((d,i)=>map.has(d)?`${x(i).toFixed(1)},${y(map.get(d)).toFixed(1)}`:null).filter(Boolean).join(' ');let s=`<line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="#aaa"/><polyline points="${path(amap)}" fill="none" stroke="${colorA}" stroke-width="3"/><polyline points="${path(bmap)}" fill="none" stroke="${colorB}" stroke-width="3"/>`;const firstA=seriesA.filter(x=>dates.includes(x.date))[0],lastA=seriesA.filter(x=>dates.includes(x.date)).at(-1),firstB=seriesB.filter(x=>dates.includes(x.date))[0],lastB=seriesB.filter(x=>dates.includes(x.date)).at(-1);[[firstA,colorA],[lastA,colorA],[firstB,colorB],[lastB,colorB]].forEach(([p,c])=>{if(!p)return;const i=dates.indexOf(p.date);s+=`<circle cx="${x(i)}" cy="${y(p.value)}" r="4" fill="#fff" stroke="${c}" stroke-width="2"/><text x="${Math.max(2,x(i)-18)}" y="${Math.max(13,y(p.value)-8)}" fill="${c}" class="chart-label">${fmt(p.value,'')}</text>`});const every=Math.max(1,Math.ceil(dates.length/7));dates.forEach((d,i)=>{if(i%every===0||i===dates.length-1)s+=`<text x="${x(i)-13}" y="${H-5}" class="chart-date">${md(d)}</text>`});svg.innerHTML=s;}
+function updateDerivedCharts(week){const sm=weeklySeries('SM',week),el=new Map(weeklySeries('Ethylene',week,30).map(x=>[x.date,x.value])),bz=new Map(weeklySeries('Benzene',week,30).map(x=>[x.date,x.value]));const smBep=sm.filter(x=>el.has(x.date)&&bz.has(x.date)).map(x=>({date:x.date,value:el.get(x.date)*.3+bz.get(x.date)*.8+150}));renderDualChart(document.querySelector('#p2 .chart-card:nth-child(1)'),sm,smBep);
+ const bpa=weeklySeries('BPA',week),bpaBep=bpa.filter(x=>bz.has(x.date)).map(x=>({date:x.date,value:bz.get(x.date)+450}));renderDualChart(document.querySelector('#p3 .chart-card:nth-child(1)'),bpa,bpaBep);
+ const mma=weeklySeries('MMA',week),np=new Map(weeklySeries('Naphtha',week,30).map(x=>[x.date,x.value])),mmaBep=mma.filter(x=>np.has(x.date)).map(x=>({date:x.date,value:np.get(x.date)+800}));renderDualChart(document.querySelector('#p3 .chart-card:nth-child(3)'),mma,mmaBep);}
+
+function buildBodyHtml(r,side){const raw=parseJsonSafe(r.raw_text||'');if(raw&&side==='market'&&raw.market_html)return raw.market_html;if(raw&&side==='outlook'&&raw.outlook_html)return raw.outlook_html;const arr=[];if(side==='market'){if(r.market_commentary)arr.push(`<div class="lead">▣ ${esc(r.market_commentary)}</div>`);if(r.china_commentary)arr.push(`<div class="rowline">[중국] ${esc(r.china_commentary)}</div>`);if(r.derivative_commentary)arr.push(`<div class="rowline">[유도품] ${esc(r.derivative_commentary)}</div>`);}else{if(r.outlook_commentary)arr.push(`<div class="lead">▣ ${esc(r.outlook_commentary)}</div>`);if(r.feedstock_commentary)arr.push(`<div class="rowline">[원료] ${esc(r.feedstock_commentary)}</div>`);if(r.supply_demand_commentary)arr.push(`<div class="rowline">[수급] ${esc(r.supply_demand_commentary)}</div>`);}if(r.extra_metric)String(r.extra_metric).split('\n').forEach(x=>x&&arr.push(`<div class="rowline">${esc(x)}</div>`));return arr.join('');}
+function updateReportRows(reports,week){['SM','AN','BD','BPA','MMA'].forEach(item=>{const r=reports.find(x=>x.item===item);if(!r)return;const tr=document.querySelector(`.market-table tr[data-item="${item}"]`);if(!tr)return;const cur=Number(r.current_price),chg=Number(r.change_abs);if(Number.isFinite(cur)){tr.cells[1].innerHTML=`$${fmt(cur,item)}<div class="delta">${Number.isFinite(chg)?(chg>0?'(+':'(')+fmt(chg,item)+')':'(-)'}</div>`;}tr.cells[2].innerHTML=buildBodyHtml(r,'market');tr.cells[3].textContent=r.direction||'-';tr.cells[4].innerHTML=buildBodyHtml(r,'outlook');});[...document.querySelectorAll('#p2 .market-table thead th:nth-child(2),#p3 .market-table thead th:nth-child(2)')].forEach(th=>th.textContent=md(week));}
+function updateMacro(reports,week){const r=reports.find(x=>x.item==='WTI');if(!r)return;const macro=document.querySelector('#p1 .macro'),raw=parseJsonSafe(r.raw_text||'');if(raw&&raw.lead)macro.querySelector('.lead').innerHTML=esc(raw.lead).replace(/\n/g,'<br>');else if(r.market_commentary)macro.querySelector('.lead').textContent='- '+r.market_commentary;const bs=[...macro.querySelectorAll('.bullet')];const vals=raw&&raw.bullets?raw.bullets:[r.china_commentary,r.derivative_commentary].filter(Boolean);bs.forEach((b,i)=>{if(vals[i])b.textContent='· '+vals[i]});}
+function updateApproval(week){const rd=addDays(week,4),d=parseDate(rd);if(!d)return;const txt=`'${String(d.getFullYear()).slice(2)}. ${String(d.getMonth()+1).padStart(2,'0')}. ${String(d.getDate()).padStart(2,'0')}`;document.querySelectorAll('.approval>div:first-child').forEach(el=>el.textContent=txt);document.getElementById('basisDate').textContent=week.replaceAll('-','.')+' 기준';}
+
+function normalizeReportExtract(tr,week){const item=tr.dataset.item,price=numFromText(tr.cells[1].textContent),deltaTxt=tr.cells[1].querySelector('.delta')?.textContent||'',change=numFromText(deltaTxt),signed=deltaTxt.includes('-')&&!deltaTxt.includes('(-)')?-Math.abs(change||0):deltaTxt.includes('+')?Math.abs(change||0):0,prev=price!=null?price-signed:null;const market=tr.cells[2],outlook=tr.cells[4],mLead=market.querySelector('.lead')?.textContent.replace(/^▣\s*/,'')||'',oLead=outlook.querySelector('.lead')?.textContent.replace(/^▣\s*/,'')||'';const mLines=[...market.querySelectorAll('.rowline')].map(x=>x.textContent.trim()),oLines=[...outlook.querySelectorAll('.rowline')].map(x=>x.textContent.trim());const pick=(arr,tag)=>arr.filter(x=>x.startsWith(tag)).map(x=>x.slice(tag.length).trim()).join(' / ');const extras=[...mLines.filter(x=>!/^\[(중국|유도품)\]/.test(x)),...oLines.filter(x=>!/^\[(원료|수급)\]/.test(x))].join('\n');return {week_end:week,item,assessment_date:week,current_price:price,previous_price:prev,unit:'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:mLead,china_commentary:pick(mLines,'[중국]'),derivative_commentary:pick(mLines,'[유도품]'),outlook_commentary:oLead,feedstock_commentary:pick(oLines,'[원료]'),supply_demand_commentary:pick(oLines,'[수급]'),extra_metric:extras,raw_text:JSON.stringify({market_html:market.innerHTML,outlook_html:outlook.innerHTML})};}
+function extractReports(week){const out=[...document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')].map(tr=>normalizeReportExtract(tr,week));const macro=document.querySelector('#p1 .macro'),wtiRow=getPriceRow('WTI'),cur=numFromText(wtiRow?.cells[2]?.textContent),prev=numFromText(wtiRow?.cells[5]?.textContent),lead=macro.querySelector('.lead')?.textContent.replace(/^[-\s]+/,'').trim()||'',bullets=[...macro.querySelectorAll('.bullet')].map(x=>x.textContent.replace(/^[·\s]+/,'').trim());out.unshift({week_end:week,item:'WTI',assessment_date:week,current_price:cur,previous_price:prev,unit:'$/b',change_abs:(cur!=null&&prev!=null)?+(cur-prev).toFixed(2):'',change_pct:(cur!=null&&prev)?+((cur-prev)/prev*100).toFixed(2):'',direction:(cur!=null&&prev!=null)?(cur>prev?'상승':cur<prev?'하락':'보합'):'',market_commentary:lead,china_commentary:bullets[0]||'',derivative_commentary:bullets[1]||'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({lead,bullets})});return out;}
+function yearForMD(mdText,week){const [m,d]=mdText.split('/').map(Number),wd=parseDate(week),year=wd.getFullYear();if(m>wd.getMonth()+2)return year-1;return year;}
+function extractMarketRows(week){const table=document.querySelector('#p1 .price-matrix'),ths=[...table.querySelectorAll('thead th')],trs=[...table.querySelectorAll('tr')].slice(1),cols=[{i:1,type:'latest'},{i:2,type:'weekly'},{i:5,type:'weekly'},{i:6,type:'weekly'},{i:7,type:'weekly'}],out=[];trs.forEach((tr,ri)=>{const item=PRICE_ROW_ITEMS[ri];cols.forEach(({i,type})=>{const v=numFromText(tr.cells[i]?.textContent);if(v==null)return;const label=ths[i]?.textContent.trim().split(/\s/)[0]||'';if(!/^\d{1,2}\/\d{1,2}$/.test(label))return;const y=yearForMD(label,week),[m,d]=label.split('/').map(Number),date=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;out.push({price_date:date,week_end:type==='latest'?week:date,item,benchmark:'',price:v,unit:item==='WTI'?'$/b':'$/mt',price_type:type,source:'주간 원료가동향 HTML',note:''});});});const daily=(CURRENT_DAILY_WTI.length?CURRENT_DAILY_WTI:DAILY_WTI_FALLBACK).map(r=>({...r,week_end:week,source:'WTI daily chart'}));return [...out,...daily];}
+async function postChunks(action,rows,size=25){for(let i=0;i<rows.length;i+=size)await gasPost(action,{data:rows.slice(i,i+size)});}
+async function saveCurrentScreen(){saveBtn.disabled=true;reloadBtn.disabled=true;setStatus('loading','DB 저장 중');try{const prices=extractMarketRows(CURRENT_WEEK),reports=extractReports(CURRENT_WEEK),kpis=(CURRENT_BUNDLE?.kpis?.length?CURRENT_BUNDLE.kpis:(CURRENT_WEEK===FALLBACK_WEEK?FALLBACK_KPIS:[]));await postChunks('saveMarketPrices',prices,22);if(kpis.length)await postChunks('saveKpis',kpis,20);await postChunks('saveReports',reports,10);toast(`저장 완료 · 가격 ${prices.length} / KPI ${kpis.length} / 시황 ${reports.length}`);await loadWeekList(CURRENT_WEEK);setStatus('online','DB 연결됨');}catch(e){console.error(e);setStatus('error','저장 실패');toast('DB 저장 실패: '+e.message);}finally{saveBtn.disabled=false;reloadBtn.disabled=false;}}
+
+async function loadWeek(week){CURRENT_WEEK=week;setStatus('loading','DB 불러오는 중');reloadBtn.disabled=true;try{const [bundle,all]=await Promise.all([gasGet('reportData',{week}),gasGet('marketPrices')]);CURRENT_BUNDLE=bundle;ALL_MARKET=all.rows||[];updateApproval(week);updatePriceMatrix(week);renderWtiChart(week);updateReportRows(bundle.reports||[],week);updateMacro(bundle.reports||[],week);updateDerivedCharts(week);setStatus('online','DB 연결됨');}catch(e){console.error(e);setStatus('error','DB 오류');toast('DB 불러오기 실패: '+e.message);if(week===FALLBACK_WEEK){updateApproval(week);renderWtiChart(week);}}finally{reloadBtn.disabled=false;fit();}}
+async function loadWeekList(preferred){try{const res=await gasGet('reports'),weeks=[...new Set((res.rows||[]).map(r=>r.week_end).filter(Boolean))].sort().reverse();weekSelect.innerHTML='';if(!weeks.length){const op=new Option(`${weekLabel(FALLBACK_WEEK)} · ${FALLBACK_WEEK} (화면 기본값)`,FALLBACK_WEEK);weekSelect.add(op);CURRENT_WEEK=FALLBACK_WEEK;setStatus('empty','DB 비어 있음');return;}weeks.forEach(w=>weekSelect.add(new Option(`${weekLabel(w)} · ${w}`,w)));const target=(preferred&&weeks.includes(preferred))?preferred:weeks[0];weekSelect.value=target;await loadWeek(target);}catch(e){console.error(e);setStatus('error','DB 연결 실패');toast('GAS 연결을 확인해 주세요: '+e.message);}}
+async function boot(){initRowMap();const initial=(location.hash||'#p1').slice(1);if(document.getElementById(initial))showPage(initial);else showPage('p1');updateApproval(FALLBACK_WEEK);try{const ping=await gasGet('ping');setStatus('online','DB 연결됨');await loadWeekList(FALLBACK_WEEK);}catch(e){console.error(e);setStatus('error','DB 연결 실패');toast('GAS Web App 연결 실패: '+e.message);renderWtiChart(FALLBACK_WEEK);}}
+weekSelect.addEventListener('change',()=>loadWeek(weekSelect.value));reloadBtn.addEventListener('click',()=>loadWeek(CURRENT_WEEK));saveBtn.addEventListener('click',saveCurrentScreen);boot();
+</script>
+<div id="toast" class="toast"></div>
+</body>
+</html>
