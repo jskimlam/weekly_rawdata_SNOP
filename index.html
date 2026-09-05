@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>주간 원료가동향 v14</title>
+<title>주간 원료가동향 v24</title>
 <style>
 :root{
   --ink:#111; --blue:#1326bd; --red:#e2241a; --yellow:#fff900;
@@ -18,7 +18,7 @@ body{font-synthesis:none}
 .stage{padding:16px 0 34px;overflow:auto}.page-frame{position:relative;margin:0 auto}.report{position:absolute;left:0;top:0;width:1536px;height:1024px;background:#fff;display:none;transform-origin:top left;overflow:hidden;box-shadow:0 8px 28px rgba(20,29,40,.14)}.report.active{display:block}
 .report *{font-family:"Malgun Gothic","맑은 고딕",sans-serif}
 /* common */
-.main-title{position:absolute;margin:0;font-size:31px;line-height:1.15;font-weight:800;letter-spacing:-1.5px}.footnote{position:absolute;font-size:10.5px;line-height:1.35;color:#4e4e4e}.approval{position:absolute;height:27px;border:1px solid #7a7a7a;display:grid;font-size:11px;color:#666;background:#fff}.approval>div{display:flex;align-items:center;justify-content:center;border-right:1px solid #7a7a7a}.approval>div:last-child{border-right:0}
+.main-title{position:absolute;margin:0;font-size:31px;line-height:1.15;font-weight:800;letter-spacing:-1.5px}.footnote{position:absolute;font-size:10.5px;line-height:1.35;color:#4e4e4e;background:#fff;z-index:20;padding-top:5px;border-top:1px solid #d7d7d7}.approval{position:absolute;height:27px;border:1px solid #7a7a7a;display:grid;font-size:11px;color:#666;background:#fff}.approval>div{display:flex;align-items:center;justify-content:center;border-right:1px solid #7a7a7a}.approval>div:last-child{border-right:0}
 /* PAGE 1 ------------------------------------------------ */
 #p1 .main-title{left:95px;top:58px}
 #p1 .sub-title{position:absolute;left:96px;top:108px;font-size:28px;font-weight:800;letter-spacing:-1.2px}
@@ -58,10 +58,10 @@ body{font-synthesis:none}
 #p2 .chart-head{height:40px;min-width:188px;padding:7px 22px 0;font-size:17px}.p2-legend{font-size:10px;top:5px}.p2-unit{top:41px}
 #p2 .market-table{position:absolute;left:30px;top:424px;width:1476px}
 #p2 .market-table col.c1{width:60px}#p2 .market-table col.c2{width:70px}#p2 .market-table col.c3{width:646px}#p2 .market-table col.c4{width:53px}#p2 .market-table col.c5{width:647px}
-#p2 .market-table tbody tr{height:164px}
+#p2 .market-table tbody tr{height:160px}
 #p2 .market-table td.body{font-size:14px;line-height:1.48;padding:11px 13px;overflow:hidden}
 #p2 .market-table td.item{font-size:17px}#p2 .market-table td.price{font-size:17px}#p2 .market-table td.price .delta{font-size:.82em}#p2 .market-table td.tone{font-size:16px}
-#p2 .footnote{left:35px;top:986px}
+#p2 .footnote{left:35px;right:35px;bottom:18px;min-height:24px}
 #p2 .approval{right:50px;bottom:-4px;width:575px;grid-template-columns:115px 145px 165px 150px}
 /* PAGE 3 ------------------------------------------------ */
 #p3 .main-title{left:94px;top:42px}
@@ -69,8 +69,8 @@ body{font-synthesis:none}
 #p3 .chart-card{height:340px}
 #p3 .market-table{position:absolute;left:96px;top:454px;width:1348px}
 #p3 .market-table col.c1{width:72px}#p3 .market-table col.c2{width:98px}#p3 .market-table col.c3{width:553px}#p3 .market-table col.c4{width:72px}#p3 .market-table col.c5{width:553px}
-#p3 .market-table tbody tr{height:220px}
-#p3 .footnote{left:100px;bottom:55px}
+#p3 .market-table tbody tr{height:214px}
+#p3 .footnote{left:100px;right:92px;bottom:18px;min-height:38px}
 /* source parser panel ------------------------------------------------ */
 .parser-overlay{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;padding:18px}.parser-overlay.open{display:flex}.parser-panel{width:min(980px,96vw);max-height:92vh;background:#fff;border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}.parser-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #ddd}.parser-head strong{font-size:19px}.parser-close{border:0;background:transparent;font-size:25px;cursor:pointer}.parser-body{padding:14px 18px;overflow:auto}.parser-help{font-size:12px;line-height:1.5;color:#555;margin-bottom:10px}.parser-week-row{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;background:#f4f7fa;border:1px solid #cbd5df;border-radius:5px}.parser-week-row label{font-size:12px;font-weight:800;white-space:nowrap}.parser-week-row select{height:34px;min-width:230px;border:1px solid #8d98a5;background:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:0 8px}.parser-week-row .week-info{font-size:11px;color:#536170;line-height:1.35}.parser-week-row .week-info.warn{color:#a3211b;font-weight:800}.parser-input{width:100%;height:270px;resize:vertical;border:1px solid #999;padding:12px;font-family:inherit;font-size:13px;line-height:1.5}.parser-file-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}.parser-file-row input{font-family:inherit;font-size:12px}.parser-file-list{font-size:11px;color:#555}.parser-preview{margin-top:12px;border:1px solid #ccd3da;background:#f7f9fb;padding:12px;min-height:108px;max-height:240px;overflow:auto;font-size:12px;line-height:1.55;white-space:pre-wrap;border-radius:6px;transition:.15s}
 .parser-preview.ok{background:#eaf7ee;border:2px solid #2e8b57;color:#145c33}
@@ -355,7 +355,7 @@ KPI
 'use strict';
 
 /* =========================================================
-   주간 원료가동향 v14
+   주간 원료가동향 v24
    - AI 파싱은 하지 않음
    - HTML용 고정 텍스트를 브라우저에서 직접 파싱
    - 화면 반영은 GAS 없이 동작
@@ -932,7 +932,24 @@ function microFitOneLine(el,maxExtraChars=4){
   }
 }
 function microFitTaggedLines(){document.querySelectorAll('.market-table .tag-content').forEach(el=>microFitOneLine(el,4));}
-function autoFitReportText(){document.querySelectorAll('#p2 .market-table td.body').forEach(el=>fitTextToBox(el,11.2,15.2));document.querySelectorAll('#p3 .market-table td.body').forEach(el=>fitTextToBox(el,11.5,15.8));fitTextToBox(document.querySelector('#p1 .macro'),13.2,19.2);microFitTaggedLines();}
+function keepTableClearOfFootnote(pageId,minPx){
+  const page=document.getElementById(pageId),table=page?.querySelector('.market-table'),note=page?.querySelector('.footnote');
+  if(!page||!table||!note)return;
+  const pageRect=page.getBoundingClientRect(),noteRect=note.getBoundingClientRect();
+  const limit=(noteRect.top-pageRect.top)-12;
+  let loops=0;
+  while((table.getBoundingClientRect().bottom-pageRect.top)>limit&&loops<18){
+    let changed=false;
+    table.querySelectorAll('td.body').forEach(el=>{
+      if(el.dataset.fontMode==='manual')return;
+      const cur=parseFloat(getComputedStyle(el).fontSize)||14;
+      if(cur>minPx+.05){el.style.fontSize=Math.max(minPx,cur-.25)+'px';changed=true;}
+    });
+    if(!changed)break;
+    loops++;
+  }
+}
+function autoFitReportText(){document.querySelectorAll('#p2 .market-table td.body').forEach(el=>fitTextToBox(el,11.2,15.2));document.querySelectorAll('#p3 .market-table td.body').forEach(el=>fitTextToBox(el,11.5,15.8));fitTextToBox(document.querySelector('#p1 .macro'),13.2,19.2);microFitTaggedLines();keepTableClearOfFootnote('p2',10.8);keepTableClearOfFootnote('p3',10.8);}
 function scheduleAutoFit(){requestAnimationFrame(()=>requestAnimationFrame(autoFitReportText));}
 
 function parseJsonSafeSafe(v){try{return v?JSON.parse(v):{};}catch(e){return {};}}
