@@ -1,4 +1,4 @@
-name: Apply rolling price matrix rules
+name: Verify rolling price matrix rules
 
 on:
   push:
@@ -6,21 +6,25 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  patch:
+  verify:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch rolling matrix logic
+      - name: Reapply patch idempotently
         run: python .github/rolling_patch.py
-      - name: Commit rolling matrix logic
+      - name: Extract browser script and check JavaScript syntax
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git diff --cached --quiet && exit 0
-          git commit -m "Make price matrix roll weeks months and year references automatically"
-          git push
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text(encoding='utf-8')
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',s,re.S|re.I)
+          if not scripts:
+              raise SystemExit('script block not found')
+          Path('/tmp/index.js').write_text('\n'.join(scripts),encoding='utf-8')
+          PY
+          node --check /tmp/index.js
