@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>주간 원료가동향</title>
+<title>주간 원료가동향 v6</title>
 <style>
 :root{
   --ink:#111; --blue:#1326bd; --red:#e2241a; --yellow:#fff900;
@@ -59,7 +59,7 @@ body{font-synthesis:none}
 #p3 .market-table tbody tr{height:220px}
 #p3 .footnote{left:100px;bottom:55px}
 /* source parser panel ------------------------------------------------ */
-.parser-overlay{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;padding:18px}.parser-overlay.open{display:flex}.parser-panel{width:min(980px,96vw);max-height:92vh;background:#fff;border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}.parser-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #ddd}.parser-head strong{font-size:19px}.parser-close{border:0;background:transparent;font-size:25px;cursor:pointer}.parser-body{padding:14px 18px;overflow:auto}.parser-help{font-size:12px;line-height:1.5;color:#555;margin-bottom:10px}.parser-input{width:100%;height:270px;resize:vertical;border:1px solid #999;padding:12px;font-family:inherit;font-size:13px;line-height:1.5}.parser-file-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}.parser-file-row input{font-family:inherit;font-size:12px}.parser-file-list{font-size:11px;color:#555}.parser-preview{margin-top:12px;border:1px solid #ccd3da;background:#f7f9fb;padding:10px;min-height:92px;max-height:220px;overflow:auto;font-size:12px;line-height:1.55;white-space:pre-wrap}.parser-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #ddd}.parser-actions button{height:34px;padding:0 14px;border:1px solid #888;background:#fff;font-family:inherit;font-weight:800;cursor:pointer}.parser-actions .primary{background:#17365d;color:#fff;border-color:#17365d}.parser-actions button:disabled{opacity:.55;cursor:wait}
+.parser-overlay{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;padding:18px}.parser-overlay.open{display:flex}.parser-panel{width:min(980px,96vw);max-height:92vh;background:#fff;border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}.parser-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #ddd}.parser-head strong{font-size:19px}.parser-close{border:0;background:transparent;font-size:25px;cursor:pointer}.parser-body{padding:14px 18px;overflow:auto}.parser-help{font-size:12px;line-height:1.5;color:#555;margin-bottom:10px}.parser-week-row{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;background:#f4f7fa;border:1px solid #cbd5df;border-radius:5px}.parser-week-row label{font-size:12px;font-weight:800;white-space:nowrap}.parser-week-row select{height:34px;min-width:230px;border:1px solid #8d98a5;background:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:0 8px}.parser-week-row .week-info{font-size:11px;color:#536170;line-height:1.35}.parser-week-row .week-info.warn{color:#a3211b;font-weight:800}.parser-input{width:100%;height:270px;resize:vertical;border:1px solid #999;padding:12px;font-family:inherit;font-size:13px;line-height:1.5}.parser-file-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}.parser-file-row input{font-family:inherit;font-size:12px}.parser-file-list{font-size:11px;color:#555}.parser-preview{margin-top:12px;border:1px solid #ccd3da;background:#f7f9fb;padding:10px;min-height:92px;max-height:220px;overflow:auto;font-size:12px;line-height:1.55;white-space:pre-wrap}.parser-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #ddd}.parser-actions button{height:34px;padding:0 14px;border:1px solid #888;background:#fff;font-family:inherit;font-weight:800;cursor:pointer}.parser-actions .primary{background:#17365d;color:#fff;border-color:#17365d}.parser-actions button:disabled{opacity:.55;cursor:wait}
 
 /* manual edit mode ------------------------------------------------ */
 .edit-tools{display:none;align-items:center;gap:5px;flex-wrap:wrap;padding:4px 7px;border:1px solid #cbd3dc;background:#f7f9fb;border-radius:5px}
@@ -134,7 +134,12 @@ body.edit-mode .edit-active{box-shadow:inset 0 0 0 3px rgba(23,54,93,.42)!import
   <div class="parser-panel" role="dialog" aria-modal="true" aria-label="HTML용 파싱 결과 입력">
     <div class="parser-head"><strong>HTML용 파싱 결과 입력</strong><button id="closeParserBtn" class="parser-close" type="button">×</button></div>
     <div class="parser-body">
-      <div class="parser-help">새 <b>주간 원료가동향 파싱 프로젝트</b>에서 <b>“HTML용 파싱해”</b>로 만든 결과를 그대로 붙여넣으세요. 이 HTML은 AI 원문분석이나 파일해석을 하지 않습니다. <b>「파싱 적용」을 누르면 브라우저가 고정 텍스트를 직접 파싱해 3페이지 화면에 반영하고 즉시 Google Sheet DB에 자동 저장</b>합니다. DAILY PRICE는 WTI/Benzene/SM/BD 등 모든 일별 이력을 처리하며, MARKET PRICE의 실제 평가일이 기준주차와 달라도 해당 주의 대표가격으로 자동 귀속합니다. 파싱 입력과 편집 모드는 관리자 비밀번호로 보호됩니다.</div>
+      <div class="parser-help">새 <b>주간 원료가동향 파싱 프로젝트</b>에서 <b>“HTML용 파싱해”</b>로 만든 결과를 그대로 붙여넣으세요. 이 HTML은 AI 원문분석이나 파일해석을 하지 않습니다. <b>파싱 시작 전에 저장할 기준 위크를 먼저 선택</b>하고, 「파싱 적용」을 누르면 브라우저가 고정 텍스트를 직접 파싱해 3페이지 화면에 반영한 뒤 해당 위크로 Google Sheet DB에 자동 저장합니다. 텍스트 안의 기준주차와 선택 위크가 다르면 저장 전에 경고합니다.</div>
+      <div class="parser-week-row">
+        <label for="parserWeekSelect">기준 위크</label>
+        <select id="parserWeekSelect" title="파싱 결과를 저장할 기준 주차"></select>
+        <span id="parserWeekInfo" class="week-info">파싱 적용 시 이 주차로 화면/DB가 저장됩니다.</span>
+      </div>
       <textarea id="parserText" class="parser-input" placeholder="기준주차
 2026-09-04
 
@@ -157,7 +162,7 @@ SM
 
 KPI
 2026-09-04|SM|중국|SM 가동률|65|%|..."></textarea>
-      <div id="parserPreview" class="parser-preview">고정 포맷을 붙여넣고 확인 후 「파싱 적용」을 누르세요. 적용 즉시 DB에 자동 저장됩니다.</div>
+      <div id="parserPreview" class="parser-preview">기준 위크를 선택하고 고정 포맷을 붙여넣으세요. 파싱본의 기준주차와 선택 위크를 자동 검증한 뒤 적용·저장합니다.</div>
     </div>
     <div class="parser-actions"><button id="parseOnlyBtn" type="button">파싱 미리보기</button><button id="parseUpdateBtn" class="primary" type="button">파싱 적용</button></div>
   </div>
@@ -318,6 +323,8 @@ const parserOverlay = document.getElementById('parserOverlay');
 const closeParserBtn = document.getElementById('closeParserBtn');
 const parserText = document.getElementById('parserText');
 const parserPreview = document.getElementById('parserPreview');
+const parserWeekSelect = document.getElementById('parserWeekSelect');
+const parserWeekInfo = document.getElementById('parserWeekInfo');
 const parseOnlyBtn = document.getElementById('parseOnlyBtn');
 const parseUpdateBtn = document.getElementById('parseUpdateBtn');
 const editModeBtn = document.getElementById('editModeBtn');
@@ -489,11 +496,11 @@ function parseFixedFormat(raw){
     if(chg===null&&cur!==null&&prev!==null)chg=+(cur-prev).toFixed(4);
     if(prev===null&&cur!==null&&chg!==null)prev=+(cur-chg).toFixed(4);
     if(pct===null&&prev&&chg!==null)pct=+(chg/prev*100).toFixed(2);
-    reports.push({week_end:week,item,assessment_date:/^\d{4}-\d{2}-\d{2}$/.test(b.assessment_date||'')?b.assessment_date:week,current_price:cur??'',previous_price:prev??'',unit:reportUnit(item,marketPrices),change_abs:chg??'',change_pct:pct??'',direction:String(b.direction||'').trim(),market_commentary:normalizeText(b.market_commentary||''),china_commentary:normalizeText(b.china_commentary||''),derivative_commentary:normalizeText(b.derivative_commentary||''),outlook_commentary:normalizeText(b.outlook_commentary||''),feedstock_commentary:normalizeText(b.feedstock_commentary||''),supply_demand_commentary:normalizeText(b.supply_demand_commentary||''),extra_metric:'',raw_text:JSON.stringify({source_format:'HTML용 파싱 v4'})});
+    reports.push({week_end:week,item,assessment_date:/^\d{4}-\d{2}-\d{2}$/.test(b.assessment_date||'')?b.assessment_date:week,current_price:cur??'',previous_price:prev??'',unit:reportUnit(item,marketPrices),change_abs:chg??'',change_pct:pct??'',direction:String(b.direction||'').trim(),market_commentary:normalizeText(b.market_commentary||''),china_commentary:normalizeText(b.china_commentary||''),derivative_commentary:normalizeText(b.derivative_commentary||''),outlook_commentary:normalizeText(b.outlook_commentary||''),feedstock_commentary:normalizeText(b.feedstock_commentary||''),supply_demand_commentary:normalizeText(b.supply_demand_commentary||''),extra_metric:'',raw_text:JSON.stringify({source_format:'HTML용 파싱 v6'})});
   }
   const wLast=wtiDaily.filter(r=>r.price_date<=week).at(-1); const prevFriday=wtiDaily.find(r=>r.price_date===addDays(week,-7));
   const wCur=wLast?.price??priceForWeekFrom(marketPrices,'WTI',week), wPrev=prevFriday?.price??priceForWeek('WTI',addDays(week,-7)); const wChg=(wCur!==null&&wCur!==''&&wPrev!==null&&wPrev!=='')?+(wCur-wPrev).toFixed(2):'';
-  reports.unshift({week_end:week,item:'WTI',assessment_date:wLast?.price_date||week,current_price:wCur??'',previous_price:wPrev??'',unit:'$/b',change_abs:wChg,change_pct:wPrev&&wChg!==''?+(wChg/wPrev*100).toFixed(2):'',direction:wChg===''?'':wChg>0?'상승':wChg<0?'하락':'보합',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'HTML용 파싱 v4'})});
+  reports.unshift({week_end:week,item:'WTI',assessment_date:wLast?.price_date||week,current_price:wCur??'',previous_price:wPrev??'',unit:'$/b',change_abs:wChg,change_pct:wPrev&&wChg!==''?+(wChg/wPrev*100).toFixed(2):'',direction:wChg===''?'':wChg>0?'상승':wChg<0?'하락':'보합',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'HTML용 파싱 v6'})});
   const kpis=[]; const ord={};
   for(const a of parsePipe(sec['KPI'],6)){
     const item=canonicalItem(a[1]);const value=num(a[4]);if(!item||!a[2]||!a[3]||value===null)continue;const k=`${item}__${a[2]}`;ord[k]=(ord[k]||0)+1;
@@ -638,10 +645,66 @@ function addWeekOption(week){if(!week)return;if([...weekSelect.options].some(o=>
 function sortWeekOptions(){const vals=[...weekSelect.options].map(o=>o.value).filter(Boolean).sort().reverse();weekSelect.innerHTML='';vals.forEach(w=>weekSelect.add(new Option(`${weekLabel(w)} · ${w}${localDb[w]?' · 로컬':''}`,w)));}
 function refreshWeekSelect(prefer){addWeekOption(BASE_WEEK);Object.keys(localDb).forEach(addWeekOption);sortWeekOptions();if(prefer&&[...weekSelect.options].some(o=>o.value===prefer))weekSelect.value=prefer;}
 
-/* ---------- 파서 모달 ---------- */
-function openParser(){if(!requireAdmin())return;parserOverlay.classList.add('open');parserOverlay.setAttribute('aria-hidden','false');parserText.focus();}
+/* ---------- 파서 모달 / 기준 위크 ---------- */
+function fridayOf(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());const day=x.getDay();const delta=(5-day+7)%7;x.setDate(x.getDate()+delta);return x;}
+function buildParserWeekOptions(prefer){
+  const candidates=new Set([BASE_WEEK,CURRENT_WEEK,...Object.keys(localDb)]);
+  [...weekSelect.options].forEach(o=>o.value&&candidates.add(o.value));
+  const base=fridayOf(new Date());
+  for(let i=-16;i<=5;i++){const d=new Date(base);d.setDate(base.getDate()+i*7);candidates.add(ymd(d));}
+  const vals=[...candidates].filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort().reverse();
+  parserWeekSelect.innerHTML='';
+  vals.forEach(w=>parserWeekSelect.add(new Option(`${weekLabel(w)} · ${w}`,w)));
+  const target=prefer&&vals.includes(prefer)?prefer:(vals.includes(CURRENT_WEEK)?CURRENT_WEEK:vals[0]);
+  if(target)parserWeekSelect.value=target;
+  updateParserWeekInfo();
+}
+function updateParserWeekInfo(parsedWeek){
+  const selected=parserWeekSelect.value||CURRENT_WEEK;
+  parserWeekInfo.classList.remove('warn');
+  if(parsedWeek&&selected!==parsedWeek){parserWeekInfo.textContent=`주의: 선택 위크 ${selected} / 파싱본 기준주차 ${parsedWeek}`;parserWeekInfo.classList.add('warn');}
+  else parserWeekInfo.textContent=`${weekLabel(selected)} · ${selected} 기준으로 화면 반영 및 DB 자동저장`;
+}
+function rebaseParsedWeek(p,targetWeek){
+  if(!p||!targetWeek||p.week===targetWeek)return p;
+  const q={...p,week:targetWeek};
+  q.marketPrices=(p.marketPrices||[]).map(r=>({...r,week_end:targetWeek}));
+  q.kpis=(p.kpis||[]).map(r=>({...r,week_end:targetWeek}));
+  q.reports=(p.reports||[]).map(r=>({...r,week_end:targetWeek}));
+  const wtiDaily=q.marketPrices.filter(r=>r.item==='WTI'&&r.price_type==='daily').sort((a,b)=>String(a.price_date).localeCompare(String(b.price_date)));
+  const wti=q.reports.find(r=>r.item==='WTI');
+  if(wti){
+    const last=wtiDaily.filter(r=>r.price_date<=targetWeek).at(-1);
+    const prev=wtiDaily.find(r=>r.price_date===addDays(targetWeek,-7));
+    if(last)wti.current_price=last.price;
+    if(prev)wti.previous_price=prev.price;
+    if(last&&prev){const ch=+(Number(last.price)-Number(prev.price)).toFixed(2);wti.change_abs=ch;wti.change_pct=prev.price?+(ch/Number(prev.price)*100).toFixed(2):'';wti.direction=ch>0?'상승':ch<0?'하락':'보합';}
+  }
+  q.warnings=[...(p.warnings||[]),`파싱본 기준주차 ${p.week} → 선택 기준위크 ${targetWeek}로 저장 주차 변경`];
+  return q;
+}
+function openParser(){
+  if(!requireAdmin())return;
+  buildParserWeekOptions(CURRENT_WEEK);
+  parserOverlay.classList.add('open');parserOverlay.setAttribute('aria-hidden','false');parserText.focus();
+}
 function closeParser(){parserOverlay.classList.remove('open');parserOverlay.setAttribute('aria-hidden','true');}
-async function runParser(mode){const raw=parserText.value.trim();if(!raw){parserPreview.textContent='새 프로젝트의 「HTML용 파싱해」 결과를 붙여넣으세요.';return;}try{const p=parseFixedFormat(raw);LAST_PARSED=p;parserPreview.textContent=previewParsed(p);setStatus('empty','파싱 확인 완료');if(mode==='save'){applyData(p);const ok=await saveToGoogle(p);if(ok)closeParser();}}catch(e){LAST_PARSED=null;parserPreview.textContent='파싱 형식을 확인해 주세요.\n\n'+e.message;setStatus('error','파싱 형식 오류');}}
+async function runParser(mode){
+  const raw=parserText.value.trim();if(!raw){parserPreview.textContent='새 프로젝트의 「HTML용 파싱해」 결과를 붙여넣으세요.';return;}
+  try{
+    const parsed=parseFixedFormat(raw);const selected=parserWeekSelect.value||parsed.week;updateParserWeekInfo(parsed.week);
+    let p=parsed;const mismatch=selected!==parsed.week;
+    if(mode==='save'&&mismatch){
+      const ok=window.confirm(`기준 위크가 다릅니다.\n\n선택 위크: ${selected}\n파싱본 기준주차: ${parsed.week}\n\n선택 위크(${selected})로 화면 반영 및 DB 저장하시겠습니까?`);
+      if(!ok){parserPreview.textContent=previewParsed(parsed)+'\n\n저장 취소: 기준 위크를 확인하세요.';return;}
+      p=rebaseParsedWeek(parsed,selected);
+    }
+    LAST_PARSED=p;
+    parserPreview.textContent=`선택 기준위크: ${selected}\n파싱본 기준주차: ${parsed.week}${mismatch?'  ← 불일치':'  ← 일치'}\n\n`+previewParsed(p);
+    setStatus('empty','파싱 확인 완료');
+    if(mode==='save'){applyData(p);const ok=await saveToGoogle(p);if(ok){await syncDbWeeks();refreshWeekSelect(p.week);weekSelect.value=p.week;closeParser();}}
+  }catch(e){LAST_PARSED=null;parserPreview.textContent='파싱 형식을 확인해 주세요.\n\n'+e.message;setStatus('error','파싱 형식 오류');}
+}
 
 /* ---------- PNG ---------- */
 let H2C_PROMISE=null;
@@ -653,6 +716,8 @@ tabButtons.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
 window.addEventListener('resize',fit);
 openParserBtn.addEventListener('click',openParser);closeParserBtn.addEventListener('click',closeParser);parserOverlay.addEventListener('click',e=>{if(e.target===parserOverlay)closeParser();});
 parseOnlyBtn.addEventListener('click',()=>runParser('preview'));parseUpdateBtn.addEventListener('click',()=>runParser('save'));
+parserWeekSelect.addEventListener('change',()=>{let pw=null;try{const raw=parserText.value.trim();if(raw)pw=parseFixedFormat(raw).week;}catch(e){}updateParserWeekInfo(pw);});
+parserText.addEventListener('input',()=>{try{const raw=parserText.value.trim();updateParserWeekInfo(raw?parseFixedFormat(raw).week:null);}catch(e){updateParserWeekInfo();}});
 reloadDbBtn.addEventListener('click',async()=>{await syncDbWeeks();await loadFromGoogle(weekSelect.value||CURRENT_WEEK);});
 weekSelect.addEventListener('change',()=>{const w=weekSelect.value,local=getLocalWeek(w);if(local){applyData(local,{cache:false});setStatus('empty','로컬 자료 표시');}else loadFromGoogle(w);});
 editModeBtn.addEventListener('click',async()=>{
@@ -665,17 +730,31 @@ fontDownBtn.addEventListener('click',()=>fontAdjust(-.5));fontUpBtn.addEventList
 exportP1Btn.addEventListener('click',()=>exportPng('p1',exportP1Btn));exportP2Btn.addEventListener('click',()=>exportPng('p2',exportP2Btn));exportP3Btn.addEventListener('click',()=>exportPng('p3',exportP3Btn));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&parserOverlay.classList.contains('open'))closeParser();});
 
-/* ---------- 부팅: GAS 자동호출 금지 ---------- */
-function boot(){
+/* ---------- 부팅: 최신 저장 주차 자동 표시 ---------- */
+async function boot(){
   initRowMap(); BASE_MARKET=seedBaseMarket(); rebuildAllMarket();
   const localWeeks=Object.keys(localDb).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort().reverse();
-  const startWeek=localWeeks[0]||BASE_WEEK;
-  refreshWeekSelect(startWeek); CURRENT_WEEK=startWeek; updateBasis(startWeek);
-  const cached=getLocalWeek(startWeek); if(cached)applyData(cached,{cache:false}); else {CURRENT_WEEK=BASE_WEEK;weekSelect.value=BASE_WEEK;updateBasis(BASE_WEEK);renderWtiChart(BASE_WEEK);scheduleAutoFit();}
+  const localLatest=localWeeks[0]||BASE_WEEK;
+  refreshWeekSelect(localLatest); CURRENT_WEEK=localLatest; updateBasis(localLatest);
+  const cached=getLocalWeek(localLatest);
+  if(cached)applyData(cached,{cache:false});
+  else {CURRENT_WEEK=BASE_WEEK;weekSelect.value=BASE_WEEK;updateBasis(BASE_WEEK);renderWtiChart(BASE_WEEK);scheduleAutoFit();}
   const initial=(location.hash||'#p1').slice(1);showPage(document.getElementById(initial)?initial:'p1');
-  setStatus('empty','로컬 준비');
-  // DB 조회는 사용자가 누를 때만 실행. 파싱 적용과 편집 종료는 자동 저장.
+
   const sheetBtn=document.createElement('button');sheetBtn.type='button';sheetBtn.textContent='DB 시트 열기';sheetBtn.title='Google Sheet DB 열기';sheetBtn.addEventListener('click',()=>window.open(SHEET_URL,'_blank','noopener'));reloadDbBtn.insertAdjacentElement('afterend',sheetBtn);
+
+  setStatus('loading','최신 주차 확인 중');
+  try{
+    const remoteWeeks=await syncDbWeeks();
+    const allWeeks=[...new Set([BASE_WEEK,...localWeeks,...remoteWeeks])].filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort().reverse();
+    const latest=allWeeks[0]||localLatest;
+    refreshWeekSelect(latest);weekSelect.value=latest;
+    if(remoteWeeks.includes(latest))await loadFromGoogle(latest);
+    else {const local=getLocalWeek(latest);if(local)applyData(local,{cache:false});setStatus('empty','최신 로컬 주차 표시');}
+  }catch(e){
+    const local=getLocalWeek(localLatest);if(local)applyData(local,{cache:false});
+    setStatus('empty','최신 로컬 주차 표시');
+  }
 }
 boot();
 
