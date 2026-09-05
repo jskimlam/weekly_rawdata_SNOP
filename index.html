@@ -202,16 +202,16 @@ KPI
   <div class="parser-panel" role="dialog" aria-modal="true" aria-label="월요일 최신가격 업데이트">
     <div class="parser-head"><strong>월요일 최신가격 업데이트</strong><button id="closeMondayBtn" class="parser-close" type="button">×</button></div>
     <div class="parser-body">
-      <div class="parser-help">현재 보고 있는 주차의 <b>차주 월요일 가격</b>을 화요일에 수동 입력하는 창입니다. 저장되는 행은 <b>price_type=latest</b>만 갱신하며, 금요일 weekly 가격·시황·KPI는 건드리지 않습니다.</div>
+      <div class="parser-help">현재 보고 있는 주차의 <b>차주 월요일 최신가격</b>을 화요일에 수동 입력하는 창입니다. 이 값은 <b>최근가격 표시용으로 이 브라우저에만 저장</b>되며 Google Sheet DB에는 저장하지 않습니다. 금요일 weekly 가격·시황·KPI에는 영향을 주지 않습니다.</div>
       <div class="monday-meta"><span>대상 보고서: <b id="mondayWeekLabel"></b></span><span>최신가격 기준일: <b id="mondayDateLabel"></b></span></div>
       <table class="monday-grid">
         <colgroup><col style="width:24%"><col style="width:24%"><col style="width:32%"><col style="width:20%"></colgroup>
-        <thead><tr><th>품목</th><th>금요일 weekly</th><th>월요일 latest 입력</th><th>단위</th></tr></thead>
+        <thead><tr><th>품목</th><th>금요일 weekly</th><th>월요일 최신가 입력</th><th>단위</th></tr></thead>
         <tbody id="mondayPriceBody"></tbody>
       </table>
-      <div class="monday-note"><strong>ABS Spread</strong>는 ABS−Cost, <strong>PC-BPA Spread</strong>는 PC−BPA로 입력값이 모두 있을 때 자동 계산해 latest로 함께 저장합니다. 빈칸은 기존 값이 있으면 그대로 유지하고 새 값을 만들지 않습니다.</div>
+      <div class="monday-note"><strong>표시 색상:</strong> 월요일 최신가가 금요일 weekly보다 높으면 <span style="color:#e2241a;font-weight:800">빨강</span>, 낮으면 <span style="color:#304eb6;font-weight:800">파랑</span>, 같으면 검정으로 표시합니다. <strong>ABS Spread</strong>는 ABS−Cost, <strong>PC-BPA Spread</strong>는 PC−BPA로 자동 계산합니다. 이 최신가는 DB에 저장하지 않습니다.</div>
     </div>
-    <div class="parser-actions"><button id="cancelMondayBtn" type="button">취소</button><button id="saveMondayBtn" class="primary" type="button">월요일 가격 저장</button></div>
+    <div class="parser-actions"><button id="cancelMondayBtn" type="button">취소</button><button id="saveMondayBtn" class="primary" type="button">최신가격 화면 적용</button></div>
   </div>
 </div>
 <div class="stage"><div id="pageFrame" class="page-frame">
@@ -368,6 +368,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzezSDIQCzEDmHGNfDOS0N4
 const API_TOKEN = 'RAWMAT_' + 'bae8861aa98d4b95b2beb486af2442b9ae2d8fedb4924b2e9e8faf16b21deb25';
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/11UUHeRpP-BOnWUz8ceeLQe7FWh6vqiw_0piB2GuyJ1o/edit';
 const LOCAL_KEY = 'raw_material_weekly_v8';
+const MONDAY_LOCAL_KEY = 'raw_material_monday_latest_v1'; // 최근가격 표시 전용: Google Sheet DB 미저장
 const PRICE_ROW_ITEMS = ['WTI','WTI_MT','Naphtha','Ethylene','Propylene','PP','Benzene','SM','AN','BD','Cost','ABS','ABS Spread','BPA','PC','PC-BPA Spread','MMA','PMMA'];
 const DETAIL_ITEMS = ['SM','AN','BD','BPA','MMA'];
 const MONDAY_ITEMS = ['WTI','Naphtha','Ethylene','Propylene','PP','Benzene','SM','AN','BD','Cost','ABS','BPA','PC','MMA','PMMA'];
@@ -422,6 +423,7 @@ let LAST_PARSED = null;
 let EDIT_MODE = false;
 let ACTIVE_EDIT_TARGET = null;
 let localDb = loadLocalDb();
+let MONDAY_LATEST = loadMondayLocal();
 let ADMIN_UNLOCKED = sessionStorage.getItem('rawmat_admin_unlocked') === '1';
 const ADMIN_PASSWORD = '0111';
 
@@ -516,6 +518,11 @@ function loadLocalDb(){try{return JSON.parse(localStorage.getItem(LOCAL_KEY)||'{
 function persistLocalDb(){try{localStorage.setItem(LOCAL_KEY,JSON.stringify(localDb));}catch(e){console.warn('localStorage 저장 실패',e);}}
 function saveLocalWeek(data){if(!data?.week)return;localDb[data.week]=data;persistLocalDb();refreshWeekSelect(data.week);}
 function getLocalWeek(week){return localDb[week]||null;}
+function loadMondayLocal(){try{return JSON.parse(localStorage.getItem(MONDAY_LOCAL_KEY)||'{}')||{};}catch(e){return {};}}
+function persistMondayLocal(){try{localStorage.setItem(MONDAY_LOCAL_KEY,JSON.stringify(MONDAY_LATEST));}catch(e){console.warn('월요일 최신가격 로컬 저장 실패',e);}}
+function mondayLocalRows(week){return Array.isArray(MONDAY_LATEST?.[week])?MONDAY_LATEST[week]:[];}
+function saveMondayLocalRows(week,rows){MONDAY_LATEST[week]=dedupeMarket(rows||[]).filter(r=>r.price_type==='latest');persistMondayLocal();}
+function migrateLegacyMondayLatest(){let changed=false;for(const [week,data] of Object.entries(localDb)){if(!data?.marketPrices)continue;const legacy=data.marketPrices.filter(r=>String(r.price_type||'').toLowerCase()==='latest');if(legacy.length){saveMondayLocalRows(week,[...mondayLocalRows(week),...legacy]);data.marketPrices=data.marketPrices.filter(r=>String(r.price_type||'').toLowerCase()!=='latest');changed=true;}}if(changed)persistLocalDb();}
 
 /* ---------- 디자인의 8/28 가격을 기본 DB로 읽기 ---------- */
 function initRowMap(){
@@ -567,7 +574,7 @@ function priceForWeek(item,week,rows=ALL_MARKET){
   return null;
 }
 function latestForWeek(item,week){
-  const rows=ALL_MARKET.filter(r=>r.item===item&&r.week_end===week&&r.price_type==='latest').sort((a,b)=>String(a.price_date).localeCompare(String(b.price_date)));if(rows.length)return rows.at(-1)||null;
+  const rows=mondayLocalRows(week).filter(r=>r.item===item&&r.price_type==='latest').sort((a,b)=>String(a.price_date).localeCompare(String(b.price_date)));if(rows.length)return rows.at(-1)||null;
   if(item==='WTI_MT'){const b=latestForWeek('WTI',week);return b?{...b,item:'WTI_MT',price:wtiMt(b.price),unit:'$/MT',benchmark:'WTI 환산 $/MT',note:'WTI $/b × 7.326 자동환산'}:null;}
   return null;
 }
@@ -651,11 +658,11 @@ function parseFixedFormat(raw){
     if(chg===null&&cur!==null&&prev!==null)chg=+(cur-prev).toFixed(4);
     if(prev===null&&cur!==null&&chg!==null)prev=+(cur-chg).toFixed(4);
     if(pct===null&&prev&&chg!==null)pct=+(chg/prev*100).toFixed(2);
-    reports.push({week_end:week,item,assessment_date:/^\d{4}-\d{2}-\d{2}$/.test(b.assessment_date||'')?b.assessment_date:week,current_price:cur??'',previous_price:prev??'',unit:reportUnit(item,marketPrices),change_abs:chg??'',change_pct:pct??'',direction:String(b.direction||'').trim(),market_commentary:normalizeText(b.market_commentary||''),china_commentary:normalizeText(b.china_commentary||''),derivative_commentary:normalizeText(b.derivative_commentary||''),outlook_commentary:normalizeText(b.outlook_commentary||''),feedstock_commentary:normalizeText(b.feedstock_commentary||''),supply_demand_commentary:normalizeText(b.supply_demand_commentary||''),market_maintenance_commentary:normalizeText(b.market_maintenance_commentary||''),outlook_maintenance_commentary:normalizeText(b.outlook_maintenance_commentary||''),market_overseas_commentary:normalizeText(b.market_overseas_commentary||''),outlook_overseas_commentary:normalizeText(b.outlook_overseas_commentary||''),outlook_reduction_commentary:normalizeText(b.outlook_reduction_commentary||''),outlook_derivative_commentary:normalizeText(b.outlook_derivative_commentary||''),outlook_natural_rubber_commentary:normalizeText(b.outlook_natural_rubber_commentary||''),extra_metric:'',raw_text:JSON.stringify({source_format:'HTML용 파싱 v23',market_maintenance_commentary:normalizeText(b.market_maintenance_commentary||''),outlook_maintenance_commentary:normalizeText(b.outlook_maintenance_commentary||''),market_overseas_commentary:normalizeText(b.market_overseas_commentary||''),outlook_overseas_commentary:normalizeText(b.outlook_overseas_commentary||''),outlook_reduction_commentary:normalizeText(b.outlook_reduction_commentary||''),outlook_derivative_commentary:normalizeText(b.outlook_derivative_commentary||''),outlook_natural_rubber_commentary:normalizeText(b.outlook_natural_rubber_commentary||'')})});
+    reports.push({week_end:week,item,assessment_date:/^\d{4}-\d{2}-\d{2}$/.test(b.assessment_date||'')?b.assessment_date:week,current_price:cur??'',previous_price:prev??'',unit:reportUnit(item,marketPrices),change_abs:chg??'',change_pct:pct??'',direction:String(b.direction||'').trim(),market_commentary:normalizeText(b.market_commentary||''),china_commentary:normalizeText(b.china_commentary||''),derivative_commentary:normalizeText(b.derivative_commentary||''),outlook_commentary:normalizeText(b.outlook_commentary||''),feedstock_commentary:normalizeText(b.feedstock_commentary||''),supply_demand_commentary:normalizeText(b.supply_demand_commentary||''),market_maintenance_commentary:normalizeText(b.market_maintenance_commentary||''),outlook_maintenance_commentary:normalizeText(b.outlook_maintenance_commentary||''),market_overseas_commentary:normalizeText(b.market_overseas_commentary||''),outlook_overseas_commentary:normalizeText(b.outlook_overseas_commentary||''),outlook_reduction_commentary:normalizeText(b.outlook_reduction_commentary||''),outlook_derivative_commentary:normalizeText(b.outlook_derivative_commentary||''),outlook_natural_rubber_commentary:normalizeText(b.outlook_natural_rubber_commentary||''),extra_metric:'',raw_text:JSON.stringify({source_format:'HTML용 파싱 v25',market_maintenance_commentary:normalizeText(b.market_maintenance_commentary||''),outlook_maintenance_commentary:normalizeText(b.outlook_maintenance_commentary||''),market_overseas_commentary:normalizeText(b.market_overseas_commentary||''),outlook_overseas_commentary:normalizeText(b.outlook_overseas_commentary||''),outlook_reduction_commentary:normalizeText(b.outlook_reduction_commentary||''),outlook_derivative_commentary:normalizeText(b.outlook_derivative_commentary||''),outlook_natural_rubber_commentary:normalizeText(b.outlook_natural_rubber_commentary||'')})});
   }
   const wLast=wtiDaily.filter(r=>r.price_date<=week).at(-1); const prevFriday=wtiDaily.find(r=>r.price_date===addDays(week,-7));
   const wCur=wLast?.price??priceForWeekFrom(marketPrices,'WTI',week), wPrev=prevFriday?.price??priceForWeek('WTI',addDays(week,-7)); const wChg=(wCur!==null&&wCur!==''&&wPrev!==null&&wPrev!=='')?+(wCur-wPrev).toFixed(2):'';
-  reports.unshift({week_end:week,item:'WTI',assessment_date:wLast?.price_date||week,current_price:wCur??'',previous_price:wPrev??'',unit:'$/b',change_abs:wChg,change_pct:wPrev&&wChg!==''?+(wChg/wPrev*100).toFixed(2):'',direction:wChg===''?'':wChg>0?'상승':wChg<0?'하락':'보합',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'HTML용 파싱 v23'})});
+  reports.unshift({week_end:week,item:'WTI',assessment_date:wLast?.price_date||week,current_price:wCur??'',previous_price:wPrev??'',unit:'$/b',change_abs:wChg,change_pct:wPrev&&wChg!==''?+(wChg/wPrev*100).toFixed(2):'',direction:wChg===''?'':wChg>0?'상승':wChg<0?'하락':'보합',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'HTML용 파싱 v25'})});
   const kpis=[]; const ord={};
   for(const a of parsePipe(sec['KPI'],6)){
     const item=canonicalItem(a[1]);const value=num(a[4]);if(!item||!a[2]||!a[3]||value===null)continue;const k=`${item}__${a[2]}`;ord[k]=(ord[k]||0)+1;
@@ -715,6 +722,9 @@ function updatePriceMatrix(week){
   if(ths.length>=8){ths[1].textContent=md(latestDate);ths[2].textContent=md(week);ths[3].innerHTML=`전주比<br><span class="tiny">${md(prev)}→${md(week)}</span>`;ths[5].textContent=md(prev);ths[6].textContent=md(prev2);ths[7].textContent=md(prev3);}
   for(const item of PRICE_ROW_ITEMS){const tr=getPriceRow(item);if(!tr)continue;const c=tr.cells;const latest=latestForWeek(item,week);const cur=priceForWeek(item,week),p1=priceForWeek(item,prev),p2=priceForWeek(item,prev2),p3=priceForWeek(item,prev3);
     setMatrix(c[1],latest?Number(latest.price):null,item,true);setMatrix(c[2],cur,item);setMatrix(c[5],p1,item);setMatrix(c[6],p2,item);setMatrix(c[7],p3,item);
+    // 월요일 최신가는 해당 주 금요일 weekly와 직접 비교: 상승=빨강, 하락=파랑, 동일=검정
+    c[1].classList.remove('up','down');c[1].style.removeProperty('color');
+    if(latest&&cur!==null){const ld=Number(latest.price)-Number(cur);if(ld>0)c[1].classList.add('up');else if(ld<0)c[1].classList.add('down');}
     c[3].classList.remove('up','down');c[4].classList.remove('up','down');
     if(cur!==null&&p1!==null){const diff=cur-p1,pct=p1?diff/p1*100:0;const mark=diff>0?'+':diff<0?'△':'';c[3].textContent=diff===0?'-':`${mark}${fmt(Math.abs(diff),item)}`;c[4].textContent=diff===0?'-':`${mark}${Math.abs(pct).toFixed(Math.abs(pct)<1?1:0)}`;if(diff>0){c[3].classList.add('up');c[4].classList.add('up');}else if(diff<0){c[3].classList.add('down');c[4].classList.add('down');}}
     else if(week!==BASE_WEEK){c[3].textContent='-';c[4].textContent='-';}
@@ -1002,8 +1012,8 @@ function applySelectionColor(color){
 }
 
 /* ---------- 현재화면 -> DB 행 추출 ---------- */
-function extractCurrentReports(){const rows=[];for(const tr of document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')){const item=tr.dataset.item;if(!DETAIL_ITEMS.includes(item))continue;ensurePriceMarkup(tr.cells[1]);const cur=num(tr.cells[1].querySelector('.price-main')?.textContent),chg=num(tr.cells[1].querySelector('.delta')?.textContent);const deltaText=tr.cells[1].querySelector('.delta')?.textContent||'';const signed=(deltaText.includes('△')||deltaText.includes('▼')||deltaText.includes('-'))?-Math.abs(chg||0):deltaText.includes('+')?Math.abs(chg||0):0;const prev=cur===null?null:cur-signed;const market=tr.cells[2],outlook=tr.cells[4];const pick=(root,tag)=>[...root.querySelectorAll('.rowline')].filter(x=>x.textContent.trim().startsWith(tag)).map(x=>x.textContent.trim().slice(tag.length).trim()).join(' / ');const existing=CURRENT_DATA?.reports?.find(x=>x.item===item);const marketMaintenance=pick(market,'[정수]'),outlookMaintenance=pick(outlook,'[정수]'),marketOverseas=pick(market,'[역외]'),outlookOverseas=pick(outlook,'[역외]'),outlookReduction=pick(outlook,'[감산]'),outlookDerivative=pick(outlook,'[유도품]'),outlookNaturalRubber=pick(outlook,'[천연고무]');rows.push({week_end:CURRENT_WEEK,item,assessment_date:existing?.assessment_date||CURRENT_WEEK,current_price:cur??'',previous_price:prev??'',unit:existing?.unit||'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:(market.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),china_commentary:pick(market,'[중국]'),derivative_commentary:pick(market,'[유도품]'),outlook_commentary:(outlook.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),feedstock_commentary:pick(outlook,'[원료]'),supply_demand_commentary:pick(outlook,'[수급]'),market_maintenance_commentary:marketMaintenance,outlook_maintenance_commentary:outlookMaintenance,market_overseas_commentary:marketOverseas,outlook_overseas_commentary:outlookOverseas,outlook_reduction_commentary:outlookReduction,outlook_derivative_commentary:outlookDerivative,outlook_natural_rubber_commentary:outlookNaturalRubber,extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v23',price_style:styleSnapshotSafe(tr.cells[1]),market_style:styleSnapshotSafe(market),tone_style:styleSnapshotSafe(tr.cells[3]),outlook_style:styleSnapshotSafe(outlook),market_html:market.innerHTML,outlook_html:outlook.innerHTML,tone_html:tr.cells[3].innerHTML,market_maintenance_commentary:marketMaintenance,outlook_maintenance_commentary:outlookMaintenance,market_overseas_commentary:marketOverseas,outlook_overseas_commentary:outlookOverseas,outlook_reduction_commentary:outlookReduction,outlook_derivative_commentary:outlookDerivative,outlook_natural_rubber_commentary:outlookNaturalRubber})});}
-  const macro=[...document.querySelectorAll('#p1 .macro .lead,#p1 .macro .bullet')].map(x=>x.innerText.replace(/^[-·\s]+/,'').trim()).filter(Boolean).join('\n');const wr=ALL_MARKET.filter(r=>r.item==='WTI'&&r.price_type==='daily'&&r.price_date<=CURRENT_WEEK).sort((a,b)=>a.price_date.localeCompare(b.price_date));const last=wr.at(-1),prev=priceForWeek('WTI',addDays(CURRENT_WEEK,-7));rows.unshift({week_end:CURRENT_WEEK,item:'WTI',assessment_date:last?.price_date||CURRENT_WEEK,current_price:last?.price??priceForWeek('WTI',CURRENT_WEEK)??'',previous_price:prev??'',unit:'$/b',change_abs:last&&prev!==null?+(last.price-prev).toFixed(2):'',change_pct:last&&prev?+((last.price-prev)/prev*100).toFixed(2):'',direction:last&&prev!==null?(last.price>prev?'상승':last.price<prev?'하락':'보합'):'',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v23',macro_html:document.querySelector('#p1 .macro')?.innerHTML||''})});return rows;}
+function extractCurrentReports(){const rows=[];for(const tr of document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')){const item=tr.dataset.item;if(!DETAIL_ITEMS.includes(item))continue;ensurePriceMarkup(tr.cells[1]);const cur=num(tr.cells[1].querySelector('.price-main')?.textContent),chg=num(tr.cells[1].querySelector('.delta')?.textContent);const deltaText=tr.cells[1].querySelector('.delta')?.textContent||'';const signed=(deltaText.includes('△')||deltaText.includes('▼')||deltaText.includes('-'))?-Math.abs(chg||0):deltaText.includes('+')?Math.abs(chg||0):0;const prev=cur===null?null:cur-signed;const market=tr.cells[2],outlook=tr.cells[4];const pick=(root,tag)=>[...root.querySelectorAll('.rowline')].filter(x=>x.textContent.trim().startsWith(tag)).map(x=>x.textContent.trim().slice(tag.length).trim()).join(' / ');const existing=CURRENT_DATA?.reports?.find(x=>x.item===item);const marketMaintenance=pick(market,'[정수]'),outlookMaintenance=pick(outlook,'[정수]'),marketOverseas=pick(market,'[역외]'),outlookOverseas=pick(outlook,'[역외]'),outlookReduction=pick(outlook,'[감산]'),outlookDerivative=pick(outlook,'[유도품]'),outlookNaturalRubber=pick(outlook,'[천연고무]');rows.push({week_end:CURRENT_WEEK,item,assessment_date:existing?.assessment_date||CURRENT_WEEK,current_price:cur??'',previous_price:prev??'',unit:existing?.unit||'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:(market.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),china_commentary:pick(market,'[중국]'),derivative_commentary:pick(market,'[유도품]'),outlook_commentary:(outlook.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),feedstock_commentary:pick(outlook,'[원료]'),supply_demand_commentary:pick(outlook,'[수급]'),market_maintenance_commentary:marketMaintenance,outlook_maintenance_commentary:outlookMaintenance,market_overseas_commentary:marketOverseas,outlook_overseas_commentary:outlookOverseas,outlook_reduction_commentary:outlookReduction,outlook_derivative_commentary:outlookDerivative,outlook_natural_rubber_commentary:outlookNaturalRubber,extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v25',price_style:styleSnapshotSafe(tr.cells[1]),market_style:styleSnapshotSafe(market),tone_style:styleSnapshotSafe(tr.cells[3]),outlook_style:styleSnapshotSafe(outlook),market_html:market.innerHTML,outlook_html:outlook.innerHTML,tone_html:tr.cells[3].innerHTML,market_maintenance_commentary:marketMaintenance,outlook_maintenance_commentary:outlookMaintenance,market_overseas_commentary:marketOverseas,outlook_overseas_commentary:outlookOverseas,outlook_reduction_commentary:outlookReduction,outlook_derivative_commentary:outlookDerivative,outlook_natural_rubber_commentary:outlookNaturalRubber})});}
+  const macro=[...document.querySelectorAll('#p1 .macro .lead,#p1 .macro .bullet')].map(x=>x.innerText.replace(/^[-·\s]+/,'').trim()).filter(Boolean).join('\n');const wr=ALL_MARKET.filter(r=>r.item==='WTI'&&r.price_type==='daily'&&r.price_date<=CURRENT_WEEK).sort((a,b)=>a.price_date.localeCompare(b.price_date));const last=wr.at(-1),prev=priceForWeek('WTI',addDays(CURRENT_WEEK,-7));rows.unshift({week_end:CURRENT_WEEK,item:'WTI',assessment_date:last?.price_date||CURRENT_WEEK,current_price:last?.price??priceForWeek('WTI',CURRENT_WEEK)??'',previous_price:prev??'',unit:'$/b',change_abs:last&&prev!==null?+(last.price-prev).toFixed(2):'',change_pct:last&&prev?+((last.price-prev)/prev*100).toFixed(2):'',direction:last&&prev!==null?(last.price>prev?'상승':last.price<prev?'하락':'보합'):'',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v25',macro_html:document.querySelector('#p1 .macro')?.innerHTML||''})});return rows;}
 function withDerivedWtiMt(rows){
   const out=[...(rows||[])].map(r=>({...r}));
   for(const r of [...out]){
@@ -1037,7 +1047,8 @@ async function postFetch(action,data){const b=new URLSearchParams();b.set('actio
 function postForm(action,data){return new Promise((resolve,reject)=>{try{const id='gas_iframe_'+Date.now()+'_'+Math.random().toString(36).slice(2);const iframe=document.createElement('iframe');iframe.name=id;iframe.style.display='none';document.body.appendChild(iframe);const form=document.createElement('form');form.method='POST';form.action=GAS_URL;form.target=id;form.style.display='none';for(const [k,v] of Object.entries({action,token:API_TOKEN,data:JSON.stringify(data)})){const input=document.createElement('input');input.type='hidden';input.name=k;input.value=v;form.appendChild(input);}document.body.appendChild(form);form.submit();setTimeout(()=>{form.remove();iframe.remove();resolve({success:true,unverified:true});},1400);}catch(e){reject(e);}});}
 async function saveRows(action,rows,size=20){let unverified=false;for(let i=0;i<rows.length;i+=size){const chunk=rows.slice(i,i+size);try{await postFetch(action,chunk);}catch(fetchErr){console.warn('fetch POST 실패, form fallback',fetchErr);await postForm(action,chunk);unverified=true;}}return {unverified};}
 async function saveToGoogle(data){
-  const normalized={...data,reports:data.reports||[],marketPrices:withDerivedWtiMt(data.marketPrices||[]),kpis:data.kpis||[]};saveLocalWeek(normalized);rebuildAllMarket(normalized.marketPrices);setStatus('loading','Google Sheet 자동 저장 중');
+  const dbMarket=withDerivedWtiMt(data.marketPrices||[]).filter(r=>String(r.price_type||'').toLowerCase()!=='latest');
+  const normalized={...data,reports:data.reports||[],marketPrices:dbMarket,kpis:data.kpis||[]};saveLocalWeek(normalized);rebuildAllMarket(normalized.marketPrices);setStatus('loading','Google Sheet 자동 저장 중');
   if(parseUpdateBtn) parseUpdateBtn.disabled=true;
   try{let uv=false;if(normalized.marketPrices.length)uv=(await saveRows('saveMarketPrices',normalized.marketPrices,22)).unverified||uv;if(normalized.kpis.length)uv=(await saveRows('saveKpis',normalized.kpis,20)).unverified||uv;if(normalized.reports.length)uv=(await saveRows('saveReports',normalized.reports,10)).unverified||uv;setStatus('online',uv?'DB 전송 완료':'DB 자동저장 완료');toast(uv?'화면 반영 완료 · Google Sheet로 전송했습니다. 브라우저 보안상 응답 확인만 제한됩니다.':'화면 반영 완료 · Google Sheet DB 자동저장 완료');return true;}
   catch(e){setStatus('error','DB 자동저장 실패');toast('화면/로컬 반영은 완료 · Google Sheet 자동저장 실패: '+e.message);return false;}
@@ -1048,7 +1059,7 @@ async function loadFromGoogle(week){
   try{
     const [bundle,marketAll]=await Promise.all([gasGet('reportData',{week}),gasGet('marketPrices')]);
     const reports=bundle.reports||[], macro=reports.find(x=>x.item==='WTI')?.market_commentary||'';
-    REMOTE_MARKET=dedupeMarket(marketAll.rows||[]);
+    REMOTE_MARKET=dedupeMarket(marketAll.rows||[]).filter(r=>String(r.price_type||'').toLowerCase()!=='latest');
     const currentMarket=REMOTE_MARKET.filter(r=>r.week_end===week);
     const data={week,macro,marketPrices:currentMarket,kpis:bundle.kpis||[],reports,raw:'',warnings:[]};
     saveLocalWeek(data);
@@ -1098,23 +1109,21 @@ async function saveMondayLatest(){
   for(const inp of mondayPriceBody.querySelectorAll('input[data-item]')){
     const value=num(inp.value);if(value===null)continue;
     const item=inp.dataset.item,wr=weeklyRowForWeek(item,week),unit=wr?.unit||(item==='WTI'?'$/b':'$/mt');
-    rows.push({price_date:monday,week_end:week,item,benchmark:wr?.benchmark||'',price:value,unit,price_type:'latest',source:'월요일 가격 수동 업데이트',note:`${weekLabel(week)} 차주 월요일 최신가격`});
+    rows.push({price_date:monday,week_end:week,item,benchmark:wr?.benchmark||'',price:value,unit,price_type:'latest',source:'월요일 최신가격 로컬 표시',note:`${weekLabel(week)} 차주 월요일 최근가격 · DB 미저장`});
   }
-  const wtiLatest=rows.find(r=>r.item==='WTI');if(wtiLatest)rows.push({...wtiLatest,item:'WTI_MT',benchmark:'WTI 환산 $/MT',price:wtiMt(wtiLatest.price),unit:'$/MT',note:`${weekLabel(week)} 차주 월요일 WTI 자동환산`});
+  const wtiLatest=rows.find(r=>r.item==='WTI');if(wtiLatest)rows.push({...wtiLatest,item:'WTI_MT',benchmark:'WTI 환산 $/MT',price:wtiMt(wtiLatest.price),unit:'$/MT',note:`${weekLabel(week)} 차주 월요일 WTI 자동환산 · DB 미저장`});
   const byItem=new Map(rows.map(r=>[r.item,r]));
-  if(byItem.has('ABS')&&byItem.has('Cost'))rows.push({price_date:monday,week_end:week,item:'ABS Spread',benchmark:'ABS-Cost',price:+(byItem.get('ABS').price-byItem.get('Cost').price).toFixed(2),unit:'$/mt',price_type:'latest',source:'월요일 가격 수동 업데이트',note:'ABS latest - Cost latest 자동계산'});
-  if(byItem.has('PC')&&byItem.has('BPA'))rows.push({price_date:monday,week_end:week,item:'PC-BPA Spread',benchmark:'PC-BPA',price:+(byItem.get('PC').price-byItem.get('BPA').price).toFixed(2),unit:'$/mt',price_type:'latest',source:'월요일 가격 수동 업데이트',note:'PC latest - BPA latest 자동계산'});
+  if(byItem.has('ABS')&&byItem.has('Cost'))rows.push({price_date:monday,week_end:week,item:'ABS Spread',benchmark:'ABS-Cost',price:+(byItem.get('ABS').price-byItem.get('Cost').price).toFixed(2),unit:'$/mt',price_type:'latest',source:'월요일 최신가격 로컬 표시',note:'ABS latest - Cost latest 자동계산 · DB 미저장'});
+  if(byItem.has('PC')&&byItem.has('BPA'))rows.push({price_date:monday,week_end:week,item:'PC-BPA Spread',benchmark:'PC-BPA',price:+(byItem.get('PC').price-byItem.get('BPA').price).toFixed(2),unit:'$/mt',price_type:'latest',source:'월요일 최신가격 로컬 표시',note:'PC latest - BPA latest 자동계산 · DB 미저장'});
   if(!rows.length){toast('입력한 월요일 가격이 없습니다.');return;}
-  saveMondayBtn.disabled=true;setStatus('loading','월요일 latest DB 저장 중');
+  saveMondayBtn.disabled=true;setStatus('loading','월요일 최신가격 화면 반영 중');
   try{
-    const base=(CURRENT_DATA?.marketPrices||ALL_MARKET.filter(r=>r.week_end===week)).filter(r=>r.week_end===week);
-    const merged=dedupeMarket([...base,...rows]);
-    CURRENT_DATA={...(CURRENT_DATA||{}),week,macro:CURRENT_DATA?.macro||'',marketPrices:merged,kpis:CURRENT_DATA?.kpis||[],reports:CURRENT_DATA?.reports||[],raw:CURRENT_DATA?.raw||'',warnings:CURRENT_DATA?.warnings||[]};
-    saveLocalWeek(CURRENT_DATA);rebuildAllMarket(merged);updatePriceMatrix(week);scheduleAutoFit();
-    let uv=false;uv=(await saveRows('saveMarketPrices',rows,22)).unverified||uv;
-    setStatus('online',uv?'월요일 가격 전송 완료':'월요일 가격 DB 저장 완료');
-    toast(`${md(monday)} 최신가격 ${rows.length}건 저장 완료`);closeMondayUpdater();
-  }catch(e){setStatus('error','월요일 가격 저장 실패');toast('월요일 가격 DB 저장 실패: '+e.message);}
+    const existing=mondayLocalRows(week).filter(r=>r.price_date!==monday);
+    saveMondayLocalRows(week,[...existing,...rows]);
+    updatePriceMatrix(week);scheduleAutoFit();fit();
+    setStatus('empty','월요일 최신가격 로컬 적용 완료');
+    toast(`${md(monday)} 최신가격 ${rows.length}건 화면 적용 완료 · DB에는 저장하지 않았습니다.`);closeMondayUpdater();
+  }catch(e){setStatus('error','월요일 최신가격 적용 실패');toast('월요일 최신가격 로컬 적용 실패: '+e.message);}
   finally{saveMondayBtn.disabled=false;}
 }
 
@@ -1251,6 +1260,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&parserOverlay.class
 
 /* ---------- 부팅: 최신 저장 주차 자동 표시 ---------- */
 async function boot(){
+  migrateLegacyMondayLatest();
   initRowMap(); initChartControls(); document.querySelectorAll('.market-table td.body').forEach(normalizeRenderedBody); document.querySelectorAll('.market-table td.price .delta').forEach(d=>{normalizeDeltaNotation(d);normalizeDeltaColor(d);}); setTimeout(()=>refreshDetailDeltaColors(),0); BASE_MARKET=seedBaseMarket(); rebuildAllMarket();
   const localWeeks=Object.keys(localDb).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort().reverse();
   const localLatest=localWeeks[0]||BASE_WEEK;
