@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Reapply patch idempotently
-        run: python .github/rolling_patch.py
       - name: Extract browser script and check JavaScript syntax
         run: |
           python - <<'PY'
