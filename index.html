@@ -35,7 +35,7 @@ body{font-synthesis:none}
 .price-matrix th{height:48px;background:#dce7f0;font-size:13.2px;font-weight:800;line-height:1.05}.price-matrix th.peach{background:#f4d6c4}.price-matrix td.item{text-align:left;padding-left:18px;font-size:13px}.price-matrix td.up{color:#dc342a;font-weight:800}.price-matrix td.down{color:#304eb6;font-weight:800}.price-matrix .spread td{background:#fff98a}.price-matrix .grp td{border-top:1.8px solid #819aaa}.price-matrix .tiny{font-size:9.5px}.price-matrix .two{line-height:1.1}
 #p1 .approval{right:90px;bottom:34px;width:600px;grid-template-columns:120px 150px 170px 160px}
 /* shared report tables ------------------------------------------------ */
-.market-table{border-collapse:collapse;table-layout:fixed;border:1.15px solid #666;background:#fff}.market-table th,.market-table td{border:1px solid #777}.market-table thead th{height:37px;background:#e9b7ae;font-size:15px;font-weight:800;letter-spacing:5px}.market-table thead th:nth-child(1),.market-table thead th:nth-child(2){letter-spacing:0}.market-table td.item{color:#101dc1;text-decoration:underline;text-align:center;font-weight:800;font-size:17px}.market-table td.price{background:var(--yellow);text-align:center;font-weight:800;font-size:18px;line-height:1.35}.market-table td.price .delta{font-size:.80em;color:#555}.market-table td.price .delta.delta-up{color:var(--red)}.market-table td.price .delta.delta-down{color:#304eb6}.market-table td.price .delta.delta-flat{color:#555}.market-table td.body{vertical-align:top;padding:12px 13px;font-size:14px;line-height:1.48;letter-spacing:-.25px;overflow:hidden}.market-table td.tone{text-align:center;font-size:16px;font-weight:800}.market-table .lead{font-weight:700;margin:0 0 7px}.market-table .rowline{margin:4px 0}.market-table .rowline.tagged{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:5px;align-items:start}.market-table .tag-label{font-weight:800;white-space:nowrap}.market-table .tag-content{min-width:0;overflow-wrap:anywhere;word-break:keep-all}.market-table .tag-content.micro-fit{white-space:nowrap;word-break:normal}.market-table b{font-weight:800}.market-table .red{color:var(--red)}.market-table .blue{color:var(--blue)}
+.market-table{border-collapse:collapse;table-layout:fixed;border:1.15px solid #666;background:#fff}.market-table th,.market-table td{border:1px solid #777}.market-table thead th{height:37px;background:#e9b7ae;font-size:15px;font-weight:800;letter-spacing:5px}.market-table thead th:nth-child(1),.market-table thead th:nth-child(2){letter-spacing:0}.market-table td.item{color:#101dc1;text-decoration:underline;text-align:center;font-weight:800;font-size:17px}.market-table td.price{background:var(--yellow);text-align:center;font-weight:800;font-size:18px;line-height:1.35}.market-table td.price .delta{font-size:.80em;color:#555;font-weight:800}.market-table td.price .delta.delta-up{color:var(--red)!important}.market-table td.price .delta.delta-down{color:#304eb6!important}.market-table td.price .delta.delta-flat{color:#555!important}.market-table td.body{vertical-align:top;padding:12px 13px;font-size:14px;line-height:1.48;letter-spacing:-.25px;overflow:hidden}.market-table td.tone{text-align:center;font-size:16px;font-weight:800}.market-table .lead{font-weight:700;margin:0 0 7px}.market-table .rowline{margin:4px 0}.market-table .rowline.tagged{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:5px;align-items:start}.market-table .tag-label{font-weight:800;white-space:nowrap}.market-table .tag-content{min-width:0;overflow-wrap:anywhere;word-break:keep-all}.market-table .tag-content.micro-fit{white-space:nowrap;word-break:normal}.market-table b{font-weight:800}.market-table .red{color:var(--red)}.market-table .blue{color:var(--blue)}
 /* charts ------------------------------------------------ */
 .graph3{position:absolute;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.chart-card{position:relative;height:100%;background:#f2f2f2;border:1px solid #a9a9a9;overflow:hidden}.chart-head{position:absolute;left:0;top:0;height:39px;background:#fff978;padding:7px 22px 0;font-size:18px;font-weight:800;min-width:180px}.legend{position:absolute;right:11px;top:7px;font-size:10px;line-height:1.45}.legend .lg{display:inline-block;width:35px;border-top:2.5px solid;margin-right:7px;vertical-align:middle}.legend .blue{border-color:#151ed0}.legend .red{border-color:#df2220}.unit{position:absolute;right:8px;top:40px;font-size:9.5px}.chart-card svg{position:absolute;left:5px;top:48px;width:calc(100% - 10px);height:calc(100% - 54px)}.bep-note{position:absolute;left:16px;bottom:28px;font-size:10px;color:#676767}.chart-label{font-size:11px;font-weight:800}.chart-date{font-size:8.5px;fill:#666}
 /* PAGE 2 ------------------------------------------------ */
@@ -68,6 +68,9 @@ body{font-synthesis:none}
 .parser-preview.error .parse-result-title{color:#b42318}
 .parser-preview.warn .parse-result-title{color:#8a6200}
 .parser-preview .parse-result-detail{display:block;color:inherit;font-size:12px;line-height:1.6;white-space:pre-wrap}.parser-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #ddd}.parser-actions button{height:34px;padding:0 14px;border:1px solid #888;background:#fff;font-family:inherit;font-weight:800;cursor:pointer}.parser-actions .primary{background:#17365d;color:#fff;border-color:#17365d}.parser-actions button:disabled{opacity:.55;cursor:wait}
+
+/* Monday latest price updater ------------------------------------------------ */
+.monday-meta{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;background:#f5f7fa;border:1px solid #d5dbe3;font-size:12px}.monday-meta b{font-size:13px}.monday-grid{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}.monday-grid th,.monday-grid td{border:1px solid #c1c8d0;padding:6px 7px;text-align:center}.monday-grid th{background:#edf2f7;font-weight:800}.monday-grid td:first-child{text-align:left;font-weight:800}.monday-grid input{width:100%;height:29px;border:1px solid #9aa5b1;padding:0 7px;text-align:right;font-family:inherit;font-size:12px}.monday-grid .ref{color:#67717d}.monday-grid .unit{position:static;font-size:11px}.monday-note{margin-top:10px;font-size:11px;line-height:1.5;color:#59636f}.monday-note strong{color:#17365d}
 
 /* manual edit mode ------------------------------------------------ */
 .edit-tools{display:none;align-items:center;gap:5px;flex-wrap:wrap;padding:4px 7px;border:1px solid #cbd3dc;background:#f7f9fb;border-radius:5px}
@@ -116,6 +119,7 @@ body.edit-mode .edit-active{box-shadow:inset 0 0 0 3px rgba(23,54,93,.42)!import
     <select id="weekSelect" title="보고서 주차 선택"><option value="2026-08-28">W35 · 2026-08-28</option></select>
     <button id="reloadDbBtn" type="button">DB 불러오기</button>
     <button id="openParserBtn" type="button">HTML용 파싱 입력</button>
+    <button id="openMondayBtn" type="button">월요일 가격 업데이트</button>
     <button id="editModeBtn" type="button">편집 모드</button>
     <span class="png-label">PPT 이미지</span>
     <button id="exportP1Btn" class="png-btn" type="button" title="1페이지를 3072×2048 PNG로 저장">1P PNG</button>
@@ -173,6 +177,22 @@ KPI
       <div id="parserPreview" class="parser-preview">파싱 미리보기를 누르면 규격이 정상인 경우 초록색으로 「파싱 문제 없습니다」가 표시되고, 오류나 누락이 있으면 빨간색으로 확인사항을 표시합니다.</div>
     </div>
     <div class="parser-actions"><button id="parseOnlyBtn" type="button">파싱 검사</button><button id="parseUpdateBtn" class="primary" type="button">파싱 적용</button></div>
+  </div>
+</div>
+<div id="mondayOverlay" class="parser-overlay" aria-hidden="true">
+  <div class="parser-panel" role="dialog" aria-modal="true" aria-label="월요일 최신가격 업데이트">
+    <div class="parser-head"><strong>월요일 최신가격 업데이트</strong><button id="closeMondayBtn" class="parser-close" type="button">×</button></div>
+    <div class="parser-body">
+      <div class="parser-help">현재 보고 있는 주차의 <b>차주 월요일 가격</b>을 화요일에 수동 입력하는 창입니다. 저장되는 행은 <b>price_type=latest</b>만 갱신하며, 금요일 weekly 가격·시황·KPI는 건드리지 않습니다.</div>
+      <div class="monday-meta"><span>대상 보고서: <b id="mondayWeekLabel"></b></span><span>최신가격 기준일: <b id="mondayDateLabel"></b></span></div>
+      <table class="monday-grid">
+        <colgroup><col style="width:24%"><col style="width:24%"><col style="width:32%"><col style="width:20%"></colgroup>
+        <thead><tr><th>품목</th><th>금요일 weekly</th><th>월요일 latest 입력</th><th>단위</th></tr></thead>
+        <tbody id="mondayPriceBody"></tbody>
+      </table>
+      <div class="monday-note"><strong>ABS Spread</strong>는 ABS−Cost, <strong>PC-BPA Spread</strong>는 PC−BPA로 입력값이 모두 있을 때 자동 계산해 latest로 함께 저장합니다. 빈칸은 기존 값이 있으면 그대로 유지하고 새 값을 만들지 않습니다.</div>
+    </div>
+    <div class="parser-actions"><button id="cancelMondayBtn" type="button">취소</button><button id="saveMondayBtn" class="primary" type="button">월요일 가격 저장</button></div>
   </div>
 </div>
 <div class="stage"><div id="pageFrame" class="page-frame">
@@ -315,6 +335,7 @@ const SHEET_URL = 'https://docs.google.com/spreadsheets/d/11UUHeRpP-BOnWUz8ceeLQ
 const LOCAL_KEY = 'raw_material_weekly_v8';
 const PRICE_ROW_ITEMS = ['WTI','Naphtha','Ethylene','Propylene','PP','Benzene','SM','AN','BD','Cost','ABS','ABS Spread','BPA','PC','PC-BPA Spread','MMA','PMMA'];
 const DETAIL_ITEMS = ['SM','AN','BD','BPA','MMA'];
+const MONDAY_ITEMS = ['WTI','Naphtha','Ethylene','Propylene','PP','Benzene','SM','AN','BD','Cost','ABS','BPA','PC','MMA','PMMA'];
 const SECTION_NAMES = ['기준주차','MACRO ISSUE','WTI DAILY','DAILY PRICE','MARKET PRICE','SM','AN','BD','BPA','MMA','KPI'];
 const FIELD_MAP = {
   '평가일':'assessment_date','가격':'current_price','전주가격':'previous_price','변동값':'change_abs','변동률':'change_pct','방향':'direction','시황':'market_commentary','[중국]':'china_commentary','[유도품]':'derivative_commentary','전망':'outlook_commentary','[원료]':'feedstock_commentary','[수급]':'supply_demand_commentary'
@@ -327,6 +348,14 @@ const weekSelect = document.getElementById('weekSelect');
 const dbStatus = document.getElementById('dbStatus');
 const reloadDbBtn = document.getElementById('reloadDbBtn');
 const openParserBtn = document.getElementById('openParserBtn');
+const openMondayBtn = document.getElementById('openMondayBtn');
+const mondayOverlay = document.getElementById('mondayOverlay');
+const closeMondayBtn = document.getElementById('closeMondayBtn');
+const cancelMondayBtn = document.getElementById('cancelMondayBtn');
+const saveMondayBtn = document.getElementById('saveMondayBtn');
+const mondayWeekLabel = document.getElementById('mondayWeekLabel');
+const mondayDateLabel = document.getElementById('mondayDateLabel');
+const mondayPriceBody = document.getElementById('mondayPriceBody');
 const parserOverlay = document.getElementById('parserOverlay');
 const closeParserBtn = document.getElementById('closeParserBtn');
 const parserText = document.getElementById('parserText');
@@ -564,16 +593,16 @@ function updateBasis(week){document.getElementById('basisDate').textContent=week
 }
 function updatePriceMatrix(week){
   const table=document.querySelector('#p1 .price-matrix'),ths=[...table.querySelectorAll('thead th')];const prev=addDays(week,-7),prev2=addDays(week,-14),prev3=addDays(week,-21);
-  const currentRows=ALL_MARKET.filter(r=>r.week_end===week);const latestDates=currentRows.map(r=>r.price_date).filter(Boolean).sort();const latestDate=latestDates.at(-1)||week;
+  const latestDate=addDays(week,3); // 금요일 보고서의 차주 월요일
   if(ths.length>=8){ths[1].textContent=md(latestDate);ths[2].textContent=md(week);ths[3].innerHTML=`전주比<br><span class="tiny">${md(prev)}→${md(week)}</span>`;ths[5].textContent=md(prev);ths[6].textContent=md(prev2);ths[7].textContent=md(prev3);}
-  for(const item of PRICE_ROW_ITEMS){const tr=getPriceRow(item);if(!tr)continue;const c=tr.cells;const latest=displayLatestForWeek(item,week);const cur=priceForWeek(item,week),p1=priceForWeek(item,prev),p2=priceForWeek(item,prev2),p3=priceForWeek(item,prev3);
-    setMatrix(c[1],latest?Number(latest.price):cur,item);setMatrix(c[2],cur,item);setMatrix(c[5],p1,item);setMatrix(c[6],p2,item);setMatrix(c[7],p3,item);
+  for(const item of PRICE_ROW_ITEMS){const tr=getPriceRow(item);if(!tr)continue;const c=tr.cells;const latest=latestForWeek(item,week);const cur=priceForWeek(item,week),p1=priceForWeek(item,prev),p2=priceForWeek(item,prev2),p3=priceForWeek(item,prev3);
+    setMatrix(c[1],latest?Number(latest.price):null,item,true);setMatrix(c[2],cur,item);setMatrix(c[5],p1,item);setMatrix(c[6],p2,item);setMatrix(c[7],p3,item);
     c[3].classList.remove('up','down');c[4].classList.remove('up','down');
     if(cur!==null&&p1!==null){const diff=cur-p1,pct=p1?diff/p1*100:0;c[3].textContent=diff===0?'-':`${diff>0?'+':'△'}${fmt(Math.abs(diff),item)}`;c[4].textContent=diff===0?'-':Math.abs(pct).toFixed(Math.abs(pct)<1?1:0);if(diff>0){c[3].classList.add('up');c[4].classList.add('up');}else if(diff<0){c[3].classList.add('down');c[4].classList.add('down');}}
     else if(week!==BASE_WEEK){c[3].textContent='-';c[4].textContent='-';}
   }
 }
-function setMatrix(td,v,item){if(v===null||v===undefined||!Number.isFinite(Number(v))){if(CURRENT_WEEK!==BASE_WEEK)td.textContent='-';return;}if(item==='WTI')td.innerHTML=`${fmt(v,item)}<br><span class="tiny">${Math.round(Number(v)*7.326).toLocaleString('en-US')}</span>`;else td.textContent=fmt(v,item);}
+function setMatrix(td,v,item,blankIfMissing=false){if(v===null||v===undefined||!Number.isFinite(Number(v))){td.innerHTML=blankIfMissing?'':(CURRENT_WEEK!==BASE_WEEK?'-':td.innerHTML);return;}if(item==='WTI')td.innerHTML=`${fmt(v,item)}<br><span class="tiny">${Math.round(Number(v)*7.326).toLocaleString('en-US')}</span>`;else td.textContent=fmt(v,item);}
 function renderWtiChart(week){
   const svg=document.querySelector('#p1 .oil-chart svg');if(!svg)return;const start=addDays(week,-7);const rows=marketRows('WTI','daily').filter(r=>r.price_date>=start&&r.price_date<=week);if(rows.length<2)return;
   const W=455,H=225,L=53,R=19,T=21,B=31,vals=rows.map(r=>Number(r.price));let mn=Math.floor(Math.min(...vals)-1),mx=Math.ceil(Math.max(...vals)+1);if(mx-mn<5){mx+=2;mn-=2;}const x=i=>L+(W-L-R)*(rows.length===1?.5:i/(rows.length-1)),y=v=>T+(H-T-B)*(mx-v)/(mx-mn);
@@ -688,7 +717,7 @@ function lineAdjust(delta){const el=ACTIVE_EDIT_TARGET;if(!el)return toast('편�
 function resetFit(){const el=ACTIVE_EDIT_TARGET;if(!el)return toast('편집할 칸을 먼저 클릭하세요.');el.dataset.fontMode='auto';el.style.fontSize='';el.style.lineHeight='';scheduleAutoFit();}
 
 /* ---------- 현재화면 -> DB 행 추출 ---------- */
-function extractCurrentReports(){const rows=[];for(const tr of document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')){const item=tr.dataset.item;if(!DETAIL_ITEMS.includes(item))continue;ensurePriceMarkup(tr.cells[1]);const cur=num(tr.cells[1].querySelector('.price-main')?.textContent),chg=num(tr.cells[1].querySelector('.delta')?.textContent);const deltaText=tr.cells[1].querySelector('.delta')?.textContent||'';const signed=deltaText.includes('-')&&!deltaText.includes('(-)')?-Math.abs(chg||0):deltaText.includes('+')?Math.abs(chg||0):0;const prev=cur===null?null:cur-signed;const market=tr.cells[2],outlook=tr.cells[4];const pick=(root,tag)=>[...root.querySelectorAll('.rowline')].filter(x=>x.textContent.trim().startsWith(tag)).map(x=>x.textContent.trim().slice(tag.length).trim()).join(' / ');const existing=CURRENT_DATA?.reports?.find(x=>x.item===item);rows.push({week_end:CURRENT_WEEK,item,assessment_date:existing?.assessment_date||CURRENT_WEEK,current_price:cur??'',previous_price:prev??'',unit:existing?.unit||'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:(market.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),china_commentary:pick(market,'[중국]'),derivative_commentary:pick(market,'[유도품]'),outlook_commentary:(outlook.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),feedstock_commentary:pick(outlook,'[원료]'),supply_demand_commentary:pick(outlook,'[수급]'),extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v8',price_style:styleSnapshotSafe(tr.cells[1]),market_style:styleSnapshotSafe(market),tone_style:styleSnapshotSafe(tr.cells[3]),outlook_style:styleSnapshotSafe(outlook)})});}
+function extractCurrentReports(){const rows=[];for(const tr of document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')){const item=tr.dataset.item;if(!DETAIL_ITEMS.includes(item))continue;ensurePriceMarkup(tr.cells[1]);const cur=num(tr.cells[1].querySelector('.price-main')?.textContent),chg=num(tr.cells[1].querySelector('.delta')?.textContent);const deltaText=tr.cells[1].querySelector('.delta')?.textContent||'';const signed=deltaText.includes('-')&&!deltaText.includes('(-)')?-Math.abs(chg||0):deltaText.includes('+')?Math.abs(chg||0):0;const prev=cur===null?null:cur-signed;const market=tr.cells[2],outlook=tr.cells[4];const pick=(root,tag)=>[...root.querySelectorAll('.rowline')].filter(x=>x.textContent.trim().startsWith(tag)).map(x=>x.textContent.trim().slice(tag.length).trim()).join(' / ');const existing=CURRENT_DATA?.reports?.find(x=>x.item===item);rows.push({week_end:CURRENT_WEEK,item,assessment_date:existing?.assessment_date||CURRENT_WEEK,current_price:cur??'',previous_price:prev??'',unit:existing?.unit||'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:(market.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),china_commentary:pick(market,'[중국]'),derivative_commentary:pick(market,'[유도품]'),outlook_commentary:(outlook.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),feedstock_commentary:pick(outlook,'[원료]'),supply_demand_commentary:pick(outlook,'[수급]'),extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v9',price_style:styleSnapshotSafe(tr.cells[1]),market_style:styleSnapshotSafe(market),tone_style:styleSnapshotSafe(tr.cells[3]),outlook_style:styleSnapshotSafe(outlook)})});}
   const macro=[...document.querySelectorAll('#p1 .macro .lead,#p1 .macro .bullet')].map(x=>x.innerText.replace(/^[-·\s]+/,'').trim()).filter(Boolean).join('\n');const wr=ALL_MARKET.filter(r=>r.item==='WTI'&&r.price_type==='daily'&&r.price_date<=CURRENT_WEEK).sort((a,b)=>a.price_date.localeCompare(b.price_date));const last=wr.at(-1),prev=priceForWeek('WTI',addDays(CURRENT_WEEK,-7));rows.unshift({week_end:CURRENT_WEEK,item:'WTI',assessment_date:last?.price_date||CURRENT_WEEK,current_price:last?.price??priceForWeek('WTI',CURRENT_WEEK)??'',previous_price:prev??'',unit:'$/b',change_abs:last&&prev!==null?+(last.price-prev).toFixed(2):'',change_pct:last&&prev?+((last.price-prev)/prev*100).toFixed(2):'',direction:last&&prev!==null?(last.price>prev?'상승':last.price<prev?'하락':'보합'):'',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v5'})});return rows;}
 function extractMarketFromScreen(){
   // 파싱/DB에서 받은 실제 평가일·benchmark·daily 이력을 최대한 보존하고,
@@ -744,6 +773,55 @@ async function syncDbWeeks(){try{const r=await gasGet('weeks');const ws=(r.weeks
 function addWeekOption(week){if(!week)return;if([...weekSelect.options].some(o=>o.value===week))return;weekSelect.add(new Option(`${weekLabel(week)} · ${week}`,week));sortWeekOptions();}
 function sortWeekOptions(){const vals=[...weekSelect.options].map(o=>o.value).filter(Boolean).sort().reverse();weekSelect.innerHTML='';vals.forEach(w=>weekSelect.add(new Option(`${weekLabel(w)} · ${w}${localDb[w]?' · 로컬':''}`,w)));}
 function refreshWeekSelect(prefer){addWeekOption(BASE_WEEK);Object.keys(localDb).forEach(addWeekOption);sortWeekOptions();if(prefer&&[...weekSelect.options].some(o=>o.value===prefer))weekSelect.value=prefer;}
+
+/* ---------- 차주 월요일 최신가격 수동 업데이트 ---------- */
+function mondayDateForWeek(week){return addDays(week,3);}
+function latestUnitFor(item){
+  const wr=weeklyRowForWeek(item,CURRENT_WEEK);return wr?.unit||(item==='WTI'?'$/b':'$/mt');
+}
+function renderMondayInputs(){
+  const week=CURRENT_WEEK,monday=mondayDateForWeek(week);
+  mondayWeekLabel.textContent=`${weekLabel(week)} · ${week}`;
+  mondayDateLabel.textContent=monday;
+  mondayPriceBody.innerHTML='';
+  for(const item of MONDAY_ITEMS){
+    const wr=weeklyRowForWeek(item,week), latest=latestForWeek(item,week), unit=wr?.unit||latest?.unit||(item==='WTI'?'$/b':'$/mt');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${esc(item)}</td><td class="ref">${wr?fmt(wr.price,item):'-'}</td><td><input type="number" step="any" inputmode="decimal" data-item="${esc(item)}" value="${latest&&latest.price_date===monday?Number(latest.price):''}" placeholder="입력"></td><td>${esc(unit)}</td>`;
+    mondayPriceBody.appendChild(tr);
+  }
+}
+function openMondayUpdater(){
+  if(!requireAdmin())return;
+  CURRENT_WEEK=weekSelect.value||CURRENT_WEEK;
+  renderMondayInputs();
+  mondayOverlay.classList.add('open');mondayOverlay.setAttribute('aria-hidden','false');
+  mondayPriceBody.querySelector('input')?.focus();
+}
+function closeMondayUpdater(){mondayOverlay.classList.remove('open');mondayOverlay.setAttribute('aria-hidden','true');}
+async function saveMondayLatest(){
+  const week=CURRENT_WEEK,monday=mondayDateForWeek(week),rows=[];
+  for(const inp of mondayPriceBody.querySelectorAll('input[data-item]')){
+    const value=num(inp.value);if(value===null)continue;
+    const item=inp.dataset.item,wr=weeklyRowForWeek(item,week),unit=wr?.unit||(item==='WTI'?'$/b':'$/mt');
+    rows.push({price_date:monday,week_end:week,item,benchmark:wr?.benchmark||'',price:value,unit,price_type:'latest',source:'월요일 가격 수동 업데이트',note:`${weekLabel(week)} 차주 월요일 최신가격`});
+  }
+  const byItem=new Map(rows.map(r=>[r.item,r]));
+  if(byItem.has('ABS')&&byItem.has('Cost'))rows.push({price_date:monday,week_end:week,item:'ABS Spread',benchmark:'ABS-Cost',price:+(byItem.get('ABS').price-byItem.get('Cost').price).toFixed(2),unit:'$/mt',price_type:'latest',source:'월요일 가격 수동 업데이트',note:'ABS latest - Cost latest 자동계산'});
+  if(byItem.has('PC')&&byItem.has('BPA'))rows.push({price_date:monday,week_end:week,item:'PC-BPA Spread',benchmark:'PC-BPA',price:+(byItem.get('PC').price-byItem.get('BPA').price).toFixed(2),unit:'$/mt',price_type:'latest',source:'월요일 가격 수동 업데이트',note:'PC latest - BPA latest 자동계산'});
+  if(!rows.length){toast('입력한 월요일 가격이 없습니다.');return;}
+  saveMondayBtn.disabled=true;setStatus('loading','월요일 latest DB 저장 중');
+  try{
+    const base=(CURRENT_DATA?.marketPrices||ALL_MARKET.filter(r=>r.week_end===week)).filter(r=>r.week_end===week);
+    const merged=dedupeMarket([...base,...rows]);
+    CURRENT_DATA={...(CURRENT_DATA||{}),week,macro:CURRENT_DATA?.macro||'',marketPrices:merged,kpis:CURRENT_DATA?.kpis||[],reports:CURRENT_DATA?.reports||[],raw:CURRENT_DATA?.raw||'',warnings:CURRENT_DATA?.warnings||[]};
+    saveLocalWeek(CURRENT_DATA);rebuildAllMarket(merged);updatePriceMatrix(week);scheduleAutoFit();
+    let uv=false;uv=(await saveRows('saveMarketPrices',rows,22)).unverified||uv;
+    setStatus('online',uv?'월요일 가격 전송 완료':'월요일 가격 DB 저장 완료');
+    toast(`${md(monday)} 최신가격 ${rows.length}건 저장 완료`);closeMondayUpdater();
+  }catch(e){setStatus('error','월요일 가격 저장 실패');toast('월요일 가격 DB 저장 실패: '+e.message);}
+  finally{saveMondayBtn.disabled=false;}
+}
 
 /* ---------- 파서 모달 / 기준 위크 ---------- */
 function fridayOf(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());const day=x.getDay();const delta=(5-day+7)%7;x.setDate(x.getDate()+delta);return x;}
@@ -855,6 +933,7 @@ async function exportPng(pageId,btn){const old=btn.textContent;btn.disabled=true
 tabButtons.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
 window.addEventListener('resize',fit);
 openParserBtn.addEventListener('click',openParser);closeParserBtn.addEventListener('click',closeParser);parserOverlay.addEventListener('click',e=>{if(e.target===parserOverlay)closeParser();});
+openMondayBtn.addEventListener('click',openMondayUpdater);closeMondayBtn.addEventListener('click',closeMondayUpdater);cancelMondayBtn.addEventListener('click',closeMondayUpdater);mondayOverlay.addEventListener('click',e=>{if(e.target===mondayOverlay)closeMondayUpdater();});saveMondayBtn.addEventListener('click',saveMondayLatest);
 parseOnlyBtn.addEventListener('click',()=>runParser('preview'));parseUpdateBtn.addEventListener('click',()=>runParser('save'));
 parserWeekSelect.addEventListener('change',()=>{let pw=null;try{const raw=parserText.value.trim();if(raw)pw=parseFixedFormat(raw).week;}catch(e){}updateParserWeekInfo(pw);});
 parserText.addEventListener('input',()=>{try{const raw=parserText.value.trim();updateParserWeekInfo(raw?parseFixedFormat(raw).week:null);}catch(e){updateParserWeekInfo();}});
@@ -868,7 +947,7 @@ editModeBtn.addEventListener('click',async()=>{
 document.addEventListener('click',e=>{if(EDIT_MODE){const t=targetForNode(e.target);if(t)setActive(t);}});document.addEventListener('focusin',e=>{if(EDIT_MODE){const t=targetForNode(e.target);if(t)setActive(t);}});
 fontDownBtn.addEventListener('click',()=>fontAdjust(-.5));fontUpBtn.addEventListener('click',()=>fontAdjust(.5));lineDownBtn.addEventListener('click',()=>lineAdjust(-1));lineUpBtn.addEventListener('click',()=>lineAdjust(1));autoFitBtn.addEventListener('click',resetFit);
 exportP1Btn.addEventListener('click',()=>exportPng('p1',exportP1Btn));exportP2Btn.addEventListener('click',()=>exportPng('p2',exportP2Btn));exportP3Btn.addEventListener('click',()=>exportPng('p3',exportP3Btn));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&parserOverlay.classList.contains('open'))closeParser();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&parserOverlay.classList.contains('open'))closeParser();if(e.key==='Escape'&&mondayOverlay.classList.contains('open'))closeMondayUpdater();});
 
 /* ---------- 부팅: 최신 저장 주차 자동 표시 ---------- */
 async function boot(){
