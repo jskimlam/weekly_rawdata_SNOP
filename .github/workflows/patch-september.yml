@@ -1,0 +1,36 @@
+name: Patch September comparison header
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace August 2025 comparison header with September 2025
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '25년<br>8월'
+          new = '25년<br>9월'
+          if old not in s:
+              raise SystemExit('Target header not found')
+          s2 = s.replace(old, new, 1)
+          p.write_text(s2, encoding='utf-8')
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Update 2025 comparison month to September"
+          git push
