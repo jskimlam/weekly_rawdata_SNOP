@@ -142,8 +142,8 @@ body.edit-mode .edit-active{box-shadow:inset 0 0 0 3px rgba(23,54,93,.42)!import
     <button id="exportP3Btn" class="png-btn" type="button" title="3페이지를 3072×2048 PNG로 저장">3P PNG</button>
     <div id="editTools" class="edit-tools" aria-label="수동 편집 도구">
       <span id="editScope" class="scope">편집할 항목을 클릭</span>
-      <button id="fontDownBtn" type="button" title="글자 작게">A−</button>
-      <button id="fontUpBtn" type="button" title="글자 크게">A+</button>
+      <button id="fontDownBtn" type="button" title="선택한 텍스트만 글자 작게">A−</button>
+      <button id="fontUpBtn" type="button" title="선택한 텍스트만 글자 크게">A+</button>
       <span class="divider"></span>
       <button id="lineDownBtn" type="button" title="줄간격 좁게">줄−</button>
       <button id="lineUpBtn" type="button" title="줄간격 넓게">줄+</button>
@@ -152,7 +152,7 @@ body.edit-mode .edit-active{box-shadow:inset 0 0 0 3px rgba(23,54,93,.42)!import
       <button id="textRedBtn" class="color-btn color-red" type="button" title="선택한 글자를 빨간색으로">빨강</button>
       <button id="textBlueBtn" class="color-btn color-blue" type="button" title="선택한 글자를 파란색으로">파랑</button>
       <button id="textBlackBtn" class="color-btn color-black" type="button" title="선택한 글자를 검은색으로">검정</button>
-      <span class="edit-note">텍스트 일부 선택 후 색상 변경 가능 · 편집 종료 시 DB 자동 업데이트</span>
+      <span class="edit-note">텍스트 일부 선택 후 글자크기·색상 변경 가능 · 편집 종료 시 DB 자동 업데이트</span>
     </div>
   </div>
   <div class="tabs">
@@ -899,7 +899,33 @@ function targetForNode(node){const el=node?.nodeType===1?node:node?.parentElemen
 function editLabel(el){if(!el)return '편집할 항목을 클릭';if(el.matches('#p1 .macro'))return '1P · Macro Issue';const tr=el.closest('tr[data-item]'),item=tr?.dataset.item||'';if(el.closest('#p1 .price-matrix'))return `1P · ${item} 가격`;if(el.classList.contains('price'))return `${item} · 가격`;if(el.classList.contains('tone'))return `${item} · 방향`;if(el.classList.contains('body'))return `${item} · ${el.cellIndex===2?'시황':'전망'}`;return item;}
 function setActive(el){ACTIVE_EDIT_TARGET?.classList.remove('edit-active');ACTIVE_EDIT_TARGET=el;ACTIVE_EDIT_TARGET?.classList.add('edit-active');editScope.textContent=editLabel(el);}
 function setEditMode(on){EDIT_MODE=!!on;document.body.classList.toggle('edit-mode',EDIT_MODE);editModeBtn.classList.toggle('active',EDIT_MODE);editModeBtn.textContent=EDIT_MODE?'편집 종료':'편집 모드';document.querySelectorAll('.market-table td.body,.market-table td.tone,#p1 .price-matrix td:not(.item),#p1 .macro .head,#p1 .macro .lead,#p1 .macro .bullet').forEach(el=>{el.contentEditable=EDIT_MODE?'true':'false';el.spellcheck=false;});document.querySelectorAll('.market-table td.price').forEach(td=>{ensurePriceMarkup(td);[td.querySelector('.price-main'),td.querySelector('.delta')].filter(Boolean).forEach(el=>el.contentEditable=EDIT_MODE?'true':'false');});if(!EDIT_MODE){setActive(null);scheduleAutoFit();}}
-function fontAdjust(delta){const el=ACTIVE_EDIT_TARGET;if(!el)return toast('편집할 칸을 먼저 클릭하세요.');const cur=parseFloat(getComputedStyle(el).fontSize)||14;el.dataset.fontMode='manual';el.style.fontSize=Math.max(9,Math.min(24,cur+delta))+'px';}
+function fontAdjust(delta){
+  if(!EDIT_MODE)return toast('편집 모드에서 사용하세요.');
+  const sel=window.getSelection();
+  if(!sel||sel.rangeCount===0||sel.isCollapsed)return toast('글자크기를 바꿀 텍스트 일부를 먼저 선택하세요.');
+  const range=sel.getRangeAt(0);
+  const common=range.commonAncestorContainer.nodeType===1?range.commonAncestorContainer:range.commonAncestorContainer.parentElement;
+  const editable=common?.closest?.('[contenteditable="true"]');
+  if(!editable||!editable.contains(range.startContainer)||!editable.contains(range.endContainer))return toast('편집 가능한 영역 안에서 텍스트를 선택하세요.');
+  const startEl=range.startContainer.nodeType===1?range.startContainer:range.startContainer.parentElement;
+  const cur=parseFloat(getComputedStyle(startEl||editable).fontSize)||14;
+  const next=Math.max(9,Math.min(24,cur+delta));
+  try{
+    const frag=range.extractContents();
+    const span=document.createElement('span');
+    span.className='manual-font-size';
+    span.style.fontSize=next+'px';
+    span.appendChild(frag);
+    span.querySelectorAll('[style]').forEach(ch=>{if(ch!==span)ch.style.removeProperty('font-size');});
+    span.querySelectorAll('font[size]').forEach(ch=>ch.removeAttribute('size'));
+    range.insertNode(span);
+    const newRange=document.createRange();
+    newRange.selectNodeContents(span);
+    sel.removeAllRanges();sel.addRange(newRange);
+    setActive(targetForNode(editable)||editable);
+    toast(`선택한 텍스트 글자크기 ${next.toFixed(1)}px`);
+  }catch(e){toast('선택한 텍스트 글자크기 변경에 실패했습니다.');}
+}
 function lineAdjust(delta){const el=ACTIVE_EDIT_TARGET;if(!el)return toast('편집할 칸을 먼저 클릭하세요.');const cur=parseFloat(getComputedStyle(el).lineHeight)||20;el.dataset.fontMode='manual';el.style.lineHeight=Math.max(12,Math.min(36,cur+delta))+'px';}
 function resetFit(){const el=ACTIVE_EDIT_TARGET;if(!el)return toast('편집할 칸을 먼저 클릭하세요.');el.dataset.fontMode='auto';el.style.fontSize='';el.style.lineHeight='';scheduleAutoFit();}
 function applySelectionColor(color){
@@ -914,8 +940,8 @@ function applySelectionColor(color){
 }
 
 /* ---------- 현재화면 -> DB 행 추출 ---------- */
-function extractCurrentReports(){const rows=[];for(const tr of document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')){const item=tr.dataset.item;if(!DETAIL_ITEMS.includes(item))continue;ensurePriceMarkup(tr.cells[1]);const cur=num(tr.cells[1].querySelector('.price-main')?.textContent),chg=num(tr.cells[1].querySelector('.delta')?.textContent);const deltaText=tr.cells[1].querySelector('.delta')?.textContent||'';const signed=(deltaText.includes('△')||deltaText.includes('▼')||deltaText.includes('-'))?-Math.abs(chg||0):deltaText.includes('+')?Math.abs(chg||0):0;const prev=cur===null?null:cur-signed;const market=tr.cells[2],outlook=tr.cells[4];const pick=(root,tag)=>[...root.querySelectorAll('.rowline')].filter(x=>x.textContent.trim().startsWith(tag)).map(x=>x.textContent.trim().slice(tag.length).trim()).join(' / ');const existing=CURRENT_DATA?.reports?.find(x=>x.item===item);rows.push({week_end:CURRENT_WEEK,item,assessment_date:existing?.assessment_date||CURRENT_WEEK,current_price:cur??'',previous_price:prev??'',unit:existing?.unit||'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:(market.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),china_commentary:pick(market,'[중국]'),derivative_commentary:pick(market,'[유도품]'),outlook_commentary:(outlook.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),feedstock_commentary:pick(outlook,'[원료]'),supply_demand_commentary:pick(outlook,'[수급]'),extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v18',price_style:styleSnapshotSafe(tr.cells[1]),market_style:styleSnapshotSafe(market),tone_style:styleSnapshotSafe(tr.cells[3]),outlook_style:styleSnapshotSafe(outlook),market_html:market.innerHTML,outlook_html:outlook.innerHTML,tone_html:tr.cells[3].innerHTML})});}
-  const macro=[...document.querySelectorAll('#p1 .macro .lead,#p1 .macro .bullet')].map(x=>x.innerText.replace(/^[-·\s]+/,'').trim()).filter(Boolean).join('\n');const wr=ALL_MARKET.filter(r=>r.item==='WTI'&&r.price_type==='daily'&&r.price_date<=CURRENT_WEEK).sort((a,b)=>a.price_date.localeCompare(b.price_date));const last=wr.at(-1),prev=priceForWeek('WTI',addDays(CURRENT_WEEK,-7));rows.unshift({week_end:CURRENT_WEEK,item:'WTI',assessment_date:last?.price_date||CURRENT_WEEK,current_price:last?.price??priceForWeek('WTI',CURRENT_WEEK)??'',previous_price:prev??'',unit:'$/b',change_abs:last&&prev!==null?+(last.price-prev).toFixed(2):'',change_pct:last&&prev?+((last.price-prev)/prev*100).toFixed(2):'',direction:last&&prev!==null?(last.price>prev?'상승':last.price<prev?'하락':'보합'):'',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v18',macro_html:document.querySelector('#p1 .macro')?.innerHTML||''})});return rows;}
+function extractCurrentReports(){const rows=[];for(const tr of document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')){const item=tr.dataset.item;if(!DETAIL_ITEMS.includes(item))continue;ensurePriceMarkup(tr.cells[1]);const cur=num(tr.cells[1].querySelector('.price-main')?.textContent),chg=num(tr.cells[1].querySelector('.delta')?.textContent);const deltaText=tr.cells[1].querySelector('.delta')?.textContent||'';const signed=(deltaText.includes('△')||deltaText.includes('▼')||deltaText.includes('-'))?-Math.abs(chg||0):deltaText.includes('+')?Math.abs(chg||0):0;const prev=cur===null?null:cur-signed;const market=tr.cells[2],outlook=tr.cells[4];const pick=(root,tag)=>[...root.querySelectorAll('.rowline')].filter(x=>x.textContent.trim().startsWith(tag)).map(x=>x.textContent.trim().slice(tag.length).trim()).join(' / ');const existing=CURRENT_DATA?.reports?.find(x=>x.item===item);rows.push({week_end:CURRENT_WEEK,item,assessment_date:existing?.assessment_date||CURRENT_WEEK,current_price:cur??'',previous_price:prev??'',unit:existing?.unit||'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:(market.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),china_commentary:pick(market,'[중국]'),derivative_commentary:pick(market,'[유도품]'),outlook_commentary:(outlook.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),feedstock_commentary:pick(outlook,'[원료]'),supply_demand_commentary:pick(outlook,'[수급]'),extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v19',price_style:styleSnapshotSafe(tr.cells[1]),market_style:styleSnapshotSafe(market),tone_style:styleSnapshotSafe(tr.cells[3]),outlook_style:styleSnapshotSafe(outlook),market_html:market.innerHTML,outlook_html:outlook.innerHTML,tone_html:tr.cells[3].innerHTML})});}
+  const macro=[...document.querySelectorAll('#p1 .macro .lead,#p1 .macro .bullet')].map(x=>x.innerText.replace(/^[-·\s]+/,'').trim()).filter(Boolean).join('\n');const wr=ALL_MARKET.filter(r=>r.item==='WTI'&&r.price_type==='daily'&&r.price_date<=CURRENT_WEEK).sort((a,b)=>a.price_date.localeCompare(b.price_date));const last=wr.at(-1),prev=priceForWeek('WTI',addDays(CURRENT_WEEK,-7));rows.unshift({week_end:CURRENT_WEEK,item:'WTI',assessment_date:last?.price_date||CURRENT_WEEK,current_price:last?.price??priceForWeek('WTI',CURRENT_WEEK)??'',previous_price:prev??'',unit:'$/b',change_abs:last&&prev!==null?+(last.price-prev).toFixed(2):'',change_pct:last&&prev?+((last.price-prev)/prev*100).toFixed(2):'',direction:last&&prev!==null?(last.price>prev?'상승':last.price<prev?'하락':'보합'):'',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v19',macro_html:document.querySelector('#p1 .macro')?.innerHTML||''})});return rows;}
 function withDerivedWtiMt(rows){
   const out=[...(rows||[])].map(r=>({...r}));
   for(const r of [...out]){
@@ -1153,7 +1179,7 @@ editModeBtn.addEventListener('click',async()=>{
 });
 document.addEventListener('click',e=>{if(EDIT_MODE){const t=targetForNode(e.target);if(t)setActive(t);}});document.addEventListener('focusin',e=>{if(EDIT_MODE){const t=targetForNode(e.target);if(t)setActive(t);}});
 fontDownBtn.addEventListener('click',()=>fontAdjust(-.5));fontUpBtn.addEventListener('click',()=>fontAdjust(.5));lineDownBtn.addEventListener('click',()=>lineAdjust(-1));lineUpBtn.addEventListener('click',()=>lineAdjust(1));autoFitBtn.addEventListener('click',resetFit);
-[textRedBtn,textBlueBtn,textBlackBtn].forEach(btn=>btn.addEventListener('mousedown',e=>e.preventDefault()));
+[fontDownBtn,fontUpBtn,textRedBtn,textBlueBtn,textBlackBtn].forEach(btn=>btn.addEventListener('mousedown',e=>e.preventDefault()));
 textRedBtn.addEventListener('click',()=>applySelectionColor('#e2241a'));
 textBlueBtn.addEventListener('click',()=>applySelectionColor('#304eb6'));
 textBlackBtn.addEventListener('click',()=>applySelectionColor('#111111'));
