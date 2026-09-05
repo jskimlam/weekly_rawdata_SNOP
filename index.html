@@ -59,7 +59,15 @@ body{font-synthesis:none}
 #p3 .market-table tbody tr{height:220px}
 #p3 .footnote{left:100px;bottom:55px}
 /* source parser panel ------------------------------------------------ */
-.parser-overlay{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;padding:18px}.parser-overlay.open{display:flex}.parser-panel{width:min(980px,96vw);max-height:92vh;background:#fff;border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}.parser-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #ddd}.parser-head strong{font-size:19px}.parser-close{border:0;background:transparent;font-size:25px;cursor:pointer}.parser-body{padding:14px 18px;overflow:auto}.parser-help{font-size:12px;line-height:1.5;color:#555;margin-bottom:10px}.parser-week-row{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;background:#f4f7fa;border:1px solid #cbd5df;border-radius:5px}.parser-week-row label{font-size:12px;font-weight:800;white-space:nowrap}.parser-week-row select{height:34px;min-width:230px;border:1px solid #8d98a5;background:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:0 8px}.parser-week-row .week-info{font-size:11px;color:#536170;line-height:1.35}.parser-week-row .week-info.warn{color:#a3211b;font-weight:800}.parser-input{width:100%;height:270px;resize:vertical;border:1px solid #999;padding:12px;font-family:inherit;font-size:13px;line-height:1.5}.parser-file-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}.parser-file-row input{font-family:inherit;font-size:12px}.parser-file-list{font-size:11px;color:#555}.parser-preview{margin-top:12px;border:1px solid #ccd3da;background:#f7f9fb;padding:10px;min-height:92px;max-height:220px;overflow:auto;font-size:12px;line-height:1.55;white-space:pre-wrap}.parser-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #ddd}.parser-actions button{height:34px;padding:0 14px;border:1px solid #888;background:#fff;font-family:inherit;font-weight:800;cursor:pointer}.parser-actions .primary{background:#17365d;color:#fff;border-color:#17365d}.parser-actions button:disabled{opacity:.55;cursor:wait}
+.parser-overlay{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.42);display:none;align-items:center;justify-content:center;padding:18px}.parser-overlay.open{display:flex}.parser-panel{width:min(980px,96vw);max-height:92vh;background:#fff;border-radius:8px;box-shadow:0 18px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}.parser-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #ddd}.parser-head strong{font-size:19px}.parser-close{border:0;background:transparent;font-size:25px;cursor:pointer}.parser-body{padding:14px 18px;overflow:auto}.parser-help{font-size:12px;line-height:1.5;color:#555;margin-bottom:10px}.parser-week-row{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:10px 12px;background:#f4f7fa;border:1px solid #cbd5df;border-radius:5px}.parser-week-row label{font-size:12px;font-weight:800;white-space:nowrap}.parser-week-row select{height:34px;min-width:230px;border:1px solid #8d98a5;background:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:0 8px}.parser-week-row .week-info{font-size:11px;color:#536170;line-height:1.35}.parser-week-row .week-info.warn{color:#a3211b;font-weight:800}.parser-input{width:100%;height:270px;resize:vertical;border:1px solid #999;padding:12px;font-family:inherit;font-size:13px;line-height:1.5}.parser-file-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}.parser-file-row input{font-family:inherit;font-size:12px}.parser-file-list{font-size:11px;color:#555}.parser-preview{margin-top:12px;border:1px solid #ccd3da;background:#f7f9fb;padding:12px;min-height:108px;max-height:240px;overflow:auto;font-size:12px;line-height:1.55;white-space:pre-wrap;border-radius:6px;transition:.15s}
+.parser-preview.ok{background:#eaf7ee;border:2px solid #2e8b57;color:#145c33}
+.parser-preview.error{background:#fff0ef;border:2px solid #d9433f;color:#9f201d}
+.parser-preview.warn{background:#fff8e5;border:2px solid #d49b18;color:#7a5a00}
+.parser-preview .parse-result-title{display:block;font-size:16px;font-weight:900;margin-bottom:7px}
+.parser-preview.ok .parse-result-title{color:#176b35}
+.parser-preview.error .parse-result-title{color:#b42318}
+.parser-preview.warn .parse-result-title{color:#8a6200}
+.parser-preview .parse-result-detail{display:block;color:inherit;font-size:12px;line-height:1.6;white-space:pre-wrap}.parser-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #ddd}.parser-actions button{height:34px;padding:0 14px;border:1px solid #888;background:#fff;font-family:inherit;font-weight:800;cursor:pointer}.parser-actions .primary{background:#17365d;color:#fff;border-color:#17365d}.parser-actions button:disabled{opacity:.55;cursor:wait}
 
 /* manual edit mode ------------------------------------------------ */
 .edit-tools{display:none;align-items:center;gap:5px;flex-wrap:wrap;padding:4px 7px;border:1px solid #cbd3dc;background:#f7f9fb;border-radius:5px}
@@ -162,9 +170,9 @@ SM
 
 KPI
 2026-09-04|SM|중국|SM 가동률|65|%|..."></textarea>
-      <div id="parserPreview" class="parser-preview">기준 위크를 선택하고 고정 포맷을 붙여넣으세요. 파싱본의 기준주차와 선택 위크를 자동 검증한 뒤 적용·저장합니다.</div>
+      <div id="parserPreview" class="parser-preview">파싱 미리보기를 누르면 규격이 정상인 경우 초록색으로 「파싱 문제 없습니다」가 표시되고, 오류나 누락이 있으면 빨간색으로 확인사항을 표시합니다.</div>
     </div>
-    <div class="parser-actions"><button id="parseOnlyBtn" type="button">파싱 미리보기</button><button id="parseUpdateBtn" class="primary" type="button">파싱 적용</button></div>
+    <div class="parser-actions"><button id="parseOnlyBtn" type="button">파싱 검사</button><button id="parseUpdateBtn" class="primary" type="button">파싱 적용</button></div>
   </div>
 </div>
 <div class="stage"><div id="pageFrame" class="page-frame">
@@ -525,6 +533,21 @@ function previewParsed(p){
   if(p.warnings.length)s+='\n\n확인사항\n- '+p.warnings.join('\n- ');
   return s;
 }
+function parserHealth(p, selectedWeek){
+  const daily=p.marketPrices.filter(x=>x.price_type==='daily').length;
+  const weekly=p.marketPrices.filter(x=>x.price_type==='weekly').length;
+  const detail=p.reports.filter(x=>DETAIL_ITEMS.includes(x.item)&&x.market_commentary).length;
+  const issues=[...(p.warnings||[])];
+  if(!p.week)issues.push('기준주차를 인식하지 못했습니다.');
+  if(weekly===0)issues.push('MARKET PRICE를 인식하지 못했습니다.');
+  if(detail<DETAIL_ITEMS.length)issues.push(`상세시황이 ${detail}/${DETAIL_ITEMS.length}건만 인식되었습니다.`);
+  if(selectedWeek&&p.week&&selectedWeek!==p.week)issues.push(`선택 위크(${selectedWeek})와 파싱본 기준주차(${p.week})가 다릅니다.`);
+  return {ok:issues.length===0,issues,daily,weekly,detail,kpi:p.kpis.length};
+}
+function showParserResult(kind,title,detail){
+  parserPreview.className='parser-preview'+(kind?' '+kind:'');
+  parserPreview.innerHTML=`<span class="parse-result-title">${esc(title)}</span><span class="parse-result-detail">${esc(detail||'')}</span>`;
+}
 
 /* ---------- 화면 반영 ---------- */
 function applyData(data,{cache=true}={}){
@@ -690,20 +713,60 @@ function openParser(){
 }
 function closeParser(){parserOverlay.classList.remove('open');parserOverlay.setAttribute('aria-hidden','true');}
 async function runParser(mode){
-  const raw=parserText.value.trim();if(!raw){parserPreview.textContent='새 프로젝트의 「HTML용 파싱해」 결과를 붙여넣으세요.';return;}
+  const raw=parserText.value.trim();
+  if(!raw){showParserResult('error','✕ 파싱할 내용이 없습니다.','새 프로젝트의 「HTML용 파싱해」 결과를 붙여넣으세요.');return;}
   try{
-    const parsed=parseFixedFormat(raw);const selected=parserWeekSelect.value||parsed.week;updateParserWeekInfo(parsed.week);
-    let p=parsed;const mismatch=selected!==parsed.week;
-    if(mode==='save'&&mismatch){
+    const parsed=parseFixedFormat(raw);
+    const selected=parserWeekSelect.value||parsed.week;
+    updateParserWeekInfo(parsed.week);
+    const firstHealth=parserHealth(parsed,selected);
+    let p=parsed;
+    const mismatch=selected!==parsed.week;
+
+    if(mode==='preview'){
+      LAST_PARSED=parsed;
+      const detail=`선택 기준위크: ${selected}\n파싱본 기준주차: ${parsed.week||'인식 실패'}\n\n${previewParsed(parsed)}${firstHealth.issues.length?'\n\n확인 필요\n- '+firstHealth.issues.join('\n- '):''}`;
+      if(firstHealth.ok){
+        showParserResult('ok','✓ 파싱 문제 없습니다.',detail);
+        setStatus('online','파싱 정상');
+      }else{
+        showParserResult('error','✕ 파싱 확인이 필요합니다.',detail);
+        setStatus('error','파싱 확인 필요');
+      }
+      return;
+    }
+
+    if(mismatch){
       const ok=window.confirm(`기준 위크가 다릅니다.\n\n선택 위크: ${selected}\n파싱본 기준주차: ${parsed.week}\n\n선택 위크(${selected})로 화면 반영 및 DB 저장하시겠습니까?`);
-      if(!ok){parserPreview.textContent=previewParsed(parsed)+'\n\n저장 취소: 기준 위크를 확인하세요.';return;}
+      if(!ok){
+        showParserResult('error','✕ 적용이 취소되었습니다.',`선택 기준위크: ${selected}\n파싱본 기준주차: ${parsed.week}\n\n기준 위크를 확인한 뒤 다시 적용하세요.`);
+        return;
+      }
       p=rebaseParsedWeek(parsed,selected);
     }
+
+    const finalHealth=parserHealth(p,selected);
     LAST_PARSED=p;
-    parserPreview.textContent=`선택 기준위크: ${selected}\n파싱본 기준주차: ${parsed.week}${mismatch?'  ← 불일치':'  ← 일치'}\n\n`+previewParsed(p);
-    setStatus('empty','파싱 확인 완료');
-    if(mode==='save'){applyData(p);const ok=await saveToGoogle(p);if(ok){await syncDbWeeks();refreshWeekSelect(p.week);weekSelect.value=p.week;closeParser();}}
-  }catch(e){LAST_PARSED=null;parserPreview.textContent='파싱 형식을 확인해 주세요.\n\n'+e.message;setStatus('error','파싱 형식 오류');}
+    if(!finalHealth.ok){
+      showParserResult('error','✕ 파싱 확인이 필요합니다.',`${previewParsed(p)}\n\n확인 필요\n- ${finalHealth.issues.join('\n- ')}`);
+      setStatus('error','파싱 확인 필요');
+      return;
+    }
+
+    showParserResult('ok','✓ 파싱 문제 없습니다. 화면 반영 및 DB 저장 중입니다.',previewParsed(p));
+    setStatus('loading','화면 반영·DB 저장 중');
+    applyData(p);
+    const ok=await saveToGoogle(p);
+    if(ok){
+      await syncDbWeeks();refreshWeekSelect(p.week);weekSelect.value=p.week;
+      showParserResult('ok','✓ 파싱 및 DB 저장 완료',`기준주차: ${p.week}\n시장 대표가격: ${finalHealth.weekly}건\nDaily price: ${finalHealth.daily}건\n상세시황: ${finalHealth.detail}/5건\nKPI: ${finalHealth.kpi}건`);
+      setTimeout(closeParser,650);
+    }
+  }catch(e){
+    LAST_PARSED=null;
+    showParserResult('error','✕ 파싱 실패','파싱 형식을 확인해 주세요.\n\n'+e.message);
+    setStatus('error','파싱 형식 오류');
+  }
 }
 
 /* ---------- PNG ---------- */
