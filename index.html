@@ -716,20 +716,153 @@ function applyData(data,{cache=true}={}){
 function updateBasis(week){document.getElementById('basisDate').textContent=week.replaceAll('-','.')+' 기준';
   document.querySelectorAll('#p2 .market-table thead th:nth-child(2),#p3 .market-table thead th:nth-child(2)').forEach(th=>th.textContent=md(week));
 }
+
+/* ---------- 1P 가격표 자동 롤링 규칙 ---------- */
+let MATRIX_REFERENCE=null;
+const MATRIX_BASELINE_YEAR=2026;
+const MATRIX_BASELINE_MONTH=8;
+
+function matrixCaptureReference(){
+  if(MATRIX_REFERENCE)return MATRIX_REFERENCE;
+  const out={};
+  const table=document.querySelector('#p1 .price-matrix');
+  if(!table)return out;
+  [...table.querySelectorAll('tbody tr[data-item]')].forEach(tr=>{
+    const item=tr.dataset.item,c=tr.cells,v=i=>num(c[i]?.textContent);
+    out[item]={
+      months:{'2026-08':v(8),'2026-07':v(9),'2026-06':v(10),'2026-02':v(11),'2025-08':v(15)},
+      yearAvg:{'2026':v(12),'2025':v(13)},
+      december:{'2025':v(14)},
+      high:{'2025':v(16)},
+      low:{'2025':v(17)}
+    };
+  });
+  MATRIX_REFERENCE=out;
+  return out;
+}
+function matrixYmKey(y,m){return `${y}-${String(m).padStart(2,'0')}`;}
+function matrixMonthShift(week,back){
+  const d=parseDate(week);if(!d)return null;
+  const x=new Date(d.getFullYear(),d.getMonth()-back,1);
+  return {year:x.getFullYear(),month:x.getMonth()+1};
+}
+function matrixYear2(y){return String(y).slice(-2);}
+function matrixPriceForWeek(item,week){
+  const direct=priceForWeek(item,week);
+  if(direct!==null&&Number.isFinite(Number(direct)))return Number(direct);
+  if(item==='Cost'){
+    const sm=priceForWeek('SM',week),an=priceForWeek('AN',week),bd=priceForWeek('BD',week);
+    return [sm,an,bd].every(v=>v!==null&&Number.isFinite(Number(v))) ? Number(sm)*0.60+Number(an)*0.25+Number(bd)*0.15 : null;
+  }
+  if(item==='ABS Spread'){
+    const abs=priceForWeek('ABS',week),cost=matrixPriceForWeek('Cost',week);
+    return abs!==null&&cost!==null?Number(abs)-Number(cost):null;
+  }
+  if(item==='PC-BPA Spread'){
+    const pc=priceForWeek('PC',week),bpa=priceForWeek('BPA',week);
+    return pc!==null&&bpa!==null?Number(pc)-Number(bpa):null;
+  }
+  return null;
+}
+function matrixSeries(item){
+  const weeks=[...new Set(ALL_MARKET.filter(r=>r.price_type==='weekly').map(r=>r.week_end||r.price_date).filter(Boolean))].sort();
+  return weeks.map(week=>({week,value:matrixPriceForWeek(item,week)})).filter(x=>x.value!==null&&Number.isFinite(Number(x.value)));
+}
+function matrixObservedMonthAverage(item,year,month,minPoints=1){
+  const vals=matrixSeries(item).filter(x=>{const d=parseDate(x.week);return d&&d.getFullYear()===year&&d.getMonth()+1===month;}).map(x=>Number(x.value));
+  if(vals.length<minPoints)return null;
+  return vals.reduce((a,b)=>a+b,0)/vals.length;
+}
+function matrixMonthAverage(item,year,month){
+  const ref=matrixCaptureReference()[item]?.months?.[matrixYmKey(year,month)];
+  if(ref!==null&&ref!==undefined&&Number.isFinite(Number(ref)))return Number(ref);
+  return matrixObservedMonthAverage(item,year,month,2);
+}
+function matrixYearAverage(item,year,week){
+  const ref=matrixCaptureReference()[item]?.yearAvg?.[String(year)];
+  const d=parseDate(week);
+  if(year===MATRIX_BASELINE_YEAR&&ref!==null&&ref!==undefined&&Number.isFinite(Number(ref))){
+    if(!d||d.getFullYear()<MATRIX_BASELINE_YEAR||d.getMonth()+1<=MATRIX_BASELINE_MONTH)return Number(ref);
+    let total=Number(ref)*MATRIX_BASELINE_MONTH,count=MATRIX_BASELINE_MONTH;
+    for(let m=MATRIX_BASELINE_MONTH+1;m<=d.getMonth()+1;m++){
+      const v=matrixObservedMonthAverage(item,year,m,1);
+      if(v!==null){total+=v;count++;}
+    }
+    return count?total/count:Number(ref);
+  }
+  if(ref!==null&&ref!==undefined&&Number.isFinite(Number(ref)))return Number(ref);
+  const vals=matrixSeries(item).filter(x=>{const z=parseDate(x.week);return z&&z.getFullYear()===year&&(!d||year!==d.getFullYear()||x.week<=week);}).map(x=>Number(x.value));
+  return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+}
+function matrixDecember(item,year){
+  const ref=matrixCaptureReference()[item]?.december?.[String(year)];
+  if(ref!==null&&ref!==undefined&&Number.isFinite(Number(ref)))return Number(ref);
+  return matrixMonthAverage(item,year,12);
+}
+function matrixYearExtreme(item,year,kind){
+  const ref=matrixCaptureReference()[item]?.[kind]?.[String(year)];
+  if(ref!==null&&ref!==undefined&&Number.isFinite(Number(ref)))return Number(ref);
+  const series=matrixSeries(item).filter(x=>{const d=parseDate(x.week);return d&&d.getFullYear()===year;});
+  const vals=series.map(x=>Number(x.value));
+  const months=new Set(series.map(x=>parseDate(x.week).getMonth()+1));
+  if(vals.length<8||months.size<6)return null;
+  return kind==='high'?Math.max(...vals):Math.min(...vals);
+}
+function setMatrixStat(td,v,item){
+  if(v===null||v===undefined||!Number.isFinite(Number(v))){td.textContent='-';return;}
+  td.textContent=fmt(v,item);
+}
+
 function updatePriceMatrix(week){
-  const table=document.querySelector('#p1 .price-matrix'),ths=[...table.querySelectorAll('thead th')];const prev=addDays(week,-7),prev2=addDays(week,-14),prev3=addDays(week,-21);
-  const latestDate=addDays(week,3); // 금요일 보고서의 차주 월요일
-  if(ths.length>=8){ths[1].textContent=md(latestDate);ths[2].textContent=md(week);ths[3].innerHTML=`전주比<br><span class="tiny">${md(prev)}→${md(week)}</span>`;ths[5].textContent=md(prev);ths[6].textContent=md(prev2);ths[7].textContent=md(prev3);}
-  for(const item of PRICE_ROW_ITEMS){const tr=getPriceRow(item);if(!tr)continue;const c=tr.cells;const latest=latestForWeek(item,week);const cur=priceForWeek(item,week),p1=priceForWeek(item,prev),p2=priceForWeek(item,prev2),p3=priceForWeek(item,prev3);
+  const table=document.querySelector('#p1 .price-matrix'),ths=[...table.querySelectorAll('thead th')];
+  const prev=addDays(week,-7),prev2=addDays(week,-14),prev3=addDays(week,-21),latestDate=addDays(week,3);
+  const d=parseDate(week); if(!d)return;
+  const currentYear=d.getFullYear(),currentMonth=d.getMonth()+1,prevYear=currentYear-1;
+  const rollingMonths=[1,2,3,4].map(n=>matrixMonthShift(week,n));
+
+  matrixCaptureReference();
+
+  if(ths.length>=19){
+    ths[1].textContent=md(latestDate);
+    ths[2].textContent=md(week);
+    ths[3].innerHTML=`전주比<br><span class="tiny">${md(prev)}→${md(week)}</span>`;
+    ths[5].textContent=md(prev);ths[6].textContent=md(prev2);ths[7].textContent=md(prev3);
+    rollingMonths.forEach((x,i)=>ths[8+i].innerHTML=`${matrixYear2(x.year)}년<br>${x.month}월`);
+    ths[12].innerHTML=`${matrixYear2(currentYear)}년<br>평균`;
+    ths[13].innerHTML=`${matrixYear2(prevYear)}년<br>평균`;
+    ths[14].innerHTML=`${matrixYear2(prevYear)}년<br>12월`;
+    ths[15].innerHTML=`${matrixYear2(prevYear)}년<br>${currentMonth}월`;
+    ths[16].innerHTML=`${matrixYear2(prevYear)}년<br>High`;
+    ths[17].innerHTML=`${matrixYear2(prevYear)}년<br>Low`;
+    ths[18].innerHTML='Historical<br>High&nbsp;&nbsp;&nbsp;Low';
+  }
+
+  for(const item of PRICE_ROW_ITEMS){
+    const tr=getPriceRow(item);if(!tr)continue;const c=tr.cells;
+    const latest=latestForWeek(item,week),cur=matrixPriceForWeek(item,week),p1=matrixPriceForWeek(item,prev),p2=matrixPriceForWeek(item,prev2),p3=matrixPriceForWeek(item,prev3);
     setMatrix(c[1],latest?Number(latest.price):null,item,true);setMatrix(c[2],cur,item);setMatrix(c[5],p1,item);setMatrix(c[6],p2,item);setMatrix(c[7],p3,item);
-    // 월요일 최신가는 해당 주 금요일 weekly와 직접 비교: 상승=빨강, 하락=파랑, 동일=검정
+
     c[1].classList.remove('up','down');c[1].style.removeProperty('color');
     if(latest&&cur!==null){const ld=Number(latest.price)-Number(cur);if(ld>0)c[1].classList.add('up');else if(ld<0)c[1].classList.add('down');}
     c[3].classList.remove('up','down');c[4].classList.remove('up','down');
-    if(cur!==null&&p1!==null){const diff=cur-p1,pct=p1?diff/p1*100:0;const mark=diff>0?'+':diff<0?'△':'';c[3].textContent=diff===0?'-':`${mark}${fmt(Math.abs(diff),item)}`;c[4].textContent=diff===0?'-':`${mark}${Math.abs(pct).toFixed(Math.abs(pct)<1?1:0)}`;if(diff>0){c[3].classList.add('up');c[4].classList.add('up');}else if(diff<0){c[3].classList.add('down');c[4].classList.add('down');}}
-    else if(week!==BASE_WEEK){c[3].textContent='-';c[4].textContent='-';}
+    if(cur!==null&&p1!==null){
+      const diff=cur-p1,pct=p1?diff/p1*100:0,mark=diff>0?'+':diff<0?'△':'';
+      c[3].textContent=diff===0?'-':`${mark}${fmt(Math.abs(diff),item)}`;
+      c[4].textContent=diff===0?'-':`${mark}${Math.abs(pct).toFixed(Math.abs(pct)<1?1:0)}`;
+      if(diff>0){c[3].classList.add('up');c[4].classList.add('up');}else if(diff<0){c[3].classList.add('down');c[4].classList.add('down');}
+    }else{c[3].textContent='-';c[4].textContent='-';}
+
+    rollingMonths.forEach((x,i)=>setMatrixStat(c[8+i],matrixMonthAverage(item,x.year,x.month),item));
+    setMatrixStat(c[12],matrixYearAverage(item,currentYear,week),item);
+    setMatrixStat(c[13],matrixYearAverage(item,prevYear,week),item);
+    setMatrixStat(c[14],matrixDecember(item,prevYear),item);
+    setMatrixStat(c[15],matrixMonthAverage(item,prevYear,currentMonth),item);
+    setMatrixStat(c[16],matrixYearExtreme(item,prevYear,'high'),item);
+    setMatrixStat(c[17],matrixYearExtreme(item,prevYear,'low'),item);
+    // c[18] Historical High/Low는 장기 기준값이므로 기존 값을 유지
   }
 }
+
 function setMatrix(td,v,item,blankIfMissing=false){if(v===null||v===undefined||!Number.isFinite(Number(v))){td.innerHTML=blankIfMissing?'':(CURRENT_WEEK!==BASE_WEEK?'-':td.innerHTML);return;}td.textContent=fmt(v,item);}
 function renderWtiChart(week){
   const svg=document.querySelector('#p1 .oil-chart svg');if(!svg)return;const start=addDays(week,-7);const rows=marketRows('WTI','daily').filter(r=>r.price_date>=start&&r.price_date<=week);if(rows.length<2)return;
