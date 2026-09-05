@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>주간 원료가동향 v13</title>
+<title>주간 원료가동향 v14</title>
 <style>
 :root{
   --ink:#111; --blue:#1326bd; --red:#e2241a; --yellow:#fff900;
@@ -38,7 +38,19 @@ body{font-synthesis:none}
 /* shared report tables ------------------------------------------------ */
 .market-table{border-collapse:collapse;table-layout:fixed;border:1.15px solid #666;background:#fff}.market-table th,.market-table td{border:1px solid #777}.market-table thead th{height:37px;background:#e9b7ae;font-size:15px;font-weight:800;letter-spacing:5px}.market-table thead th:nth-child(1),.market-table thead th:nth-child(2){letter-spacing:0}.market-table td.item{color:#101dc1;text-decoration:underline;text-align:center;font-weight:800;font-size:17px}.market-table td.price{background:var(--yellow);text-align:center;font-weight:800;font-size:18px;line-height:1.35}.market-table td.price .delta{font-size:.80em;color:#555;font-weight:800}.market-table td.price .delta.delta-up{color:var(--red)!important}.market-table td.price .delta.delta-down{color:#304eb6!important}.market-table td.price .delta.delta-flat{color:#555!important}.market-table td.price .delta[data-delta-state="up"]{color:#e2241a!important}.market-table td.price .delta[data-delta-state="down"]{color:#304eb6!important}.market-table td.price .delta[data-delta-state="flat"]{color:#555!important}.market-table td.body{vertical-align:top;padding:12px 13px;font-size:14px;line-height:1.48;letter-spacing:-.25px;overflow:hidden}.market-table td.tone{text-align:center;font-size:16px;font-weight:800}.market-table .lead{font-weight:700;margin:0 0 7px}.market-table .rowline{margin:4px 0}.market-table .rowline.tagged{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:5px;align-items:start}.market-table .tag-label{font-weight:800;white-space:nowrap}.market-table .tag-content{min-width:0;overflow-wrap:anywhere;word-break:keep-all}.market-table .tag-content.micro-fit{white-space:nowrap;word-break:normal}.market-table b{font-weight:800}.market-table .red{color:var(--red)}.market-table .blue{color:var(--blue)}
 /* charts ------------------------------------------------ */
-.graph3{position:absolute;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.chart-card{position:relative;height:100%;background:#f2f2f2;border:1px solid #a9a9a9;overflow:hidden}.chart-head{position:absolute;left:0;top:0;height:39px;background:#fff978;padding:7px 22px 0;font-size:18px;font-weight:800;min-width:180px}.legend{position:absolute;right:11px;top:7px;font-size:10px;line-height:1.45}.legend .lg{display:inline-block;width:35px;border-top:2.5px solid;margin-right:7px;vertical-align:middle}.legend .blue{border-color:#151ed0}.legend .red{border-color:#df2220}.unit{position:absolute;right:8px;top:40px;font-size:9.5px}.chart-card svg{position:absolute;left:5px;top:48px;width:calc(100% - 10px);height:calc(100% - 54px)}.bep-note{position:absolute;left:16px;bottom:28px;font-size:10px;color:#676767}.chart-label{font-size:11px;font-weight:800}.chart-date{font-size:8.5px;fill:#666}
+.graph3{position:absolute;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.chart-card{position:relative;height:100%;background:#f2f2f2;border:1px solid #a9a9a9;overflow:hidden}.chart-head{position:absolute;left:0;top:0;height:39px;background:#fff978;padding:7px 22px 0;font-size:18px;font-weight:800;min-width:180px}.legend{position:absolute;right:11px;top:7px;font-size:10px;line-height:1.45}.legend .lg{display:inline-block;width:35px;border-top:2.5px solid;margin-right:7px;vertical-align:middle}.legend .blue{border-color:#151ed0}.legend .red{border-color:#df2220}.unit{position:absolute;right:8px;top:40px;font-size:9.5px}.chart-card svg{position:absolute;left:5px;top:68px;width:calc(100% - 10px);height:calc(100% - 94px)}
+.bep-note{position:absolute;left:16px;bottom:6px;font-size:10px;color:#676767;line-height:1.2;white-space:nowrap}
+.chart-label{font-size:11px;font-weight:800}.chart-date{font-size:8.5px;fill:#666}
+.chart-controls{position:absolute;right:50px;top:43px;z-index:8;display:flex;gap:2px;align-items:center}
+.chart-controls button{height:20px;min-width:33px;padding:0 5px;border:1px solid #aeb4bb;background:#fff;color:#444;font-family:inherit;font-size:8.5px;font-weight:800;line-height:18px;cursor:pointer;border-radius:2px}
+.chart-controls button:hover{background:#eef3f8}.chart-controls button.active{background:#1f2937;color:#fff;border-color:#1f2937}
+.chart-card .unit{z-index:9}.chart-card .legend{z-index:9}
+.anbd-card svg{top:67px;height:218px}
+.anbd-card .anbd-separator{stroke:#b9b9b9;stroke-width:1.2;stroke-dasharray:4 3}
+.anbd-card .panel-label{font-size:11px;font-weight:900;fill:#555}
+.anbd-notes{position:absolute;left:10px;right:10px;bottom:3px;height:21px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center;font-size:9.2px;color:#666;line-height:1.15}
+.anbd-notes span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.anbd-notes span:last-child{text-align:right}
+@media print{.chart-controls{display:none!important}}
 /* PAGE 2 ------------------------------------------------ */
 #p2 .main-title{left:20px;top:18px;font-size:29px}
 #p2 .graph3{left:30px;top:92px;width:1476px;height:315px;gap:10px}
@@ -278,21 +290,36 @@ KPI
         <g class="chart-date"><text x="16" y="188">'26.01</text><text x="117" y="188">'26.05</text><text x="215" y="188">'26.07</text><text x="312" y="188">'26.09</text><text x="411" y="188">'26.11</text></g>
       </svg>
     </div>
-    <!-- AN BD -->
-    <div class="chart-card">
-      <div class="chart-head">AN/BD 가격 동향</div><div class="legend p2-legend"><div><span class="lg blue"></span>시장가</div><div><span class="lg red"></span>BEP</div></div><div class="unit p2-unit">($/ton)</div>
-      <svg viewBox="0 0 480 195">
-        <line x1="18" y1="170" x2="466" y2="170" stroke="#aaa"/>
-        <!-- AN upper -->
-        <polyline points="30,52 61,56 92,66 123,69 154,71 185,65 216,70 247,80 278,86 309,83 340,84 371,79 402,76 433,74 457,73" fill="none" stroke="#1424d2" stroke-width="3"/>
-        <polyline points="30,35 61,38 92,46 123,52 154,72 185,74 216,74 247,68 278,66 309,62 340,62 371,62 402,62 433,62 457,58" fill="none" stroke="#e12b24" stroke-width="3"/>
-        <!-- BD lower -->
-        <polyline points="30,125 61,129 92,131 123,136 154,140 185,143 216,146 247,143 278,139 309,137 340,145 371,145 402,141 433,138 457,135" fill="none" stroke="#1424d2" stroke-width="3"/>
-        <polyline points="30,111 61,116 92,122 123,126 154,137 185,143 216,146 247,142 278,139 309,132 340,127 371,128 402,126 433,125 457,121" fill="none" stroke="#e12b24" stroke-width="3"/>
-        <text x="8" y="27" fill="#e12b24" class="chart-label">1,902</text><text x="10" y="70" fill="#1424d2" class="chart-label">1,735</text><text x="421" y="53" fill="#e12b24" class="chart-label">1,635</text><text x="421" y="84" fill="#1424d2" class="chart-label">1,545</text><text x="9" y="108" fill="#1424d2" class="chart-label">1,620</text><text x="10" y="151" fill="#e12b24" class="chart-label">1,373</text><text x="421" y="119" fill="#e12b24" class="chart-label">1,327</text><text x="421" y="145" fill="#1424d2" class="chart-label">1,510</text><text x="95" y="22" fill="#1424d2" class="chart-label">-167</text><text x="95" y="108" fill="#e12b24" class="chart-label">+248</text><text x="352" y="26" fill="#1424d2" class="chart-label">-90</text><text x="351" y="111" fill="#e12b24" class="chart-label">+173</text>
-        <g class="chart-date"><text x="12" y="188">5/22</text><text x="48" y="188">5/29</text><text x="87" y="188">6/5</text><text x="121" y="188">6/12</text><text x="159" y="188">6/19</text><text x="196" y="188">6/26</text><text x="232" y="188">7/3</text><text x="269" y="188">7/10</text><text x="305" y="188">7/17</text><text x="342" y="188">7/24</text><text x="378" y="188">7/31</text><text x="414" y="188">8/14</text><text x="446" y="188">8/28</text></g>
+    <!-- AN / BD : 상하 분리 그래프 -->
+    <div class="chart-card anbd-card" data-chart-default="marker">
+      <div class="chart-head">AN/BD 가격 동향</div>
+      <div class="legend p2-legend"><div><span class="lg blue"></span>시장가</div><div><span class="lg red"></span>BEP</div></div>
+      <div class="unit p2-unit">($/ton)</div>
+      <svg viewBox="0 0 480 218" aria-label="AN 및 BD 가격 동향 상하 분리 그래프">
+        <!-- 상단 AN 영역 -->
+        <line x1="24" y1="98" x2="466" y2="98" class="anbd-separator"/>
+        <text x="26" y="13" class="panel-label">AN</text>
+        <polyline data-series="market" data-panel="AN" points="36,40 66,44 96,53 126,56 156,58 186,53 216,58 246,67 276,73 306,70 336,71 366,66 396,63 426,61 456,60" fill="none" stroke="#1424d2" stroke-width="3"/>
+        <polyline data-series="bep" data-panel="AN" points="36,23 66,26 96,34 126,40 156,59 186,61 216,61 246,55 276,53 306,49 336,49 366,49 396,49 426,49 456,45" fill="none" stroke="#e12b24" stroke-width="3"/>
+        <g class="chart-label">
+          <text x="7" y="24" fill="#e12b24">1,902</text><text x="8" y="48" fill="#1424d2">1,735</text>
+          <text x="421" y="41" fill="#e12b24">1,635</text><text x="421" y="72" fill="#1424d2">1,545</text>
+          <text x="99" y="19" fill="#1424d2">-167</text><text x="350" y="20" fill="#1424d2">-90</text>
+        </g>
+
+        <!-- 하단 BD 영역 -->
+        <text x="26" y="113" class="panel-label">BD</text>
+        <polyline data-series="market" data-panel="BD" points="36,139 66,143 96,145 126,150 156,154 186,157 216,160 246,157 276,153 306,151 336,159 366,159 396,155 426,152 456,149" fill="none" stroke="#1424d2" stroke-width="3"/>
+        <polyline data-series="bep" data-panel="BD" points="36,125 66,130 96,136 126,140 156,151 186,157 216,160 246,156 276,153 306,146 336,141 366,142 396,140 426,139 456,135" fill="none" stroke="#e12b24" stroke-width="3"/>
+        <g class="chart-label">
+          <text x="8" y="135" fill="#1424d2">1,620</text><text x="8" y="166" fill="#e12b24">1,373</text>
+          <text x="421" y="134" fill="#e12b24">1,327</text><text x="421" y="162" fill="#1424d2">1,510</text>
+          <text x="99" y="121" fill="#e12b24">+248</text><text x="350" y="124" fill="#e12b24">+173</text>
+        </g>
+        <line x1="24" y1="174" x2="466" y2="174" stroke="#aaa"/>
+        <g class="chart-date"><text x="22" y="198">5/22</text><text x="56" y="198">5/29</text><text x="91" y="198">6/5</text><text x="121" y="198">6/12</text><text x="156" y="198">6/19</text><text x="191" y="198">6/26</text><text x="226" y="198">7/3</text><text x="261" y="198">7/10</text><text x="296" y="198">7/17</text><text x="331" y="198">7/24</text><text x="366" y="198">7/31</text><text x="401" y="198">8/14</text><text x="438" y="198">8/28</text></g>
       </svg>
-      <div class="bep-note" style="bottom:94px;left:92px">BEP=프로필렌*1.1+NH3*0.5+$150</div><div class="bep-note">BEP=납사+$500</div>
+      <div class="anbd-notes"><span>AN BEP = 프로필렌×1.1 + NH3×0.5 + $150</span><span>BD BEP = 납사 + $500</span></div>
     </div>
   </div>
   <table class="market-table">
@@ -328,7 +355,7 @@ KPI
 'use strict';
 
 /* =========================================================
-   주간 원료가동향 v8
+   주간 원료가동향 v14
    - AI 파싱은 하지 않음
    - HTML용 고정 텍스트를 브라우저에서 직접 파싱
    - 화면 반영은 GAS 없이 동작
@@ -720,9 +747,96 @@ function updateMacro(macro,reports){const box=document.querySelector('#p1 .macro
 function weeklySeries(item,week,limit=15){return marketRows(item,'weekly').filter(r=>r.price_date<=week&&Number.isFinite(Number(r.price))).slice(-limit).map(r=>({date:r.price_date,value:Number(r.price)}));}
 function renderDual(card,a,b,colorA='#18238e',colorB='#c63d35'){if(!card||a.length<3||b.length<3)return;const svg=card.querySelector('svg');if(!svg)return;const vb=(svg.getAttribute('viewBox')||'0 0 480 195').split(/\s+/).map(Number),W=vb[2],H=vb[3],L=28,R=18,T=18,B=25;const dates=[...new Set([...a.map(x=>x.date),...b.map(x=>x.date)])].sort().slice(-15),am=new Map(a.map(x=>[x.date,x.value])),bm=new Map(b.map(x=>[x.date,x.value]));const vals=[...dates.map(d=>am.get(d)),...dates.map(d=>bm.get(d))].filter(Number.isFinite);if(vals.length<4)return;let mn=Math.min(...vals),mx=Math.max(...vals),pad=(mx-mn||100)*.13;mn-=pad;mx+=pad;const x=i=>L+(W-L-R)*(dates.length===1?.5:i/(dates.length-1)),y=v=>T+(H-T-B)*(mx-v)/(mx-mn),pts=m=>dates.map((d,i)=>m.has(d)?`${x(i).toFixed(1)},${y(m.get(d)).toFixed(1)}`:null).filter(Boolean).join(' ');let s=`<line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="#aaa"/><polyline points="${pts(am)}" fill="none" stroke="${colorA}" stroke-width="3"/><polyline points="${pts(bm)}" fill="none" stroke="${colorB}" stroke-width="3"/>`;dates.forEach((d,i)=>{if(i%Math.max(1,Math.ceil(dates.length/7))===0||i===dates.length-1)s+=`<text x="${x(i)-13}" y="${H-5}" class="chart-date">${md(d)}</text>`;});for(const [series,c] of [[a,colorA],[b,colorB]]){for(const p of [series.filter(z=>dates.includes(z.date))[0],series.filter(z=>dates.includes(z.date)).at(-1)]){if(!p)continue;const i=dates.indexOf(p.date);s+=`<circle cx="${x(i)}" cy="${y(p.value)}" r="4" fill="#fff" stroke="${c}" stroke-width="2"/><text x="${Math.max(2,x(i)-18)}" y="${Math.max(13,y(p.value)-8)}" fill="${c}" class="chart-label">${fmt(p.value)}</text>`;}}svg.innerHTML=s;}
 function updateDerivedCharts(week){
-  const sm=weeklySeries('SM',week),el=new Map(weeklySeries('Ethylene',week,30).map(x=>[x.date,x.value])),bz=new Map(weeklySeries('Benzene',week,30).map(x=>[x.date,x.value]));renderDual(document.querySelector('#p2 .chart-card:nth-child(1)'),sm,sm.filter(x=>el.has(x.date)&&bz.has(x.date)).map(x=>({date:x.date,value:el.get(x.date)*.3+bz.get(x.date)*.8+150})));
-  const bpa=weeklySeries('BPA',week);renderDual(document.querySelector('#p3 .chart-card:nth-child(1)'),bpa,bpa.filter(x=>bz.has(x.date)).map(x=>({date:x.date,value:bz.get(x.date)+450})));
-  const mma=weeklySeries('MMA',week),np=new Map(weeklySeries('Naphtha',week,30).map(x=>[x.date,x.value]));renderDual(document.querySelector('#p3 .chart-card:nth-child(3)'),mma,mma.filter(x=>np.has(x.date)).map(x=>({date:x.date,value:np.get(x.date)+800})));
+  const smCard=document.querySelector('#p2 .chart-card:nth-child(1)');
+  const sm=weeklySeries('SM',week),el=new Map(weeklySeries('Ethylene',week,30).map(x=>[x.date,x.value])),bz=new Map(weeklySeries('Benzene',week,30).map(x=>[x.date,x.value]));renderDual(smCard,sm,sm.filter(x=>el.has(x.date)&&bz.has(x.date)).map(x=>({date:x.date,value:el.get(x.date)*.3+bz.get(x.date)*.8+150})));refreshChartCard(smCard);
+  const bpaCard=document.querySelector('#p3 .chart-card:nth-child(1)');
+  const bpa=weeklySeries('BPA',week);renderDual(bpaCard,bpa,bpa.filter(x=>bz.has(x.date)).map(x=>({date:x.date,value:bz.get(x.date)+450})));refreshChartCard(bpaCard);
+  const mmaCard=document.querySelector('#p3 .chart-card:nth-child(3)');
+  const mma=weeklySeries('MMA',week),np=new Map(weeklySeries('Naphtha',week,30).map(x=>[x.date,x.value]));renderDual(mmaCard,mma,mma.filter(x=>np.has(x.date)).map(x=>({date:x.date,value:np.get(x.date)+800})));refreshChartCard(mmaCard);
+}
+
+
+/* ---------- 그래프 보기 방식 ---------- */
+const CHART_MODE_KEY='raw_material_chart_modes_v14';
+let chartModeStore={};
+try{chartModeStore=JSON.parse(localStorage.getItem(CHART_MODE_KEY)||'{}')||{};}catch(e){chartModeStore={};}
+function chartCards(){return [...document.querySelectorAll('#p2 .chart-card,#p3 .chart-card')];}
+function chartId(card){return card?.dataset.chartId||'';}
+function saveChartModes(){try{localStorage.setItem(CHART_MODE_KEY,JSON.stringify(chartModeStore));}catch(e){}}
+function parsePoints(poly){return (poly?.getAttribute('points')||'').trim().split(/\s+/).map(p=>p.split(',').map(Number)).filter(p=>p.length===2&&p.every(Number.isFinite));}
+function chartBaseSnapshot(card){const svg=card?.querySelector('svg');if(!svg)return;card._chartBase=svg.innerHTML;}
+function makeSvg(tag,attrs={}){const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,String(v));return el;}
+function clearChartDecor(svg){svg.querySelectorAll('[data-chart-generated="1"]').forEach(x=>x.remove());}
+function ensureMarkers(svg){
+  const firstText=svg.querySelector('text');
+  svg.querySelectorAll('polyline').forEach(poly=>{
+    const stroke=poly.getAttribute('stroke')||'#333';
+    const g=makeSvg('g',{'data-chart-generated':'1'});
+    parsePoints(poly).forEach(([x,y])=>g.appendChild(makeSvg('circle',{cx:x,cy:y,r:3.1,fill:'#fff',stroke, 'stroke-width':1.7})));
+    firstText?svg.insertBefore(g,firstText):svg.appendChild(g);
+  });
+}
+function addBars(card,svg){
+  const vb=(svg.getAttribute('viewBox')||'0 0 480 195').split(/\s+/).map(Number),H=vb[3]||195;
+  const polys=[...svg.querySelectorAll('polyline')]; if(!polys.length)return;
+  const firstText=svg.querySelector('text');
+  const g=makeSvg('g',{'data-chart-generated':'1'});
+  polys.forEach((poly,si)=>{
+    const pts=parsePoints(poly),stroke=poly.getAttribute('stroke')||'#333';
+    const panel=poly.dataset.panel||'';
+    const baseline=card.classList.contains('anbd-card')?(panel==='AN'?91:174):(H-25);
+    const w=Math.max(3,Math.min(9,(pts.length>1?Math.abs(pts[1][0]-pts[0][0]):14)*0.28));
+    const shift=(si%2===0?-w*.55:w*.55);
+    pts.forEach(([x,y])=>{const top=Math.min(y,baseline),height=Math.max(1,Math.abs(baseline-y));g.appendChild(makeSvg('rect',{x:(x-w/2+shift).toFixed(1),y:top.toFixed(1),width:w.toFixed(1),height:height.toFixed(1),fill:stroke,opacity:.62,rx:1}));});
+    poly.style.display='none';
+  });
+  svg.querySelectorAll('circle').forEach(c=>c.style.display='none');
+  firstText?svg.insertBefore(g,firstText):svg.appendChild(g);
+}
+function linearTrend(points){
+  const n=points.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;
+  points.forEach(([x,y])=>{sx+=x;sy+=y;sxx+=x*x;sxy+=x*y;});
+  const den=n*sxx-sx*sx;if(!den)return null;const m=(n*sxy-sx*sy)/den,b=(sy-m*sx)/n;
+  const x1=points[0][0],x2=points.at(-1)[0];return [x1,m*x1+b,x2,m*x2+b];
+}
+function addTrends(svg){
+  const firstText=svg.querySelector('text');
+  svg.querySelectorAll('polyline').forEach(poly=>{
+    const pts=parsePoints(poly),t=linearTrend(pts);if(!t)return;poly.setAttribute('opacity','.25');
+    const line=makeSvg('line',{x1:t[0].toFixed(1),y1:t[1].toFixed(1),x2:t[2].toFixed(1),y2:t[3].toFixed(1),stroke:poly.getAttribute('stroke')||'#333','stroke-width':3,'stroke-dasharray':'7 4','data-chart-generated':'1'});
+    firstText?svg.insertBefore(line,firstText):svg.appendChild(line);
+  });
+  svg.querySelectorAll('circle').forEach(c=>c.style.display='none');
+}
+function applyChartMode(card,mode,remember=true){
+  const svg=card?.querySelector('svg');if(!svg)return;
+  if(!card._chartBase)chartBaseSnapshot(card);
+  svg.innerHTML=card._chartBase; clearChartDecor(svg);
+  if(mode==='line')svg.querySelectorAll('circle').forEach(c=>c.style.display='none');
+  else if(mode==='marker')ensureMarkers(svg);
+  else if(mode==='bar')addBars(card,svg);
+  else if(mode==='trend')addTrends(svg);
+  card.dataset.chartMode=mode;
+  card.querySelectorAll('.chart-controls button').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  if(remember){chartModeStore[chartId(card)]=mode;saveChartModes();}
+}
+function refreshChartCard(card){
+  if(!card)return; chartBaseSnapshot(card);
+  const mode=card.dataset.chartMode||chartModeStore[chartId(card)]||card.dataset.chartDefault||'line';
+  applyChartMode(card,mode,false);
+}
+function initChartControls(){
+  chartCards().forEach((card,i)=>{
+    const page=card.closest('.report')?.id||'p';card.dataset.chartId=`${page}_${i+1}`;
+    if(!card.querySelector('.chart-controls')){
+      const ctl=document.createElement('div');ctl.className='chart-controls';ctl.setAttribute('data-export-hide','1');
+      [['line','선형'],['bar','막대'],['marker','마커'],['trend','추세']].forEach(([mode,label])=>{const b=document.createElement('button');b.type='button';b.dataset.mode=mode;b.textContent=label;b.title=`그래프를 ${label} 보기로 변경`;b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();applyChartMode(card,mode,true);});ctl.appendChild(b);});
+      card.appendChild(ctl);
+    }
+    chartBaseSnapshot(card);
+    const mode=chartModeStore[chartId(card)]||card.dataset.chartDefault||(card.classList.contains('anbd-card')?'marker':'line');
+    applyChartMode(card,mode,false);
+  });
 }
 
 /* ---------- 텍스트 자동맞춤 ---------- */
@@ -769,8 +883,8 @@ function applySelectionColor(color){
 }
 
 /* ---------- 현재화면 -> DB 행 추출 ---------- */
-function extractCurrentReports(){const rows=[];for(const tr of document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')){const item=tr.dataset.item;if(!DETAIL_ITEMS.includes(item))continue;ensurePriceMarkup(tr.cells[1]);const cur=num(tr.cells[1].querySelector('.price-main')?.textContent),chg=num(tr.cells[1].querySelector('.delta')?.textContent);const deltaText=tr.cells[1].querySelector('.delta')?.textContent||'';const signed=deltaText.includes('-')&&!deltaText.includes('(-)')?-Math.abs(chg||0):deltaText.includes('+')?Math.abs(chg||0):0;const prev=cur===null?null:cur-signed;const market=tr.cells[2],outlook=tr.cells[4];const pick=(root,tag)=>[...root.querySelectorAll('.rowline')].filter(x=>x.textContent.trim().startsWith(tag)).map(x=>x.textContent.trim().slice(tag.length).trim()).join(' / ');const existing=CURRENT_DATA?.reports?.find(x=>x.item===item);rows.push({week_end:CURRENT_WEEK,item,assessment_date:existing?.assessment_date||CURRENT_WEEK,current_price:cur??'',previous_price:prev??'',unit:existing?.unit||'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:(market.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),china_commentary:pick(market,'[중국]'),derivative_commentary:pick(market,'[유도품]'),outlook_commentary:(outlook.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),feedstock_commentary:pick(outlook,'[원료]'),supply_demand_commentary:pick(outlook,'[수급]'),extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v13',price_style:styleSnapshotSafe(tr.cells[1]),market_style:styleSnapshotSafe(market),tone_style:styleSnapshotSafe(tr.cells[3]),outlook_style:styleSnapshotSafe(outlook),market_html:market.innerHTML,outlook_html:outlook.innerHTML,tone_html:tr.cells[3].innerHTML})});}
-  const macro=[...document.querySelectorAll('#p1 .macro .lead,#p1 .macro .bullet')].map(x=>x.innerText.replace(/^[-·\s]+/,'').trim()).filter(Boolean).join('\n');const wr=ALL_MARKET.filter(r=>r.item==='WTI'&&r.price_type==='daily'&&r.price_date<=CURRENT_WEEK).sort((a,b)=>a.price_date.localeCompare(b.price_date));const last=wr.at(-1),prev=priceForWeek('WTI',addDays(CURRENT_WEEK,-7));rows.unshift({week_end:CURRENT_WEEK,item:'WTI',assessment_date:last?.price_date||CURRENT_WEEK,current_price:last?.price??priceForWeek('WTI',CURRENT_WEEK)??'',previous_price:prev??'',unit:'$/b',change_abs:last&&prev!==null?+(last.price-prev).toFixed(2):'',change_pct:last&&prev?+((last.price-prev)/prev*100).toFixed(2):'',direction:last&&prev!==null?(last.price>prev?'상승':last.price<prev?'하락':'보합'):'',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v13',macro_html:document.querySelector('#p1 .macro')?.innerHTML||''})});return rows;}
+function extractCurrentReports(){const rows=[];for(const tr of document.querySelectorAll('#p2 .market-table tbody tr,#p3 .market-table tbody tr')){const item=tr.dataset.item;if(!DETAIL_ITEMS.includes(item))continue;ensurePriceMarkup(tr.cells[1]);const cur=num(tr.cells[1].querySelector('.price-main')?.textContent),chg=num(tr.cells[1].querySelector('.delta')?.textContent);const deltaText=tr.cells[1].querySelector('.delta')?.textContent||'';const signed=deltaText.includes('-')&&!deltaText.includes('(-)')?-Math.abs(chg||0):deltaText.includes('+')?Math.abs(chg||0):0;const prev=cur===null?null:cur-signed;const market=tr.cells[2],outlook=tr.cells[4];const pick=(root,tag)=>[...root.querySelectorAll('.rowline')].filter(x=>x.textContent.trim().startsWith(tag)).map(x=>x.textContent.trim().slice(tag.length).trim()).join(' / ');const existing=CURRENT_DATA?.reports?.find(x=>x.item===item);rows.push({week_end:CURRENT_WEEK,item,assessment_date:existing?.assessment_date||CURRENT_WEEK,current_price:cur??'',previous_price:prev??'',unit:existing?.unit||'$/mt',change_abs:signed,change_pct:prev?+(signed/prev*100).toFixed(2):0,direction:tr.cells[3].textContent.trim(),market_commentary:(market.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),china_commentary:pick(market,'[중국]'),derivative_commentary:pick(market,'[유도품]'),outlook_commentary:(outlook.querySelector('.lead')?.innerText||'').replace(/^▣\s*/,'').trim(),feedstock_commentary:pick(outlook,'[원료]'),supply_demand_commentary:pick(outlook,'[수급]'),extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v14',price_style:styleSnapshotSafe(tr.cells[1]),market_style:styleSnapshotSafe(market),tone_style:styleSnapshotSafe(tr.cells[3]),outlook_style:styleSnapshotSafe(outlook),market_html:market.innerHTML,outlook_html:outlook.innerHTML,tone_html:tr.cells[3].innerHTML})});}
+  const macro=[...document.querySelectorAll('#p1 .macro .lead,#p1 .macro .bullet')].map(x=>x.innerText.replace(/^[-·\s]+/,'').trim()).filter(Boolean).join('\n');const wr=ALL_MARKET.filter(r=>r.item==='WTI'&&r.price_type==='daily'&&r.price_date<=CURRENT_WEEK).sort((a,b)=>a.price_date.localeCompare(b.price_date));const last=wr.at(-1),prev=priceForWeek('WTI',addDays(CURRENT_WEEK,-7));rows.unshift({week_end:CURRENT_WEEK,item:'WTI',assessment_date:last?.price_date||CURRENT_WEEK,current_price:last?.price??priceForWeek('WTI',CURRENT_WEEK)??'',previous_price:prev??'',unit:'$/b',change_abs:last&&prev!==null?+(last.price-prev).toFixed(2):'',change_pct:last&&prev?+((last.price-prev)/prev*100).toFixed(2):'',direction:last&&prev!==null?(last.price>prev?'상승':last.price<prev?'하락':'보합'):'',market_commentary:macro,china_commentary:'',derivative_commentary:'',outlook_commentary:'',feedstock_commentary:'',supply_demand_commentary:'',extra_metric:'',raw_text:JSON.stringify({source_format:'화면편집 v14',macro_html:document.querySelector('#p1 .macro')?.innerHTML||''})});return rows;}
 function withDerivedWtiMt(rows){
   const out=[...(rows||[])].map(r=>({...r}));
   for(const r of [...out]){
@@ -989,7 +1103,7 @@ async function runParser(mode){
 /* ---------- PNG ---------- */
 let H2C_PROMISE=null;
 async function ensureH2C(){if(typeof html2canvas==='function')return html2canvas;if(H2C_PROMISE)return H2C_PROMISE;H2C_PROMISE=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';s.onload=()=>resolve(window.html2canvas);s.onerror=()=>reject(new Error('html2canvas 로드 실패'));document.head.appendChild(s);});return H2C_PROMISE;}
-async function exportPng(pageId,btn){const old=btn.textContent;btn.disabled=true;btn.textContent='생성중';let holder;try{const h2c=await ensureH2C();holder=document.createElement('div');holder.style='position:fixed;left:-20000px;top:0;width:1536px;height:1024px;background:#fff;';const clone=document.getElementById(pageId).cloneNode(true);clone.classList.add('active');clone.style='display:block;position:relative;transform:none;box-shadow:none;width:1536px;height:1024px;background:#fff;';clone.querySelectorAll('[contenteditable]').forEach(x=>x.removeAttribute('contenteditable'));holder.appendChild(clone);document.body.appendChild(holder);if(document.fonts?.ready)await document.fonts.ready;const canvas=await h2c(clone,{backgroundColor:'#fff',scale:2,width:1536,height:1024,windowWidth:1536,windowHeight:1024,useCORS:true,logging:false});const blob=await new Promise((res,rej)=>canvas.toBlob(b=>b?res(b):rej(new Error('PNG 생성 실패')),'image/png',1));const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=`주간원료가동향_${CURRENT_WEEK}_${pageId.toUpperCase()}_3072x2048.png`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast(`${pageId.toUpperCase()} PNG 저장 완료`);}catch(e){toast('이미지 저장 실패: '+e.message);}finally{holder?.remove();btn.disabled=false;btn.textContent=old;}}
+async function exportPng(pageId,btn){const old=btn.textContent;btn.disabled=true;btn.textContent='생성중';let holder;try{const h2c=await ensureH2C();holder=document.createElement('div');holder.style='position:fixed;left:-20000px;top:0;width:1536px;height:1024px;background:#fff;';const clone=document.getElementById(pageId).cloneNode(true);clone.classList.add('active');clone.style='display:block;position:relative;transform:none;box-shadow:none;width:1536px;height:1024px;background:#fff;';clone.querySelectorAll('[contenteditable]').forEach(x=>x.removeAttribute('contenteditable'));clone.querySelectorAll('.chart-controls,[data-export-hide="1"]').forEach(x=>x.remove());holder.appendChild(clone);document.body.appendChild(holder);if(document.fonts?.ready)await document.fonts.ready;const canvas=await h2c(clone,{backgroundColor:'#fff',scale:2,width:1536,height:1024,windowWidth:1536,windowHeight:1024,useCORS:true,logging:false});const blob=await new Promise((res,rej)=>canvas.toBlob(b=>b?res(b):rej(new Error('PNG 생성 실패')),'image/png',1));const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=`주간원료가동향_${CURRENT_WEEK}_${pageId.toUpperCase()}_3072x2048.png`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast(`${pageId.toUpperCase()} PNG 저장 완료`);}catch(e){toast('이미지 저장 실패: '+e.message);}finally{holder?.remove();btn.disabled=false;btn.textContent=old;}}
 
 /* ---------- 이벤트 ---------- */
 tabButtons.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
@@ -1018,7 +1132,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&parserOverlay.class
 
 /* ---------- 부팅: 최신 저장 주차 자동 표시 ---------- */
 async function boot(){
-  initRowMap(); document.querySelectorAll('.market-table td.price .delta').forEach(d=>normalizeDeltaColor(d)); setTimeout(()=>refreshDetailDeltaColors(),0); BASE_MARKET=seedBaseMarket(); rebuildAllMarket();
+  initRowMap(); initChartControls(); document.querySelectorAll('.market-table td.price .delta').forEach(d=>normalizeDeltaColor(d)); setTimeout(()=>refreshDetailDeltaColors(),0); BASE_MARKET=seedBaseMarket(); rebuildAllMarket();
   const localWeeks=Object.keys(localDb).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort().reverse();
   const localLatest=localWeeks[0]||BASE_WEEK;
   refreshWeekSelect(localLatest); CURRENT_WEEK=localLatest; updateBasis(localLatest);
