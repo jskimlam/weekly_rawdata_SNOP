@@ -1,0 +1,55 @@
+name: Diagnose GAS read
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  diag:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Diagnose GAS and Pages
+        shell: bash
+        run: |
+          set -e
+          GAS='https://script.google.com/macros/s/AKfycbzezSDIQCzEDmHGNfDOS0N4ZFqKSzw50mLdgdHhJhMrNtyF2_ve32Up7ef2MxnfNCvM/exec'
+          PAGE='https://jskimlam.github.io/weekly_rawdata_SNOP/'
+          {
+            echo '=== DATE ==='
+            date -u
+            echo
+            echo '=== GAS weeks headers ==='
+            curl -sS -L -D - -o /tmp/weeks "$GAS?action=weeks" | sed -n '1,80p'
+            echo '=== GAS weeks body ==='
+            cat /tmp/weeks
+            echo
+            echo '=== GAS reportData 2026-09-04 headers ==='
+            curl -sS -L -D - -o /tmp/report "$GAS?action=reportData&week=2026-09-04" | sed -n '1,80p'
+            echo '=== GAS reportData body first 4000 ==='
+            head -c 4000 /tmp/report
+            echo
+            echo
+            echo '=== GAS marketPrices headers ==='
+            curl -sS -L -D - -o /tmp/market "$GAS?action=marketPrices" | sed -n '1,80p'
+            echo '=== GAS marketPrices body first 4000 ==='
+            head -c 4000 /tmp/market
+            echo
+            echo
+            echo '=== PAGE headers ==='
+            curl -sS -I -L "$PAGE"
+            echo
+            echo '=== PAGE startup markers ==='
+            curl -sS -L "$PAGE" | grep -o "Prefer latest remote DB week\|const latest=remoteWeeks\[0\][^;]*\|async function syncDbWeeks" | head -20 || true
+          } > GAS_DIAG.txt 2>&1
+      - name: Commit diagnostics
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add GAS_DIAG.txt
+          git commit -m "Temporary GAS diagnostics"
+          git push
