@@ -1,0 +1,27 @@
+{
+  "period": "2025-09",
+  "source": "Weekly_원료가_동향_260116 구글드라이브용.xlsx",
+  "sheet": "월 별",
+  "source_column": "25.9월",
+  "prices": {
+    "WTI": 63.24,
+    "Naphtha": 599.875,
+    "Ethylene": 836.25,
+    "Propylene": 785.0,
+    "PP": 843.75,
+    "Benzene": 712.8775,
+    "SM": 869.375,
+    "AN": 1121.25,
+    "BD": 1076.25,
+    "ABS": 1258.75,
+    "BPA": 1110.0,
+    "PC": 1505.0,
+    "MMA": 1275.0,
+    "PMMA": 1715.0
+  },
+  "derived": {
+    "Cost": "SM*0.60 + AN*0.25 + BD*0.15 = 963.375",
+    "ABS Spread": "ABS - Cost = 295.375",
+    "PC-BPA Spread": "PC - BPA = 395"
+  }
+}
