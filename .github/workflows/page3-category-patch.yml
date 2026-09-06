@@ -25,24 +25,17 @@ jobs:
           s = path.read_text(encoding='utf-8')
           original = s
 
-          # 1) 파서: [정기보수] 정식 지원 + 기존 [정수] 호환
           pattern = re.compile(
               r"if\(t\.startsWith\('\[정수\]:'\)\)\{\s*"
               r"last=side==='outlook'\?'outlook_maintenance_commentary':'market_maintenance_commentary';\s*"
               r"out\[last\]=t\.slice\('\[정수\]:'.length\)\.trim\(\);\s*continue;\s*\}",
               re.S,
           )
-          repl = """if(t.startsWith('[정기보수]:')||t.startsWith('[정수]:')){
-      const maintenanceTag=t.startsWith('[정기보수]:')?'[정기보수]:':'[정수]:';
-      last=side==='outlook'?'outlook_maintenance_commentary':'market_maintenance_commentary';
-      out[last]=t.slice(maintenanceTag.length).trim();
-      continue;
-    }"""
+          repl = "if(t.startsWith('[정기보수]:')||t.startsWith('[정수]:')){\n      const maintenanceTag=t.startsWith('[정기보수]:')?'[정기보수]:':'[정수]:';\n      last=side==='outlook'?'outlook_maintenance_commentary':'market_maintenance_commentary';\n      out[last]=t.slice(maintenanceTag.length).trim();\n      continue;\n    }"
           s, n = pattern.subn(repl, s, count=1)
           if n != 1:
               raise SystemExit(f'parseItemBlock maintenance patch count={n}')
 
-          # 2) 동적 렌더링
           s, n = re.subn(
               r"if\(marketMaintenance\)a\.push\(taggedRow\('\[정수\]',marketMaintenance,r\.item,'maintenance'\)\);",
               "if(r.item==='BPA')a.push(taggedRow('[정기보수]',marketMaintenance,r.item,'maintenance',true));",
@@ -59,13 +52,11 @@ jobs:
           if n != 1:
               raise SystemExit(f'market overseas render patch count={n}')
 
-          # BPA 전망에서 정기보수 행은 제거
           s = re.sub(
               r"\s*if\(outlookMaintenance\)a\.push\(taggedRow\('\[정수\]',outlookMaintenance,r\.item,'maintenance'\)\);",
               '', s, count=1,
           )
 
-          # [수급] 직후에 [감산]을 원료/수급과 동일 peer-category로 항상 표시
           supply_line = "if(r.supply_demand_commentary)a.push(taggedRow('[수급]',r.supply_demand_commentary,r.item,'supply'));"
           if supply_line not in s:
               raise SystemExit('supply render line not found')
@@ -79,30 +70,24 @@ jobs:
               '', s, count=1,
           )
 
-          # 3) 편집모드 저장: 신규 라벨/기존 라벨 모두 인식
           old = "const marketMaintenance=pick(market,'[정수]'),outlookMaintenance=pick(outlook,'[정수]'),marketOverseas=pick(market,'[역외]')"
           new = "const marketMaintenance=pick(market,'[정기보수]')||pick(market,'[정수]'),outlookMaintenance=pick(outlook,'[정기보수]')||pick(outlook,'[정수]'),marketOverseas=pick(market,'[역외]')"
           if old not in s:
               raise SystemExit('extractCurrentReports maintenance picker not found')
           s = s.replace(old, new, 1)
 
-          # 4) 3페이지 기본 템플릿 정리
           p3_start = s.find('<!-- PAGE 3 -->')
           p3_end = s.find('</section>', p3_start)
           if p3_start < 0 or p3_end < 0:
               raise SystemExit('PAGE 3 block not found')
           p3 = s[p3_start:p3_end]
 
-          # BPA 시황 첫 [정수] -> [정기보수]
           p3 = p3.replace('[정수]', '[정기보수]', 1)
-
-          # BPA 전망에 남아있는 정기보수/정수 행 제거
           p3 = re.sub(
               r'<div class="rowline tagged peer-category"><span class="tag-label">\[(?:정수|정기보수)\]</span><span class="tag-content">.*?</span></div>',
               '', p3, count=1, flags=re.S,
           )
 
-          # 기본 템플릿에 감산/역외가 없으면 추가
           if '[감산]' not in p3:
               bpa_pos = p3.find('<td class="item">BPA</td>')
               supply_pos = p3.find('<span class="tag-label">[수급]</span>', bpa_pos)
