@@ -44,6 +44,11 @@ body{font-synthesis:none}
 .chart-controls{position:absolute;right:50px;top:43px;z-index:8;display:flex;gap:2px;align-items:center}
 .chart-controls button{height:20px;min-width:33px;padding:0 5px;border:1px solid #aeb4bb;background:#fff;color:#444;font-family:inherit;font-size:8.5px;font-weight:800;line-height:18px;cursor:pointer;border-radius:2px}
 .chart-controls button:hover{background:#eef3f8}.chart-controls button.active{background:#1f2937;color:#fff;border-color:#1f2937}
+.chart-file-input{display:none!important}
+.chart-image-layer{position:absolute;left:5px;top:42px;width:calc(100% - 10px);height:calc(100% - 47px);object-fit:contain;object-position:center;background:#fff;z-index:6;display:none}
+.chart-card.image-mode .chart-image-layer{display:block}
+.chart-card.image-mode svg,.chart-card.image-mode .legend,.chart-card.image-mode .unit,.chart-card.image-mode .bep-note,.chart-card.image-mode .anbd-notes{visibility:hidden}
+.chart-card.image-mode .chart-head{z-index:8}.chart-card.image-mode .chart-controls{z-index:10}
 .chart-card .unit{z-index:9}.chart-card .legend{z-index:9}
 .anbd-card svg{top:67px;height:218px}
 .anbd-card .anbd-separator{stroke:#b9b9b9;stroke-width:1.2;stroke-dasharray:4 3}
@@ -709,7 +714,7 @@ function applyData(data,{cache=true}={}){
   CURRENT_WEEK=data.week; CURRENT_DATA=data;
   if(cache)saveLocalWeek(data);
   rebuildAllMarket(data.marketPrices||[]);
-  updateBasis(data.week); updatePriceMatrix(data.week); renderWtiChart(data.week); updateReportRows(data.reports||[],data.week); updateMacro(data.macro||'',data.reports||[]); updateDerivedCharts(data.week); refreshDetailDeltaColors(data.reports||[]);
+  updateBasis(data.week); updatePriceMatrix(data.week); renderWtiChart(data.week); updateReportRows(data.reports||[],data.week); updateMacro(data.macro||'',data.reports||[]); updateDerivedCharts(data.week); restoreChartImages(data.week); refreshDetailDeltaColors(data.reports||[]);
   addWeekOption(data.week); weekSelect.value=data.week;
   setStatus('empty','화면 반영 완료'); scheduleAutoFit(); fit();
 }
@@ -840,7 +845,7 @@ function updatePriceMatrix(week){
   const prev=addDays(week,-7),prev2=addDays(week,-14),prev3=addDays(week,-21),latestDate=addDays(week,3);
   const d=parseDate(week); if(!d)return;
   const currentYear=d.getFullYear(),currentMonth=d.getMonth()+1,prevYear=currentYear-1;
-  const rollingMonths=[1,2,3,4].map(n=>matrixMonthShift(week,n));
+  const rollingMonths=[0,1,2,3].map(n=>matrixMonthShift(week,n));
 
   if(ths.length>=19){
     ths[1].textContent=md(latestDate);
@@ -982,7 +987,9 @@ function updateReportRows(reports,week){
   refreshDetailDeltaColors(reports);
   scheduleAutoFit();
 }
-function updateMacro(macro,reports){const box=document.querySelector('#p1 .macro');if(!box)return;const wti=reports.find(x=>x.item==='WTI');const raw=parseJsonSafeSafe(wti?.raw_text);if(raw?.macro_html){box.innerHTML=raw.macro_html;scheduleAutoFit();return;}const lines=normalizeText(macro||wti?.market_commentary||'').split('\n').map(x=>x.trim()).filter(Boolean);box.querySelector('.head').textContent='[ Macro Issue ]';box.querySelector('.lead').innerHTML=lines.length?'- '+esc(lines[0]):'-';const bs=[...box.querySelectorAll('.bullet')];bs.forEach((b,i)=>{b.textContent=lines[i+1]?'· '+lines[i+1]:'';});scheduleAutoFit();}
+function cleanMacroLine(v){return String(v||'').replace(/^(?:\s*[-·•▪]\s*)+/,'').trim();}
+function normalizeMacroBullets(box){if(!box)return;box.querySelectorAll('.bullet').forEach(b=>{const t=cleanMacroLine(b.textContent);b.textContent=t?'· '+t:'';});}
+function updateMacro(macro,reports){const box=document.querySelector('#p1 .macro');if(!box)return;const wti=reports.find(x=>x.item==='WTI');const raw=parseJsonSafeSafe(wti?.raw_text);if(raw?.macro_html){box.innerHTML=raw.macro_html;normalizeMacroBullets(box);scheduleAutoFit();return;}const lines=normalizeText(macro||wti?.market_commentary||'').split('\n').map(cleanMacroLine).filter(Boolean);box.querySelector('.head').textContent='[ Macro Issue ]';box.querySelector('.lead').innerHTML=lines.length?'- '+esc(lines[0]):'-';const bs=[...box.querySelectorAll('.bullet')];bs.forEach((b,i)=>{b.textContent=lines[i+1]?'· '+lines[i+1]:'';});normalizeMacroBullets(box);scheduleAutoFit();}
 function weeklySeries(item,week,limit=15){return marketRows(item,'weekly').filter(r=>r.price_date<=week&&Number.isFinite(Number(r.price))).slice(-limit).map(r=>({date:r.price_date,value:Number(r.price)}));}
 function renderDual(card,a,b,colorA='#18238e',colorB='#c63d35'){if(!card||a.length<3||b.length<3)return;const svg=card.querySelector('svg');if(!svg)return;const vb=(svg.getAttribute('viewBox')||'0 0 480 195').split(/\s+/).map(Number),W=vb[2],H=vb[3],L=28,R=18,T=18,B=25;const dates=[...new Set([...a.map(x=>x.date),...b.map(x=>x.date)])].sort().slice(-15),am=new Map(a.map(x=>[x.date,x.value])),bm=new Map(b.map(x=>[x.date,x.value]));const vals=[...dates.map(d=>am.get(d)),...dates.map(d=>bm.get(d))].filter(Number.isFinite);if(vals.length<4)return;let mn=Math.min(...vals),mx=Math.max(...vals),pad=(mx-mn||100)*.13;mn-=pad;mx+=pad;const x=i=>L+(W-L-R)*(dates.length===1?.5:i/(dates.length-1)),y=v=>T+(H-T-B)*(mx-v)/(mx-mn),pts=m=>dates.map((d,i)=>m.has(d)?`${x(i).toFixed(1)},${y(m.get(d)).toFixed(1)}`:null).filter(Boolean).join(' ');let s=`<line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="#aaa"/><polyline points="${pts(am)}" fill="none" stroke="${colorA}" stroke-width="3"/><polyline points="${pts(bm)}" fill="none" stroke="${colorB}" stroke-width="3"/>`;dates.forEach((d,i)=>{if(i%Math.max(1,Math.ceil(dates.length/7))===0||i===dates.length-1)s+=`<text x="${x(i)-13}" y="${H-5}" class="chart-date">${md(d)}</text>`;});for(const [series,c] of [[a,colorA],[b,colorB]]){for(const p of [series.filter(z=>dates.includes(z.date))[0],series.filter(z=>dates.includes(z.date)).at(-1)]){if(!p)continue;const i=dates.indexOf(p.date);s+=`<circle cx="${x(i)}" cy="${y(p.value)}" r="4" fill="#fff" stroke="${c}" stroke-width="2"/><text x="${Math.max(2,x(i)-18)}" y="${Math.max(13,y(p.value)-8)}" fill="${c}" class="chart-label">${fmt(p.value)}</text>`;}}svg.innerHTML=s;}
 function updateDerivedCharts(week){
@@ -997,6 +1004,21 @@ function updateDerivedCharts(week){
 
 /* ---------- 그래프 보기 방식 ---------- */
 const CHART_MODE_KEY='raw_material_chart_modes_v14';
+const CHART_IMAGE_DB='raw_material_chart_images_v1',CHART_IMAGE_STORE='images';
+let CHART_IMAGE_DB_PROMISE=null;
+function openChartImageDb(){
+  if(CHART_IMAGE_DB_PROMISE)return CHART_IMAGE_DB_PROMISE;
+  CHART_IMAGE_DB_PROMISE=new Promise((resolve,reject)=>{const req=indexedDB.open(CHART_IMAGE_DB,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(CHART_IMAGE_STORE))db.createObjectStore(CHART_IMAGE_STORE);};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
+  return CHART_IMAGE_DB_PROMISE;
+}
+async function chartImageGet(key){try{const db=await openChartImageDb();return await new Promise((resolve,reject)=>{const tx=db.transaction(CHART_IMAGE_STORE,'readonly'),req=tx.objectStore(CHART_IMAGE_STORE).get(key);req.onsuccess=()=>resolve(req.result||'');req.onerror=()=>reject(req.error);});}catch(e){console.warn('그래프 이미지 읽기 실패',e);return '';}}
+async function chartImagePut(key,data){try{const db=await openChartImageDb();await new Promise((resolve,reject)=>{const tx=db.transaction(CHART_IMAGE_STORE,'readwrite');tx.objectStore(CHART_IMAGE_STORE).put(data,key);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});return true;}catch(e){console.warn('그래프 이미지 저장 실패',e);return false;}}
+function chartImageKey(card,week=CURRENT_WEEK){return `${week}__${chartId(card)}`;}
+function ensureChartImageLayer(card){let img=card.querySelector('.chart-image-layer');if(!img){img=document.createElement('img');img.className='chart-image-layer';img.alt=(card.querySelector('.chart-head')?.textContent||'그래프')+' 외부 이미지';card.appendChild(img);}return img;}
+function showChartImage(card,data){if(!card||!data)return;const img=ensureChartImageLayer(card);img.src=data;card._externalImageData=data;card.classList.add('image-mode');}
+function showNativeChart(card){if(!card)return;card.classList.remove('image-mode');}
+async function restoreChartImages(week=CURRENT_WEEK){for(const card of chartCards()){const data=await chartImageGet(chartImageKey(card,week));const img=ensureChartImageLayer(card);if(data){showChartImage(card,data);}else{card._externalImageData='';img.removeAttribute('src');showNativeChart(card);}}}
+async function loadExternalChartFile(card,file){if(!file)return;const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(file);});const ok=await chartImagePut(chartImageKey(card),data);showChartImage(card,data);toast(ok?'그래프 이미지를 적용하고 이 브라우저에 저장했습니다.':'그래프 이미지를 적용했습니다.');}
 let chartModeStore={};
 try{chartModeStore=JSON.parse(localStorage.getItem(CHART_MODE_KEY)||'{}')||{};}catch(e){chartModeStore={};}
 function chartCards(){return [...document.querySelectorAll('#p2 .chart-card,#p3 .chart-card')];}
@@ -1049,6 +1071,7 @@ function addTrends(svg){
 }
 function applyChartMode(card,mode,remember=true){
   const svg=card?.querySelector('svg');if(!svg)return;
+  showNativeChart(card);
   if(!card._chartBase)chartBaseSnapshot(card);
   svg.innerHTML=card._chartBase; clearChartDecor(svg);
   if(mode==='line')svg.querySelectorAll('circle').forEach(c=>c.style.display='none');
@@ -1070,7 +1093,13 @@ function initChartControls(){
     if(!card.querySelector('.chart-controls')){
       const ctl=document.createElement('div');ctl.className='chart-controls';ctl.setAttribute('data-export-hide','1');
       [['line','선형'],['bar','막대'],['marker','마커'],['trend','추세']].forEach(([mode,label])=>{const b=document.createElement('button');b.type='button';b.dataset.mode=mode;b.textContent=label;b.title=`그래프를 ${label} 보기로 변경`;b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();applyChartMode(card,mode,true);});ctl.appendChild(b);});
-      card.appendChild(ctl);
+      const imgBtn=document.createElement('button');imgBtn.type='button';imgBtn.textContent='이미지';imgBtn.title='외부 그래프 이미지 파일 선택/교체';
+      const baseBtn=document.createElement('button');baseBtn.type='button';baseBtn.textContent='기본';baseBtn.title='DB 기반 기본 그래프로 복귀';
+      const input=document.createElement('input');input.type='file';input.accept='image/png,image/jpeg,image/webp';input.className='chart-file-input';input.setAttribute('data-export-hide','1');
+      imgBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();input.click();});
+      baseBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();showNativeChart(card);});
+      input.addEventListener('change',async()=>{const file=input.files?.[0];if(file)await loadExternalChartFile(card,file);input.value='';});
+      ctl.appendChild(imgBtn);ctl.appendChild(baseBtn);card.appendChild(ctl);card.appendChild(input);ensureChartImageLayer(card);
     }
     chartBaseSnapshot(card);
     const mode=chartModeStore[chartId(card)]||card.dataset.chartDefault||(card.classList.contains('anbd-card')?'marker':'line');
