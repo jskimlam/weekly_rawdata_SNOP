@@ -1,0 +1,150 @@
+name: Patch Page 3 categories
+
+on:
+  push:
+    paths:
+      - '.github/workflows/page3-category-patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch index.html
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          s = path.read_text(encoding='utf-8')
+          original = s
+
+          # 1) HTML용 파싱: [정기보수]를 정식 태그로 받고 기존 [정수]도 호환
+          old = """    if(t.startsWith('[정수]:')){
+              last=side==='outlook'?'outlook_maintenance_commentary':'market_maintenance_commentary';
+              out[last]=t.slice('[정수]:'.length).trim();
+              continue;
+            }"""
+          new = """    if(t.startsWith('[정기보수]:')||t.startsWith('[정수]:')){
+              const maintenanceTag=t.startsWith('[정기보수]:')?'[정기보수]:':'[정수]:';
+              last=side==='outlook'?'outlook_maintenance_commentary':'market_maintenance_commentary';
+              out[last]=t.slice(maintenanceTag.length).trim();
+              continue;
+            }"""
+          if old not in s:
+              raise SystemExit('parseItemBlock maintenance block not found')
+          s = s.replace(old, new, 1)
+
+          # 2) 동적 렌더링: BPA 시황 [정기보수], MMA 시황 [역외]는 항상 동일 레벨 카테고리로 노출
+          old = "if(marketMaintenance)a.push(taggedRow('[정수]',marketMaintenance,r.item,'maintenance'));"
+          new = "if(r.item==='BPA')a.push(taggedRow('[정기보수]',marketMaintenance,r.item,'maintenance',true));"
+          if old not in s:
+              raise SystemExit('market maintenance render line not found')
+          s = s.replace(old, new, 1)
+
+          old = "if(marketOverseas)a.push(taggedRow('[역외]',marketOverseas,r.item,'overseas'));"
+          new = "if(r.item==='MMA')a.push(taggedRow('[역외]',marketOverseas,r.item,'overseas',true));"
+          if old not in s:
+              raise SystemExit('market overseas render line not found')
+          s = s.replace(old, new, 1)
+
+          # 3) BPA 전망에서는 정기보수 카테고리를 빼고 [원료]/[수급]/[감산] 구조로 통일
+          old = "    if(outlookMaintenance)a.push(taggedRow('[정수]',outlookMaintenance,r.item,'maintenance'));\n"
+          if old in s:
+              s = s.replace(old, '', 1)
+
+          old = "    if(r.supply_demand_commentary)a.push(taggedRow('[수급]',r.supply_demand_commentary,r.item,'supply'));"
+          new = "    if(r.supply_demand_commentary)a.push(taggedRow('[수급]',r.supply_demand_commentary,r.item,'supply'));\n    if(r.item==='BPA')a.push(taggedRow('[감산]',outlookReduction,r.item,'reduction',true));"
+          if old not in s:
+              raise SystemExit('supply render line not found')
+          s = s.replace(old, new, 1)
+
+          old = "    if(outlookReduction)a.push(taggedRow('[감산]',outlookReduction,r.item,'reduction'));\n"
+          if old in s:
+              s = s.replace(old, '', 1)
+
+          # 4) 편집모드 저장 시 신규 [정기보수] 라벨을 정상 추출, 기존 [정수]도 호환
+          old = "const marketMaintenance=pick(market,'[정수]'),outlookMaintenance=pick(outlook,'[정수]'),marketOverseas=pick(market,'[역외]')"
+          new = "const marketMaintenance=pick(market,'[정기보수]')||pick(market,'[정수]'),outlookMaintenance=pick(outlook,'[정기보수]')||pick(outlook,'[정수]'),marketOverseas=pick(market,'[역외]')"
+          if old not in s:
+              raise SystemExit('extractCurrentReports maintenance picker not found')
+          s = s.replace(old, new, 1)
+
+          # 5) 3페이지 기본 템플릿도 동일 구조로 정리
+          p3_start = s.find('<!-- PAGE 3 -->')
+          if p3_start < 0:
+              raise SystemExit('PAGE 3 marker not found')
+          p3_end = s.find('</section>', p3_start)
+          if p3_end < 0:
+              raise SystemExit('PAGE 3 section end not found')
+          p3 = s[p3_start:p3_end]
+
+          # BPA 시황의 첫 [정수] -> [정기보수]
+          if '[정수]' in p3:
+              p3 = p3.replace('[정수]', '[정기보수]', 1)
+
+          # BPA 전망에 남아 있는 정기보수/정수 행은 제거
+          p3 = re.sub(
+              r'<div class="rowline tagged peer-category"><span class="tag-label">\[(?:정수|정기보수)\]</span><span class="tag-content">.*?</span></div>',
+              '',
+              p3,
+              count=1,
+              flags=re.S,
+          )
+
+          # 감산 행이 없으면 수급 바로 뒤에 추가
+          if '[감산]' not in p3:
+              marker = '<span class="tag-label">[수급]</span>'
+              pos = p3.find(marker)
+              if pos < 0:
+                  raise SystemExit('BPA supply row not found in PAGE 3')
+              end = p3.find('</div>', p3.find('</span>', p3.find('</span>', pos)+1))
+              if end < 0:
+                  raise SystemExit('BPA supply row end not found')
+              end += len('</div>')
+              p3 = p3[:end] + '<div class="rowline tagged peer-category"><span class="tag-label">[감산]</span><span class="tag-content"></span></div>' + p3[end:]
+
+          # MMA 역외 행이 없으면 유도품 뒤에 추가
+          mma_pos = p3.find('<td class="item">MMA</td>')
+          if mma_pos >= 0 and '[역외]' not in p3[mma_pos:]:
+              der = p3.find('<span class="tag-label">[유도품]</span>', mma_pos)
+              if der >= 0:
+                  end = p3.find('</div>', p3.find('</span>', p3.find('</span>', der)+1))
+                  if end >= 0:
+                      end += len('</div>')
+                      p3 = p3[:end] + '<div class="rowline tagged peer-category"><span class="tag-label">[역외]</span><span class="tag-content"></span></div>' + p3[end:]
+
+          s = s[:p3_start] + p3 + s[p3_end:]
+
+          # 최소 검증
+          checks = [
+              "taggedRow('[정기보수]'",
+              "taggedRow('[감산]'",
+              "taggedRow('[역외]'",
+              "pick(market,'[정기보수]')",
+          ]
+          for check in checks:
+              if check not in s:
+                  raise SystemExit(f'validation failed: {check}')
+          if s == original:
+              raise SystemExit('no changes applied')
+
+          path.write_text(s, encoding='utf-8')
+          print('Page 3 category patch applied successfully')
+          PY
+
+      - name: Commit patched dashboard
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/page3-category-patch.yml
+          git add -A
+          git commit -m "Add BPA maintenance/reduction and MMA overseas categories"
+          git push
