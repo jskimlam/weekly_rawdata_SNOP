@@ -1205,7 +1205,22 @@ async function loadFromGoogle(week){
     else{setStatus('error','DB 조회 실패');toast('Google Sheet 조회 실패: '+e.message);}
   }finally{reloadDbBtn.disabled=false;}
 }
-async function syncDbWeeks(){try{const r=await gasGet('weeks');const ws=(r.weeks||[]).map(x=>typeof x==='string'?x:x.week_end).filter(Boolean);ws.forEach(addWeekOption);return ws;}catch(e){return [];}}
+async function syncDbWeeks(){
+  const found=new Set();
+  try{
+    const r=await gasGet('weeks');
+    (r.weeks||[]).map(x=>typeof x==='string'?x:x.week_end).filter(w=>/^\d{4}-\d{2}-\d{2}$/.test(String(w||''))).forEach(w=>found.add(w));
+  }catch(e){console.warn('weeks 조회 실패',e);}
+  try{
+    const m=await gasGet('marketPrices');
+    const rows=dedupeMarket(m.rows||m.marketPrices||[]).filter(r=>String(r.price_type||'').toLowerCase()!=='latest');
+    REMOTE_MARKET=rows;
+    rows.map(r=>r.week_end).filter(w=>/^\d{4}-\d{2}-\d{2}$/.test(String(w||''))).forEach(w=>found.add(w));
+  }catch(e){console.warn('marketPrices 주차 조회 실패',e);}
+  const ws=[...found].sort().reverse();
+  ws.forEach(addWeekOption);
+  return ws;
+}
 
 /* ---------- 주차 ---------- */
 function addWeekOption(week){if(!week)return;if([...weekSelect.options].some(o=>o.value===week))return;weekSelect.add(new Option(`${weekLabel(week)} · ${week}`,week));sortWeekOptions();}
@@ -1375,7 +1390,7 @@ parseOnlyBtn.addEventListener('click',()=>runParser('preview'));parseUpdateBtn.a
 parserWeekSelect.addEventListener('change',()=>{let pw=null;try{const raw=parserText.value.trim();if(raw)pw=parseFixedFormat(raw).week;}catch(e){}updateParserWeekInfo(pw);});
 parserText.addEventListener('input',()=>{try{const raw=parserText.value.trim();updateParserWeekInfo(raw?parseFixedFormat(raw).week:null);}catch(e){updateParserWeekInfo();}});
 reloadDbBtn.addEventListener('click',async()=>{await syncDbWeeks();await loadFromGoogle(weekSelect.value||CURRENT_WEEK);});
-weekSelect.addEventListener('change',()=>{const w=weekSelect.value,local=getLocalWeek(w);if(local){applyData(local,{cache:false});setStatus('empty','로컬 자료 표시');}else loadFromGoogle(w);});
+weekSelect.addEventListener('change',async()=>{const w=weekSelect.value;if(!w)return;await loadFromGoogle(w);});
 editModeBtn.addEventListener('click',async()=>{
   if(!EDIT_MODE && !requireAdmin())return;
   if(EDIT_MODE){setEditMode(false);setStatus('loading','편집 내용 DB 업데이트 중');toast('편집 내용을 Google Sheet DB에 자동 업데이트합니다.');const bundle=currentBundleFromScreen();CURRENT_DATA=bundle;await saveToGoogle(bundle);}
@@ -1408,10 +1423,9 @@ async function boot(){
   setStatus('loading','최신 주차 확인 중');
   try{
     const remoteWeeks=await syncDbWeeks();
-    const allWeeks=[...new Set([BASE_WEEK,...localWeeks,...remoteWeeks])].filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x)).sort().reverse();
-    const latest=allWeeks[0]||localLatest;
+    const latest=remoteWeeks[0]||localLatest||BASE_WEEK;
     refreshWeekSelect(latest);weekSelect.value=latest;
-    if(remoteWeeks.includes(latest))await loadFromGoogle(latest);
+    if(remoteWeeks.length)await loadFromGoogle(latest);
     else {const local=getLocalWeek(latest);if(local)applyData(local,{cache:false});setStatus('empty','최신 로컬 주차 표시');}
   }catch(e){
     const local=getLocalWeek(localLatest);if(local)applyData(local,{cache:false});
